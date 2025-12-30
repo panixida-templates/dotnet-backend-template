@@ -29,7 +29,7 @@ jobs:
 
   build-api:
       if: ${{ github.event_name != 'pull_request' }}
-      needs: [ format, tests ]
+      needs: [ format, tests, resolve-env ]
       uses: PANiXiDA-Infrastructure/ci-cd/.github/workflows/docker-build.yml@main
       with:
         service-folder: ${{ vars.API_SERVICE_FOLDER }}
@@ -40,11 +40,12 @@ jobs:
 
   build-ui-admin:
       if: ${{ github.event_name != 'pull_request' }}
-      needs: [ format, tests ]
+      needs: [ format, tests, resolve-env ]
       uses: PANiXiDA-Infrastructure/ci-cd/.github/workflows/docker-build.yml@main
       with:
         service-folder: ${{ vars.UI_ADMIN_SERVICE_FOLDER }}
         image: ${{ vars.REGISTRY_URL }}/${{ github.repository }}/${{ vars.UI_ADMIN_SERVICE_NAME }}:${{ github.run_number }}
+        environment: ${{ needs.resolve-env.outputs.environment_pascal  }}
       secrets:
         registry-user: ${{ secrets.REGISTRY_USER }}
         registry-token: ${{ secrets.REGISTRY_TOKEN }}

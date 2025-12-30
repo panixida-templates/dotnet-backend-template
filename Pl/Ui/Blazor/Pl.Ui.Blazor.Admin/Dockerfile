@@ -1,5 +1,6 @@
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
+ARG ENVIRONMENT=""
 WORKDIR /app
 
 COPY ["Pl/Ui/Blazor/Pl.Ui.Blazor.Admin/Pl.Ui.Blazor.Admin.csproj", "Pl/Ui/Blazor/Pl.Ui.Blazor.Admin/"]
@@ -29,7 +30,7 @@ RUN dotnet restore "./Pl/Ui/Blazor/Pl.Ui.Blazor.Admin/Pl.Ui.Blazor.Admin.csproj"
 
 COPY . ./
 WORKDIR "/app/Pl/Ui/Blazor/Pl.Ui.Blazor.Admin"
-RUN dotnet publish "./Pl.Ui.Blazor.Admin.csproj" -c $BUILD_CONFIGURATION -o out
+RUN dotnet publish "./Pl.Ui.Blazor.Admin.csproj" -c $BUILD_CONFIGURATION -o out -p:WasmApplicationEnvironmentName="$ENVIRONMENT"
 
 FROM nginx:1.23-alpine
 WORKDIR /app
