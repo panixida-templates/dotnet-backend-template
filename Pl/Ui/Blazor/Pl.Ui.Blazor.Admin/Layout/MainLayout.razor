@@ -1,0 +1,35 @@
+﻿@inherits LayoutComponentBase
+
+<MudThemeProvider />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+    <MudAppBar Elevation="1">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="ToggleDrawer" />
+        <MudText Typo="Typo.h6" Class="ml-2">Company</MudText>
+
+        <MudSpacer />
+
+        <!-- Для тестов: текущая среда/урлы -->
+        <MudText Typo="Typo.caption" Class="mr-4">
+            API: @_apiBaseAddress
+        </MudText>
+
+        <MudText Typo="Typo.caption">
+            URL: @_currentUrl
+        </MudText>
+    </MudAppBar>
+
+    <MudDrawer @bind-Open="_drawerOpen" Variant="DrawerVariant.Responsive" Elevation="1">
+        <NavMenu />
+    </MudDrawer>
+
+    <MudMainContent>
+        <MudContainer MaxWidth="MaxWidth.False" Class="mud-theme-drawer pt-4 px-4">
+            @Body
+        </MudContainer>
+    </MudMainContent>
+
+</MudLayout>
