@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pl.Ui.Blazor.Admin</title>
+    <title>Панель администрирования</title>
     <base href="/" />
 
     <link rel="icon" href="favicon.ico">
@@ -31,8 +31,29 @@
         <span class="dismiss">🗙</span>
     </div>
 
-    <script src="_framework/blazor.webassembly#[.{fingerprint}].js"></script>
+    <script src="_framework/blazor.webassembly#[.{fingerprint}].js" autostart="false"></script>
     <script src="_content/MudBlazor/MudBlazor.min.js?v=1"></script>
+
+    <script>
+        Blazor.start({
+            loadBootResource: function (type, name, defaultUri, integrity) {
+                const uri = defaultUri.startsWith("/") ? defaultUri : ("/" + defaultUri);
+
+                const isFrameworkAsset =
+                    uri.startsWith("/_framework/") || uri.startsWith("/_content/");
+
+                const init = {
+                    cache: isFrameworkAsset ? "force-cache" : "no-cache"
+                };
+
+                if (integrity) {
+                    init.integrity = integrity;
+                }
+
+                return fetch(defaultUri, init);
+            }
+        });
+    </script>
 </body>
 
 </html>
