@@ -41,14 +41,8 @@
                     return defaultUri;
                 }
 
-                const uri = defaultUri.startsWith("/") ? defaultUri : ("/" + defaultUri);
-
-                const isFrameworkAsset =
-                    uri.startsWith("/_framework/") || uri.startsWith("/_content/");
-
-                const init = {
-                    cache: isFrameworkAsset ? "force-cache" : "no-cache"
-                };
+                const cacheable = type === "wasm" || type === "assembly" || type === "icu";
+                const init = { cache: cacheable ? "force-cache" : "no-cache" };
 
                 if (integrity) {
                     init.integrity = integrity;
