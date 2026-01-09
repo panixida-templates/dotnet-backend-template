@@ -2,48 +2,15 @@
 
 using Pl.Api.Http.Dtos.Models;
 
+using Riok.Mapperly.Abstractions;
+
 namespace Pl.Api.Http.Mappers;
 
-public static class UsersMapper
+[Mapper]
+public static partial class UsersMapper
 {
-    public static User ToEntity(this UserDto dto)
-    {
-        var entity = new User(
-            id: dto.Id,
-            role: dto.Role,
-            name: dto.Name,
-            email: dto.Email,
-            phone: dto.Phone,
-            age: dto.Age,
-            birthday: dto.Birthday
-        );
-
-        return entity;
-    }
-
-    public static List<User> ToEntity(this IEnumerable<UserDto> dtos)
-    {
-        return [.. dtos.Select(ToEntity)];
-    }
-
-    public static UserDto ToDto(this User entity)
-    {
-        var dto = new UserDto
-        {
-            Id = entity.Id,
-            Role = entity.Role,
-            Name = entity.Name,
-            Email = entity.Email,
-            Phone = entity.Phone,
-            Age = entity.Age,
-            Birthday = entity.Birthday
-        };
-
-        return dto;
-    }
-
-    public static List<UserDto> ToDto(this IEnumerable<User> entities)
-    {
-        return [.. entities.Select(ToDto)];
-    }
+    public static partial User ToEntity(this UserDto dto);
+    public static partial List<User> ToEntity(this IEnumerable<UserDto> dtos);
+    public static partial UserDto ToDto(this User entity);
+    public static partial List<UserDto> ToDto(this IEnumerable<User> entities);
 }

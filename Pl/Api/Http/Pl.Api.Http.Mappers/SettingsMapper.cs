@@ -2,40 +2,15 @@
 
 using Pl.Api.Http.Dtos.Models;
 
+using Riok.Mapperly.Abstractions;
+
 namespace Pl.Api.Http.Mappers;
 
-public static class SettingsMapper
+[Mapper]
+public static partial class SettingsMapper
 {
-    public static Setting ToEntity(this SettingDto dto)
-    {
-        var entity = new Setting(
-            id: dto.Id,
-            settingType: dto.SettingType,
-            value: dto.Value
-        );
-
-        return entity;
-    }
-
-    public static List<Setting> ToEntity(this IEnumerable<SettingDto> dtos)
-    {
-        return [.. dtos.Select(ToEntity)];
-    }
-
-    public static SettingDto ToDto(this Setting entity)
-    {
-        var dto = new SettingDto
-        {
-            Id = entity.Id,
-            SettingType = entity.SettingType,
-            Value = entity.Value
-        };
-
-        return dto;
-    }
-
-    public static List<SettingDto> ToDto(this IEnumerable<Setting> entities)
-    {
-        return [.. entities.Select(ToDto)];
-    }
+    public static partial Setting ToEntity(this SettingDto dto);
+    public static partial List<Setting> ToEntity(this IEnumerable<SettingDto> dtos);
+    public static partial SettingDto ToDto(this Setting entity);
+    public static partial List<SettingDto> ToDto(this IEnumerable<Setting> entities);
 }
