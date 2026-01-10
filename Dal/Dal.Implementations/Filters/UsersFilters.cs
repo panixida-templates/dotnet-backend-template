@@ -6,7 +6,7 @@ namespace Dal.Implementations.Filters;
 
 internal static class UsersFilters
 {
-    internal static IQueryable<User> Filter(this IQueryable<User> dbObjects, UsersSearchParams searchParams)
+    internal static IQueryable<UserDbModel> Filter(this IQueryable<UserDbModel> dbObjects, UsersSearchParams searchParams)
     {
         if (searchParams.Role.HasValue)
         {

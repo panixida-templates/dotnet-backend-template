@@ -21,7 +21,7 @@ namespace IntegrationTests.Tests.Core;
 [Trait(TraitKeysConstants.Category, TraitCategoriesConstants.Integration)]
 public abstract partial class IntegrationTestBase<TEndpoint, TId, TModel, TSearchParams, TConvertParams>
     where TEndpoint : IBaseApiEndpointsConstants<TEndpoint, TId>
-    where TId : notnull
+    where TId : struct
     where TModel : BaseDto<TId>
     where TSearchParams : BaseSearchParams
     where TConvertParams : class

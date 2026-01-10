@@ -25,7 +25,7 @@ public sealed class SettingsController(ISettingsBl settingsBl) : BaseApiControll
     [ProducesResponseType(typeof(RestApiResponse<SettingDto>), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<RestApiResponse<SettingDto>>> Get([FromRoute] int id, [FromQuery] SettingsConvertParams? convertParams)
     {
-        var dto = (await settingsBl.GetAsync(id, convertParams)).ToDto();
+        var dto = SettingsMapper.ToDto(await settingsBl.GetAsync(id, convertParams));
         return Ok(RestApiResponseBuilder<SettingDto>.Success(dto));
     }
 
@@ -42,7 +42,7 @@ public sealed class SettingsController(ISettingsBl settingsBl) : BaseApiControll
     [ProducesResponseType(typeof(RestApiResponse<int>), StatusCodes.Status201Created)]
     public async Task<ActionResult<RestApiResponse<int>>> Create([FromBody] SettingDto dto)
     {
-        dto.Id = await settingsBl.AddOrUpdateAsync(dto.ToEntity());
+        dto.Id = await settingsBl.AddOrUpdateAsync(SettingsMapper.ToEntity(dto));
         return Created(string.Empty, RestApiResponseBuilder<int>.Success(dto.Id));
     }
 
@@ -52,7 +52,7 @@ public sealed class SettingsController(ISettingsBl settingsBl) : BaseApiControll
     public async Task<ActionResult<RestApiResponse<NoContent>>> Update([FromRoute] int id, [FromBody] SettingDto dto)
     {
         dto.Id = id;
-        await settingsBl.AddOrUpdateAsync(dto.ToEntity());
+        await settingsBl.AddOrUpdateAsync(SettingsMapper.ToEntity(dto));
         return Ok(RestApiResponseBuilder<NoContent>.Success(new()));
     }
 

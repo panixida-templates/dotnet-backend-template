@@ -6,7 +6,7 @@ namespace Dal.Implementations.Filters;
 
 internal static class SettingsFilters
 {
-    internal static IQueryable<Settings> Filter(this IQueryable<Settings> dbObjects, SettingsSearchParams searchParams)
+    internal static IQueryable<SettingDbModel> Filter(this IQueryable<SettingDbModel> dbObjects, SettingsSearchParams searchParams)
     {
         return dbObjects;
     }

@@ -4,7 +4,7 @@ using Dal.DbModels.Core;
 
 namespace Dal.DbModels;
 
-public sealed class User : BaseDbModel<int>
+public sealed class UserDbModel : BaseDbModel<int>
 {
     public Role Role { get; set; }
 

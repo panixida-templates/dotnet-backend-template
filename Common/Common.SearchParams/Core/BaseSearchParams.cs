@@ -14,7 +14,7 @@ public class BaseSearchParams
     public string? SortField { get; set; }
     public SortOrder SortOrder { get; set; }
     public string? SearchQuery { get; set; }
-    public bool IsDeleted { get; set; } = false;
+    public bool IsDeleted { get; set; }
 
     public DateTime? CreatedFrom { get; set; }
     public DateTime? CreatedTo { get; set; }

@@ -1,6 +1,7 @@
 ﻿namespace Dal.DbModels.Core;
 
-public abstract class BaseDbModel<TId> : IBaseDbModel<TId>
+public abstract class BaseDbModel<TId>
+    where TId : struct
 {
     public TId Id { get; set; } = default!;
     public DateTime CreatedAt { get; set; }

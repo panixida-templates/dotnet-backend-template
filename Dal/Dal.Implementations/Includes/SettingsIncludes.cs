@@ -6,7 +6,7 @@ namespace Dal.Implementations.Includes;
 
 internal static class SettingsIncludes
 {
-    internal static IQueryable<Settings> Include(this IQueryable<Settings> dbObjects, SettingsConvertParams convertParams)
+    internal static IQueryable<SettingDbModel> Include(this IQueryable<SettingDbModel> dbObjects, SettingsConvertParams convertParams)
     {
         return dbObjects;
     }

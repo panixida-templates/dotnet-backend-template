@@ -1,5 +1,4 @@
 ﻿using System.Linq.Dynamic.Core;
-using System.Linq.Expressions;
 
 using Common.Enums;
 using Common.Exceptions;
@@ -7,6 +6,7 @@ using Common.SearchParams.Core;
 
 using Dal.DbModels.Core;
 using Dal.Interfaces.Core;
+using Dal.Mappers.Core;
 
 using Entities.Core;
 
@@ -14,218 +14,53 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Dal.Implementations.Core;
 
-public abstract class BaseDal<TDbContext, TDbObject, TEntity, TId, TSearchParams, TConvertParams>
-    : IBaseDal<TDbObject, TEntity, TId, TSearchParams, TConvertParams>
+public abstract class BaseDal<TDbContext, TId, TDbModel, TEntity, TMapper, TSearchParams, TConvertParams>(TDbContext dbContext)
+    : IBaseDal<TId, TEntity, TSearchParams, TConvertParams>
     where TDbContext : DbContext
-    where TDbObject : class, IBaseDbModel<TId>, new()
+    where TId : struct
+    where TDbModel : BaseDbModel<TId>, new()
     where TEntity : BaseEntity<TId>
-    where TId : IEquatable<TId>, IComparable<TId>
+    where TMapper : IMapper<TDbModel, TEntity>
     where TSearchParams : BaseSearchParams
     where TConvertParams : class, new()
 {
-    protected TDbContext _context;
-
-    protected abstract bool RequiresUpdatesAfterObjectSaving { get; }
-
-    private protected BaseDal(TDbContext context)
-    {
-        _context = context;
-    }
-
-    public virtual Task<TId> AddOrUpdateAsync(TEntity entity)
-    {
-        ArgumentNullException.ThrowIfNull(entity);
-
-        return AddOrUpdateAsync(entity, true);
-    }
-
-    internal virtual async Task<TId> AddOrUpdateAsync(TEntity entity, bool forceSave)
-    {
-        ArgumentNullException.ThrowIfNull(entity);
-
-        var data = _context;
-        var objects = data.Set<TDbObject>();
-        var dbObject = await objects.FirstOrDefaultAsync(item => item.Id.Equals(entity.Id));
-        var exists = dbObject != null;
-        dbObject ??= new TDbObject();
-
-        await UpdateBeforeSavingAsync(entity, dbObject);
-
-        var now = DateTime.UtcNow;
-        if (!exists)
-        {
-            dbObject.CreatedAt = now;
-            objects.Add(dbObject);
-        }
-        dbObject.UpdatedAt = now;
-
-        if (RequiresUpdatesAfterObjectSaving || forceSave)
-        {
-            await data.SaveChangesAsync();
-        }
-
-        if (RequiresUpdatesAfterObjectSaving)
-        {
-            await UpdateAfterSavingAsync(entity, dbObject);
-
-            if (forceSave)
-            {
-                await data.SaveChangesAsync();
-            }
-        }
-        entity.Id = dbObject.Id;
-
-        return dbObject.Id;
-    }
-
-    public virtual Task<IList<TId>> AddOrUpdateAsync(IList<TEntity> entities)
-    {
-        ArgumentNullException.ThrowIfNull(entities);
-
-        return AddOrUpdateAsync(entities, true);
-    }
-
-    internal virtual async Task<IList<TId>> AddOrUpdateAsync(IList<TEntity> entities, bool forceSave)
-    {
-        ArgumentNullException.ThrowIfNull(entities);
-
-        var data = _context;
-        var entitiesIdArray = entities.Select(item => item.Id).ToArray();
-        var dbSet = data.Set<TDbObject>();
-        var dbObjectsDictionary = await dbSet.Where(item => entitiesIdArray.Any(id => item.Id.Equals(id))).ToDictionaryAsync(item => item.Id);
-
-        var existingSet = new HashSet<TId>();
-        var dbObjects = new List<TDbObject>();
-        var addedObjects = new List<TDbObject>();
-
-        foreach (var entity in entities)
-        {
-            var id = entity.Id;
-            var exists = dbObjectsDictionary.TryGetValue(id, out var dbObject);
-            dbObject ??= new TDbObject();
-
-            if (exists)
-            {
-                existingSet.Add(id);
-            }
-
-            var now = DateTime.UtcNow;
-            if (!exists)
-            {
-                dbObject.CreatedAt = now;
-            }
-            dbObject.UpdatedAt = now;
-
-            await UpdateBeforeSavingAsync(entity, dbObject);
-            dbObjects.Add(dbObject);
-
-            if (!exists)
-            {
-                addedObjects.Add(dbObject);
-            }
-        }
-
-        dbSet.AddRange(addedObjects);
-
-        if (RequiresUpdatesAfterObjectSaving || forceSave)
-        {
-            await data.SaveChangesAsync();
-        }
-
-        if (RequiresUpdatesAfterObjectSaving)
-        {
-            for (var i = 0; i < dbObjects.Count; i++)
-            {
-                var dbObject = dbObjects[i];
-                await UpdateAfterSavingAsync(entities[i], dbObject);
-            }
-        }
-
-        if (forceSave)
-        {
-            await data.SaveChangesAsync();
-        }
-
-        return [.. dbObjects.Select(item => item.Id)];
-    }
-
-    public virtual Task<bool> ExistsAsync(TId id)
-    {
-        return _context.Set<TDbObject>().Where(item => item.Id.Equals(id)).AnyAsync();
-    }
-
-    public virtual async Task<bool> ExistsAsync(TSearchParams searchParams)
-    {
-        ArgumentNullException.ThrowIfNull(searchParams);
-
-        var data = _context;
-        var objects = data.Set<TDbObject>().AsNoTracking();
-
-        return await (await BuildDbQueryAsync(objects, searchParams)).AnyAsync();
-    }
-
-    internal virtual async Task<bool> ExistsAsync(Expression<Func<TDbObject, bool>> predicate)
-    {
-        ArgumentNullException.ThrowIfNull(predicate);
-
-        var data = _context;
-
-        return await data.Set<TDbObject>().Where(predicate).AnyAsync();
-    }
-
-    public virtual Task<bool> DeleteAsync(TId id)
-    {
-        return DeleteAsync(item => item.Id.Equals(id));
-    }
-
-    public virtual async Task<bool> DeleteAsync(Expression<Func<TDbObject, bool>> predicate)
-    {
-        var count = await _context.Set<TDbObject>()
-            .Where(predicate)
-            .Where(item => item.DeletedAt == null)
-            .ExecuteUpdateAsync(item => item.SetProperty(prop => prop.DeletedAt, prop => DateTime.UtcNow));
-
-        return count != 0;
-    }
-
     public virtual async Task<TEntity> GetAsync(TId id, TConvertParams? convertParams = null)
     {
-        convertParams = convertParams ?? new TConvertParams();
+        convertParams ??= new TConvertParams();
 
-        var data = _context;
-        var dbObjects = data.Set<TDbObject>().Where(item => item.Id.Equals(id) && item.DeletedAt.Equals(null)).Take(1);
+        var dbObject = dbContext.Set<TDbModel>()
+            .AsNoTracking()
+            .Where(item => item.Id.Equals(id) && !item.DeletedAt.HasValue)
+            .Take(1);
 
-        return (await BuildEntitiesListAsync(dbObjects, convertParams)).FirstOrDefault() ?? throw new NotFoundException($"{typeof(TDbObject).Name} с id={id} не найдена");
+        return (await BuildEntitiesListAsync(dbObject, convertParams)).FirstOrDefault() 
+            ?? throw new NotFoundException($"{typeof(TDbModel).Name} с id={id} не найдена");
     }
 
     public virtual async Task<SearchResult<TEntity>> GetAsync(TSearchParams searchParams, TConvertParams? convertParams = null)
     {
         ArgumentNullException.ThrowIfNull(searchParams);
+        convertParams ??= new TConvertParams();
 
-        convertParams = convertParams ?? new TConvertParams();
-
-        var data = _context;
-        var objects = data.Set<TDbObject>().AsNoTracking();
-
+        var objects = dbContext.Set<TDbModel>().AsNoTracking();
         objects = await BuildDbQueryAsync(objects, searchParams);
 
-        var mappedSortField = MapSortField(searchParams.SortField ?? string.Empty);
-        if (!string.IsNullOrEmpty(searchParams.SortField) && !string.IsNullOrEmpty(mappedSortField))
+        if (!string.IsNullOrEmpty(searchParams.SortField))
         {
             if (searchParams.SortOrder == SortOrder.Descending)
             {
-                objects = objects.OrderBy($"{mappedSortField} descending");
+                objects = objects.OrderBy($"{searchParams.SortField} descending");
             }
             else
             {
-                objects = objects.OrderBy(mappedSortField);
+                objects = objects.OrderBy(searchParams.SortField);
             }
         }
         else
         {
             var visitor = new OrderedQueryableVisitor();
             visitor.Visit(objects.Expression);
-            if (visitor.IsOrdered && objects is IOrderedQueryable<TDbObject> orderedObjects)
+            if (visitor.IsOrdered && objects is IOrderedQueryable<TDbModel> orderedObjects)
             {
                 objects = orderedObjects
                     .ThenByDescending(item => item.UpdatedAt)
@@ -264,32 +99,117 @@ public abstract class BaseDal<TDbContext, TDbObject, TEntity, TId, TSearchParams
         return result;
     }
 
-    internal virtual async Task<IList<TEntity>> GetAsync(Expression<Func<TDbObject, bool>> predicate, TConvertParams? convertParams = null)
+    public virtual Task<bool> ExistsAsync(TId id)
     {
-        ArgumentNullException.ThrowIfNull(predicate);
-
-        convertParams = convertParams ?? new TConvertParams();
-        var data = _context;
-
-        return await BuildEntitiesListAsync(data.Set<TDbObject>().Where(predicate), convertParams);
+        return dbContext.Set<TDbModel>().AsNoTracking().Where(item => item.Id.Equals(id)).AnyAsync();
     }
 
-    protected abstract Task UpdateBeforeSavingAsync(TEntity entity, TDbObject dbObject);
-
-    protected virtual Task UpdateAfterSavingAsync(TEntity entity, TDbObject dbObject)
+    public virtual async Task<bool> ExistsAsync(TSearchParams searchParams)
     {
-        return Task.CompletedTask;
+        ArgumentNullException.ThrowIfNull(searchParams);
+
+        var data = dbContext;
+        var objects = data.Set<TDbModel>().AsNoTracking();
+
+        return await (await BuildDbQueryAsync(objects, searchParams)).AnyAsync();
     }
 
-    protected virtual Task<IQueryable<TDbObject>> BuildDbQueryAsync(IQueryable<TDbObject> dbObjects, TSearchParams searchParams)
+    public virtual async Task<TId> AddOrUpdateAsync(TEntity entity)
+    {
+        ArgumentNullException.ThrowIfNull(entity);
+
+        var data = dbContext;
+        var objects = data.Set<TDbModel>();
+        var dbObject = await objects.FirstOrDefaultAsync(item => item.Id.Equals(entity.Id));
+        var exists = dbObject != null;
+        dbObject = TMapper.ToDbModel(entity);
+
+        var now = DateTime.UtcNow;
+        if (!exists)
+        {
+            dbObject.CreatedAt = now;
+            objects.Add(dbObject);
+        }
+        dbObject.UpdatedAt = now;
+
+        await data.SaveChangesAsync();
+
+        entity.Id = dbObject.Id;
+
+        return dbObject.Id;
+    }
+
+    public virtual async Task<IList<TId>> AddOrUpdateAsync(IList<TEntity> entities)
+    {
+        ArgumentNullException.ThrowIfNull(entities);
+
+        var data = dbContext;
+        var entitiesIdArray = entities.Select(item => item.Id).ToArray();
+        var dbSet = data.Set<TDbModel>();
+        var dbObjectsDictionary = await dbSet.Where(item => entitiesIdArray.Any(id => item.Id.Equals(id))).ToDictionaryAsync(item => item.Id);
+
+        var existingSet = new HashSet<TId>();
+        var dbObjects = new List<TDbModel>();
+        var addedObjects = new List<TDbModel>();
+
+        foreach (var entity in entities)
+        {
+            var id = entity.Id;
+            var exists = dbObjectsDictionary.TryGetValue(id, out var dbObject);
+            dbObject = TMapper.ToDbModel(entity);
+
+            if (exists)
+            {
+                existingSet.Add(id);
+            }
+
+            var now = DateTime.UtcNow;
+            if (!exists)
+            {
+                dbObject.CreatedAt = now;
+            }
+            dbObject.UpdatedAt = now;
+
+            dbObjects.Add(dbObject);
+
+            if (!exists)
+            {
+                addedObjects.Add(dbObject);
+            }
+        }
+
+        dbSet.AddRange(addedObjects);
+
+        await data.SaveChangesAsync();
+
+        return [.. dbObjects.Select(item => item.Id)];
+    }
+
+    public virtual async Task DeleteAsync(TId id)
+    {
+        var dbObject = dbContext.Set<TDbModel>().Where(item => item.Id.Equals(id) && !item.DeletedAt.HasValue);
+        await SoftDeleteAsync(dbObject);
+    }
+
+    public virtual async Task DeleteAsync(TSearchParams searchParams)
+    {
+        ArgumentNullException.ThrowIfNull(searchParams);
+
+        var dbObjects = dbContext.Set<TDbModel>().AsQueryable();
+        dbObjects = await BuildDbQueryAsync(dbObjects, searchParams);
+
+        await SoftDeleteAsync(dbObjects);
+    }
+
+    protected virtual Task<IQueryable<TDbModel>> BuildDbQueryAsync(IQueryable<TDbModel> dbObjects, TSearchParams searchParams)
     {
         if (searchParams.IsDeleted)
         {
-            dbObjects = dbObjects.Where(item => item.DeletedAt != null);
+            dbObjects = dbObjects.Where(item => item.DeletedAt.HasValue);
         }
         else
         {
-            dbObjects = dbObjects.Where(item => item.DeletedAt == null);
+            dbObjects = dbObjects.Where(item => !item.DeletedAt.HasValue);
         }
 
         if (searchParams.CreatedFrom.HasValue)
@@ -320,10 +240,17 @@ public abstract class BaseDal<TDbContext, TDbObject, TEntity, TId, TSearchParams
         return Task.FromResult(dbObjects);
     }
 
-    protected abstract Task<IList<TEntity>> BuildEntitiesListAsync(IQueryable<TDbObject> dbObjects, TConvertParams convertParams);
+    protected abstract Task<IList<TEntity>> BuildEntitiesListAsync(IQueryable<TDbModel> dbObjects, TConvertParams convertParams);
 
-    protected virtual string MapSortField(string sortField)
+    private static async Task SoftDeleteAsync(IQueryable<TDbModel> dbObjects)
     {
-        return sortField;
+        var now = DateTime.UtcNow;
+
+        await dbObjects.ExecuteUpdateAsync(item =>
+        {
+            item
+                .SetProperty(property => property.DeletedAt, now)
+                .SetProperty(property => property.UpdatedAt, now);
+        });
     }
 }

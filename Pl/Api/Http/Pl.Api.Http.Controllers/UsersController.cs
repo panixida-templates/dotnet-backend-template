@@ -25,7 +25,7 @@ public sealed class UsersController(IUsersBl usersBl) : BaseApiController
     [ProducesResponseType(typeof(RestApiResponse<UserDto>), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<RestApiResponse<UserDto>>> Get([FromRoute] int id, [FromQuery] UsersConvertParams? convertParams)
     {
-        var dto = (await usersBl.GetAsync(id, convertParams)).ToDto();
+        var dto = UsersMapper.ToDto(await usersBl.GetAsync(id, convertParams));
         return Ok(RestApiResponseBuilder<UserDto>.Success(dto));
     }
 
@@ -42,7 +42,7 @@ public sealed class UsersController(IUsersBl usersBl) : BaseApiController
     [ProducesResponseType(typeof(RestApiResponse<int>), StatusCodes.Status201Created)]
     public async Task<ActionResult<RestApiResponse<int>>> Create([FromBody] UserDto dto)
     {
-        dto.Id = await usersBl.AddOrUpdateAsync(dto.ToEntity());
+        dto.Id = await usersBl.AddOrUpdateAsync(UsersMapper.ToEntity(dto));
         return Created(string.Empty, RestApiResponseBuilder<int>.Success(dto.Id));
     }
 
@@ -52,7 +52,7 @@ public sealed class UsersController(IUsersBl usersBl) : BaseApiController
     public async Task<ActionResult<RestApiResponse<NoContent>>> Update([FromRoute] int id, [FromBody] UserDto dto)
     {
         dto.Id = id;
-        await usersBl.AddOrUpdateAsync(dto.ToEntity());
+        await usersBl.AddOrUpdateAsync(UsersMapper.ToEntity(dto));
         return Ok(RestApiResponseBuilder<NoContent>.Success(new()));
     }
 

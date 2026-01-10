@@ -2,9 +2,9 @@
 
 using Entities.Core;
 
-namespace Dal.Interfaces.Core;
+namespace Bl.Interfaces.Core;
 
-public interface IBaseDal<TId, TEntity, TSearchParams, TConvertParams>
+public interface IBaseBl<TId, TEntity, TSearchParams, TConvertParams>
     where TId : struct
     where TEntity : BaseEntity<TId>
     where TSearchParams : BaseSearchParams

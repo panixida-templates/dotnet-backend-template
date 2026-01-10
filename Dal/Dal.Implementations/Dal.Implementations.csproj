@@ -14,6 +14,7 @@
       <ProjectReference Include="..\..\Common\Common.Exceptions\Common.Exceptions.csproj" />
       <ProjectReference Include="..\Dal.Ef\Dal.Ef.csproj" />
       <ProjectReference Include="..\Dal.Interfaces\Dal.Interfaces.csproj" />
+      <ProjectReference Include="..\Dal.Mappers\Dal.Mappers.csproj" />
     </ItemGroup>
 
 </Project>

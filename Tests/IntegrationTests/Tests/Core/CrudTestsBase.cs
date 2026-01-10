@@ -12,7 +12,7 @@ namespace IntegrationTests.Tests.Core;
 public abstract class CrudTestsBase<TEndpoint, TId, TModel, TSearchParams, TConvertParams>(ApiWebApplicationFactory apiWebApplicationFactory)
     : IntegrationTestBase<TEndpoint, TId, TModel, TSearchParams, TConvertParams>(apiWebApplicationFactory)
     where TEndpoint : IBaseApiEndpointsConstants<TEndpoint, TId>
-    where TId : notnull
+    where TId : struct
     where TModel : BaseDto<TId>
     where TSearchParams : BaseSearchParams
     where TConvertParams : class

@@ -3,16 +3,20 @@ using Common.Constants.ApiEndpoints.Core;
 using Common.SearchParams.Core;
 
 using Pl.Api.Http.Dtos.Core;
+using Pl.Api.Http.Dtos.Models.Core;
+using Pl.Ui.Blazor.Mappers.Core;
 using Pl.Ui.Blazor.Services.Interfaces.Core;
+using Pl.Ui.Blazor.ViewModels.Core;
 
 namespace Pl.Ui.Blazor.Services.Implementations.Core;
 
-public abstract class BaseService<TEndpoint, TId, TDto, TViewModel, TSearchParams, TConvertParams>(IApiHttpClient apiHttpClient, Func<TDto, TViewModel> toViewModel, Func<TViewModel, TDto> toDto)
+public abstract class BaseService<TEndpoint, TId, TDto, TViewModel, TMapper, TSearchParams, TConvertParams>(IApiHttpClient apiHttpClient)
     : IBaseService<TId, TViewModel, TSearchParams, TConvertParams>
     where TEndpoint : IBaseApiEndpointsConstants<TEndpoint, TId>
-    where TId : notnull
-    where TDto : class
-    where TViewModel : class
+    where TId : struct
+    where TDto : BaseDto<TId>
+    where TViewModel : BaseViewModel<TId>
+    where TMapper : IMapper<TViewModel, TDto>
     where TSearchParams : BaseSearchParams
     where TConvertParams : class
 {
@@ -23,7 +27,7 @@ public abstract class BaseService<TEndpoint, TId, TDto, TViewModel, TSearchParam
             convertParams: convertParams,
             cancellationToken: cancellationToken)).Payload;
 
-        return toViewModel(dto!);
+        return TMapper.ToViewModel(dto!);
     }
 
     public async Task<SearchResult<TViewModel>> GetAsync(TSearchParams searchParams, TConvertParams? convertParams = null, CancellationToken cancellationToken = default)
@@ -34,14 +38,14 @@ public abstract class BaseService<TEndpoint, TId, TDto, TViewModel, TSearchParam
             convertParams: convertParams,
             cancellationToken: cancellationToken)).Payload;
 
-        return searchResult!.Map(toViewModel);
+        return searchResult!.Map(TMapper.ToViewModel);
     }
 
     public async Task<TId> CreateAsync(TViewModel viewModel, CancellationToken cancellationToken = default)
     {
         return (await apiHttpClient.PostAsync<TDto, RestApiResponse<TId>>(
             endpoint: TEndpoint.Base(),
-            request: toDto(viewModel),
+            request: TMapper.ToDto(viewModel),
             cancellationToken: cancellationToken)).Payload!;
     }
 
@@ -49,7 +53,7 @@ public abstract class BaseService<TEndpoint, TId, TDto, TViewModel, TSearchParam
     {
         return apiHttpClient.PutAsync<TDto, RestApiResponse<NoContent>>(
             endpoint: TEndpoint.ById(id),
-            request: toDto(viewModel),
+            request: TMapper.ToDto(viewModel),
             cancellationToken: cancellationToken);
     }
 

@@ -1,5 +1,5 @@
 ﻿using Pl.Api.Http.Dtos.Models;
-
+using Pl.Ui.Blazor.Mappers.Core;
 using Pl.Ui.Blazor.ViewModels;
 
 using Riok.Mapperly.Abstractions;
@@ -7,10 +7,10 @@ using Riok.Mapperly.Abstractions;
 namespace Pl.Ui.Blazor.Mappers;
 
 [Mapper]
-public static partial class UsersMapper
+public sealed partial class UsersMapper : IMapper<UserViewModel, UserDto>
 {
-    public static partial UserViewModel ToViewModel(this UserDto dto);
-    public static partial List<UserViewModel> ToViewModel(this IEnumerable<UserDto> dtos);
-    public static partial UserDto ToDto(this UserViewModel viewModel);
-    public static partial List<UserDto> ToDto(this IEnumerable<UserViewModel> viewModels);
+    public static partial UserViewModel ToViewModel(UserDto dto);
+    public static partial IEnumerable<UserViewModel> ToViewModel(IEnumerable<UserDto> dtos);
+    public static partial UserDto ToDto(UserViewModel viewModel);
+    public static partial IEnumerable<UserDto> ToDto(IEnumerable<UserViewModel> viewModels);
 }

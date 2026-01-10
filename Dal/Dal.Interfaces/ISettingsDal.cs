@@ -1,12 +1,12 @@
 ﻿using Common.ConvertParams;
-using Common.Enums;
 using Common.SearchParams;
 
 using Dal.Interfaces.Core;
 
+using Entities;
+
 namespace Dal.Interfaces;
 
-public interface ISettingsDal : IBaseDal<DbModels.Settings, Entities.Setting, int, SettingsSearchParams, SettingsConvertParams>
+public interface ISettingsDal : IBaseDal<int, Setting, SettingsSearchParams, SettingsConvertParams>
 {
-    Task<Entities.Setting?> GetAsync(SettingType settingType);
 }

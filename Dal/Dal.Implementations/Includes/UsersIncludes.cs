@@ -6,7 +6,7 @@ namespace Dal.Implementations.Includes;
 
 internal static class UsersIncludes
 {
-    internal static IQueryable<User> Include(this IQueryable<User> dbObjects, UsersConvertParams convertParams)
+    internal static IQueryable<UserDbModel> Include(this IQueryable<UserDbModel> dbObjects, UsersConvertParams convertParams)
     {
         return dbObjects;
     }
