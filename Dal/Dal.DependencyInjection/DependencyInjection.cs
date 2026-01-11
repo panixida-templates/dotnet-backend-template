@@ -1,8 +1,9 @@
 using Common.Constants;
 
 using Dal.Ef;
-using Dal.Implementations;
+using Dal.Ef.Implementations;
 using Dal.Interfaces;
+using Dal.MongoDb.DependencyInjection;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -18,7 +19,8 @@ public static class DependencyInjection
             options.UseNpgsql(configuration.GetConnectionString(AppsettingsKeysConstants.DefaultDbConnectionString)).UseSnakeCaseNamingConvention());
 
         serviceCollection.AddScoped<ISettingsDal, SettingsDal>();
-        serviceCollection.AddScoped<IUsersDal, UsersDal>();
+
+        serviceCollection.UseMongoDal(configuration);
 
         return serviceCollection;
     }

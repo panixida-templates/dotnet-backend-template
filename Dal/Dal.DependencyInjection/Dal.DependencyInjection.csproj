@@ -7,7 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Dal.Implementations\Dal.Implementations.csproj" />
+    <ProjectReference Include="..\Dal.Interfaces\Dal.Interfaces.csproj" />
+    <ProjectReference Include="..\Ef\Dal.Ef.Implementations\Dal.Ef.Implementations.csproj" />
+    <ProjectReference Include="..\MongoDb\Dal.MongoDb.DependencyInjection\Dal.MongoDb.DependencyInjection.csproj" />
   </ItemGroup>
 
 </Project>

@@ -4,7 +4,7 @@ using Pl.Api.Http.Dtos.Models.Core;
 
 namespace Pl.Api.Http.Dtos.Models;
 
-public sealed record UserDto : BaseDto<int>
+public sealed record UserDto : BaseDto<Guid>
 {
     public required Role Role { get; set; }
     public required string Name { get; set; }

@@ -2,10 +2,13 @@
 
 public static class AppsettingsKeysConstants
 {
-    #region connection strings
+    #region Connection strings
 
     public const string DefaultDbConnectionString = "DefaultConnectionString";
     public const string ConnectionStringsDefaultDbConnectionString = "ConnectionStrings:DefaultConnectionString";
+
+    public const string MongoDbConnectionString = "MongoDbConnectionString";
+    public const string MongoDbDatabase = "MongoDb:Database";
 
     #endregion
 

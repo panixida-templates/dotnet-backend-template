@@ -4,7 +4,7 @@ using Entities.Core;
 
 namespace Entities;
 
-public sealed class User : BaseEntity<int>
+public sealed class User : BaseEntity<Guid>
 {
     public Role Role { get; set; }
     public string Name { get; set; }
@@ -14,7 +14,7 @@ public sealed class User : BaseEntity<int>
     public DateTime Birthday { get; set; }
 
     public User(
-        int id,
+        Guid id,
         Role role,
         string name,
         string email,
