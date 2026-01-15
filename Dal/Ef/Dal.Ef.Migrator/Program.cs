@@ -1,6 +1,6 @@
-﻿using Dal.DependencyInjection;
-using Dal.Ef;
-using Dal.Migrator.Core;
+﻿using Dal.Ef;
+using Dal.Ef.DependencyInjection;
+using Dal.Ef.Migrator.Core;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -13,6 +13,6 @@ await Host.CreateDefaultBuilder(args)
     })
     .ConfigureServices((ctx, services) =>
     {
-        services.UseDal(ctx.Configuration);
+        services.UseEfDal(ctx.Configuration);
     })
     .RunMigrationsAsync<DefaultDbContext>();

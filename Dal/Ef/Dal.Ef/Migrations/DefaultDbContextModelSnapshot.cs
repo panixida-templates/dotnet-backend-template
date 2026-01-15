@@ -63,7 +63,8 @@ namespace Dal.Ef.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
-                        .HasColumnName("id");
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
 
                     b.Property<int>("Age")
                         .HasColumnType("integer")
@@ -105,9 +106,9 @@ namespace Dal.Ef.Migrations
                         .HasColumnName("updated_at");
 
                     b.HasKey("Id")
-                        .HasName("pk_domain_users");
+                        .HasName("pk_users");
 
-                    b.ToTable("domain_users", (string)null);
+                    b.ToTable("users", (string)null);
                 });
 #pragma warning restore 612, 618
         }

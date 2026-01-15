@@ -1,4 +1,4 @@
-﻿using Dal.Migrator.Extensions;
+﻿using Dal.Ef.Migrator.Extensions;
 
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +9,7 @@ using Microsoft.Extensions.Hosting;
 
 using Npgsql.EntityFrameworkCore.PostgreSQL.Design.Internal;
 
-namespace Dal.Migrator.Core;
+namespace Dal.Ef.Migrator.Core;
 
 internal static class AutoMigrator
 {

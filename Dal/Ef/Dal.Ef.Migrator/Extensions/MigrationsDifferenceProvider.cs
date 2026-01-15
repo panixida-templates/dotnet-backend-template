@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Dal.Migrator.Extensions;
+namespace Dal.Ef.Migrator.Extensions;
 
 internal static class MigrationsDifferenceProvider
 {

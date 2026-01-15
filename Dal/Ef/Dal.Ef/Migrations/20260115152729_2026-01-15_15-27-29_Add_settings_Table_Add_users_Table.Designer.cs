@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Dal.Ef.Migrations
 {
     [DbContext(typeof(DefaultDbContext))]
-    [Migration("20260111185344_2026-01-11_18-53-44_Alter_Column_id_In_domain_users_Table")]
-    partial class _20260111_185344_Alter_Column_id_In_domain_users_Table
+    [Migration("20260115152729_2026-01-15_15-27-29_Add_settings_Table_Add_users_Table")]
+    partial class _20260115_152729_Add_settings_Table_Add_users_Table
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -66,7 +66,8 @@ namespace Dal.Ef.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
-                        .HasColumnName("id");
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
 
                     b.Property<int>("Age")
                         .HasColumnType("integer")
@@ -108,9 +109,9 @@ namespace Dal.Ef.Migrations
                         .HasColumnName("updated_at");
 
                     b.HasKey("Id")
-                        .HasName("pk_domain_users");
+                        .HasName("pk_users");
 
-                    b.ToTable("domain_users", (string)null);
+                    b.ToTable("users", (string)null);
                 });
 #pragma warning restore 612, 618
         }

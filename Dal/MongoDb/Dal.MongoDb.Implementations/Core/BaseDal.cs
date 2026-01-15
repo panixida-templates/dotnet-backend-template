@@ -35,7 +35,7 @@ public abstract class BaseDal<TId, TDbModel, TEntity, TMapper, TSearchParams, TC
     public virtual async Task<TEntity> GetAsync(TId id, TConvertParams? convertParams = null)
     {
         convertParams ??= new TConvertParams();
-        var filter = BuildNotDeletedFilter(id);
+        var filter = BuildDbNotDeletedFilter(id);
 
         var dbObject = await Collection.Find(filter).Limit(1).FirstOrDefaultAsync() //TODO поверить на n+1
             ?? throw new NotFoundException($"{typeof(TDbModel).Name} с id={id} не найдена");
@@ -87,7 +87,7 @@ public abstract class BaseDal<TId, TDbModel, TEntity, TMapper, TSearchParams, TC
 
     public virtual async Task<bool> ExistsAsync(TId id)
     {
-        var filter = BuildNotDeletedFilter(id);
+        var filter = BuildDbNotDeletedFilter(id);
         return await Collection.Find(filter).AnyAsync();
     }
 
@@ -188,7 +188,7 @@ public abstract class BaseDal<TId, TDbModel, TEntity, TMapper, TSearchParams, TC
 
     public virtual Task DeleteAsync(TId id)
     {
-        var filter = BuildNotDeletedFilter(id);
+        var filter = BuildDbNotDeletedFilter(id);
         return SoftDeleteAsync(filter, (f, u) => Collection.UpdateOneAsync(f, u));
     }
 
@@ -268,7 +268,7 @@ public abstract class BaseDal<TId, TDbModel, TEntity, TMapper, TSearchParams, TC
 
     protected abstract Task<IList<TEntity>> BuildEntitiesListAsync(IReadOnlyList<TDbModel> dbObjects, TConvertParams convertParams);
 
-    private static FilterDefinition<TDbModel> BuildNotDeletedFilter(TId id)
+    private static FilterDefinition<TDbModel> BuildDbNotDeletedFilter(TId id)
     {
         return Builders<TDbModel>.Filter.And(
             Builders<TDbModel>.Filter.Eq(item => item.Id, id),

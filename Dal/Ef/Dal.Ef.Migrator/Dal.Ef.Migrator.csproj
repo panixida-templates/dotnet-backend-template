@@ -16,7 +16,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Dal.DependencyInjection\Dal.DependencyInjection.csproj" />
+      <ProjectReference Include="..\Dal.Ef.DependencyInjection\Dal.Ef.DependencyInjection.csproj" />
     </ItemGroup>
 
     <ItemGroup>

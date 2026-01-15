@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
 
-namespace Dal.Migrator.Extensions;
+namespace Dal.Ef.Migrator.Extensions;
 
 internal static partial class MigrationsNameBuilder
 {

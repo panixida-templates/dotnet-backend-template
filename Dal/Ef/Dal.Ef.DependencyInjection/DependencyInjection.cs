@@ -1,59 +1,24 @@
 ﻿using Common.Constants;
 
-using Dal.Interfaces;
+using Dal.Ef.Implementations.Core;
 using Dal.Interfaces.Core;
 
-using Dal.MongoDb.Implementations;
-using Dal.MongoDb.Implementations.Core;
-
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization;
-using MongoDB.Bson.Serialization.Serializers;
-using MongoDB.Driver;
-
 using System.Reflection;
 
-namespace Dal.MongoDb.DependencyInjection;
+namespace Dal.Ef.DependencyInjection;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection UseMongoDal(this IServiceCollection serviceCollection, IConfiguration configuration)
+    public static IServiceCollection UseEfDal(this IServiceCollection serviceCollection, IConfiguration configuration)
     {
-        BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
-        BsonSerializer.RegisterSerializer(new NullableSerializer<Guid>(new GuidSerializer(GuidRepresentation.Standard)));
+        serviceCollection.AddDbContext<DefaultDbContext>(options =>
+            options.UseNpgsql(configuration.GetConnectionString(AppsettingsKeysConstants.DefaultDbConnectionString)).UseSnakeCaseNamingConvention());
 
-        serviceCollection.AddSingleton<IMongoClient>(serviceProvider =>
-        {
-            var connectionString = configuration.GetConnectionString(AppsettingsKeysConstants.MongoDbConnectionString);
-
-            if (string.IsNullOrWhiteSpace(connectionString))
-            {
-                throw new InvalidOperationException("MongoDb connection string is not configured (ConnectionStrings:MongoDb).");
-            }
-
-            return new MongoClient(connectionString);
-        });
-
-        serviceCollection.AddScoped(serviceProvider =>
-        {
-            var configuration = serviceProvider.GetRequiredService<IConfiguration>();
-
-            var databaseName = configuration[$"{AppsettingsKeysConstants.MongoDbDatabase}"];
-
-            if (string.IsNullOrWhiteSpace(databaseName))
-            {
-                throw new InvalidOperationException($"MongoDb database is not configured ({AppsettingsKeysConstants.MongoDbDatabase}).");
-            }
-
-            var client = serviceProvider.GetRequiredService<IMongoClient>();
-
-            return client.GetDatabase(databaseName);
-        });
-
-        serviceCollection.RegisterDalImplementations(typeof(BaseDal<,,,,,>).Assembly);
+        serviceCollection.RegisterDalImplementations(typeof(BaseDal<,,,,,,,,>).Assembly);
 
         return serviceCollection;
     }

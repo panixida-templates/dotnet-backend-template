@@ -1,12 +1,13 @@
 ﻿using Common.SearchParams;
 
 using Dal.Ef.DbModels;
+using Dal.Ef.Filters.Core;
 
-namespace Dal.Ef.Implementations.Filters;
+namespace Dal.Ef.Filters;
 
-internal static class UsersFilters
+public sealed class UsersFilter : IFilter<Guid, UserDbModel, UsersSearchParams>
 {
-    internal static IQueryable<UserDbModel> Filter(this IQueryable<UserDbModel> dbObjects, UsersSearchParams searchParams)
+    public static IQueryable<UserDbModel> Filter(IQueryable<UserDbModel> dbObjects, UsersSearchParams searchParams)
     {
         if (searchParams.Role.HasValue)
         {

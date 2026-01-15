@@ -1,10 +1,10 @@
-﻿using System.Linq.Dynamic.Core;
-
-using Common.Enums;
+﻿using Common.Enums;
 using Common.Exceptions;
 using Common.SearchParams.Core;
 
 using Dal.Ef.DbModels.Core;
+using Dal.Ef.Filters.Core;
+using Dal.Ef.Includes.Core;
 using Dal.Ef.Mappers.Core;
 using Dal.Interfaces.Core;
 
@@ -12,28 +12,31 @@ using Entities.Core;
 
 using Microsoft.EntityFrameworkCore;
 
+using System.Linq.Dynamic.Core;
+
 namespace Dal.Ef.Implementations.Core;
 
-public abstract class BaseDal<TDbContext, TId, TDbModel, TEntity, TMapper, TSearchParams, TConvertParams>(TDbContext dbContext)
+public abstract class BaseDal<TDbContext, TId, TDbModel, TEntity, TSearchParams, TConvertParams, TMapper, TFilter, TInclude>(TDbContext dbContext)
     : IBaseDal<TId, TEntity, TSearchParams, TConvertParams>
     where TDbContext : DbContext
     where TId : struct
     where TDbModel : BaseDbModel<TId>, new()
     where TEntity : BaseEntity<TId>
-    where TMapper : IMapper<TDbModel, TEntity>
     where TSearchParams : BaseSearchParams
     where TConvertParams : class, new()
+    where TMapper : IMapper<TId, TDbModel, TEntity>
+    where TFilter : IFilter<TId, TDbModel, TSearchParams>
+    where TInclude : IInclude<TId, TDbModel, TConvertParams>
 {
     public virtual async Task<TEntity> GetAsync(TId id, TConvertParams? convertParams = null)
     {
         convertParams ??= new TConvertParams();
 
-        var dbObject = dbContext.Set<TDbModel>()
-            .AsNoTracking()
-            .Where(item => item.Id.Equals(id) && !item.DeletedAt.HasValue)
-            .Take(1);
+        var dbObjects = dbContext.Set<TDbModel>().AsNoTrackingWithIdentityResolution();
+        dbObjects = BuildDbNotDeletedFilter(dbObjects, id);
+        dbObjects = dbObjects.Take(1);
 
-        var entity = (await BuildEntitiesListAsync(dbObject, convertParams)).FirstOrDefault()
+        var entity = (await BuildEntitiesListAsync(dbObjects, convertParams)).FirstOrDefault()
             ?? throw new NotFoundException($"{typeof(TDbModel).Name} с id={id} не найдена");
 
         return entity;
@@ -44,9 +47,9 @@ public abstract class BaseDal<TDbContext, TId, TDbModel, TEntity, TMapper, TSear
         ArgumentNullException.ThrowIfNull(searchParams);
         convertParams ??= new TConvertParams();
 
-        var dbObjects = dbContext.Set<TDbModel>().AsNoTracking();
-        dbObjects = await BuildDbFilterAsync(dbObjects, searchParams);
-        dbObjects = await BuildSortAsync(dbObjects, searchParams);
+        var dbObjects = dbContext.Set<TDbModel>().AsNoTrackingWithIdentityResolution();
+        dbObjects = BuildDbFilter(dbObjects, searchParams);
+        dbObjects = BuildDbSort(dbObjects, searchParams);
 
         var searchResult = new SearchResult<TEntity>
         {
@@ -56,16 +59,7 @@ public abstract class BaseDal<TDbContext, TId, TDbModel, TEntity, TMapper, TSear
             RequestedPage = searchParams.Page,
         };
 
-        if (searchParams.ObjectsCount == 0)
-        {
-            return searchResult;
-        }
-
-        dbObjects = dbObjects.Skip((searchParams.Page - 1) * (searchParams.ObjectsCount ?? 0));
-        if (searchParams.ObjectsCount.HasValue)
-        {
-            dbObjects = dbObjects.Take(searchParams.ObjectsCount.Value);
-        }
+        dbObjects = BuildDbPagination(dbObjects, searchParams);
         searchResult.Objects = await BuildEntitiesListAsync(dbObjects, convertParams);
 
         return searchResult;
@@ -73,41 +67,32 @@ public abstract class BaseDal<TDbContext, TId, TDbModel, TEntity, TMapper, TSear
 
     public virtual Task<bool> ExistsAsync(TId id)
     {
-        return dbContext.Set<TDbModel>()
-            .AsNoTracking()
-            .Where(item => item.Id.Equals(id) && !item.DeletedAt.HasValue)
-            .AnyAsync();
+        var dbObjects = dbContext.Set<TDbModel>().AsNoTracking();
+        dbObjects = BuildDbNotDeletedFilter(dbObjects, id);
+        return dbObjects.AnyAsync();
     }
 
-    public virtual async Task<bool> ExistsAsync(TSearchParams searchParams)
+    public virtual Task<bool> ExistsAsync(TSearchParams searchParams)
     {
         ArgumentNullException.ThrowIfNull(searchParams);
 
         var data = dbContext;
-        var objects = data.Set<TDbModel>().AsNoTracking();
+        var dbObjects = data.Set<TDbModel>().AsNoTracking();
 
-        return await (await BuildDbFilterAsync(objects, searchParams)).AnyAsync();
+        return BuildDbFilter(dbObjects, searchParams).AnyAsync();
     }
 
     public virtual async Task<TId> AddOrUpdateAsync(TEntity entity)
     {
         ArgumentNullException.ThrowIfNull(entity);
 
-        var data = dbContext;
-        var objects = data.Set<TDbModel>();
-        var dbObject = await objects.FirstOrDefaultAsync(item => item.Id.Equals(entity.Id));
-        var exists = dbObject != null;
-        dbObject = TMapper.ToDbModel(entity);
+        var dbObjects = dbContext.Set<TDbModel>();
+        var dbObject = await dbObjects.FirstOrDefaultAsync(item => item.Id.Equals(entity.Id));
 
         var now = DateTime.UtcNow;
-        if (!exists)
-        {
-            dbObject.CreatedAt = now;
-            objects.Add(dbObject);
-        }
-        dbObject.UpdatedAt = now;
+        dbObject = AddOrUpdate(dbObjects, entity, dbObject, now);
 
-        await data.SaveChangesAsync();
+        await dbContext.SaveChangesAsync();
 
         entity.Id = dbObject.Id;
 
@@ -118,65 +103,54 @@ public abstract class BaseDal<TDbContext, TId, TDbModel, TEntity, TMapper, TSear
     {
         ArgumentNullException.ThrowIfNull(entities);
 
-        var data = dbContext;
-        var entitiesIdArray = entities.Select(item => item.Id).ToArray();
-        var dbSet = data.Set<TDbModel>();
-        var dbObjectsDictionary = await dbSet.Where(item => entitiesIdArray.Any(id => item.Id.Equals(id))).ToDictionaryAsync(item => item.Id);
+        var dbObjects = dbContext.Set<TDbModel>();
 
-        var existingSet = new HashSet<TId>();
-        var dbObjects = new List<TDbModel>();
-        var addedObjects = new List<TDbModel>();
+        var ids = entities.Select(item => item.Id).Distinct().ToArray();
+        var existingById = await dbObjects.Where(item => ids.Contains(item.Id)).ToDictionaryAsync(item => item.Id);
+
+        var savedDbObjects = new List<TDbModel>(entities.Count);
+        var now = DateTime.UtcNow;
 
         foreach (var entity in entities)
         {
-            var id = entity.Id;
-            var exists = dbObjectsDictionary.TryGetValue(id, out var dbObject);
-            dbObject = TMapper.ToDbModel(entity);
-
-            if (exists)
-            {
-                existingSet.Add(id);
-            }
-
-            var now = DateTime.UtcNow;
-            if (!exists)
-            {
-                dbObject.CreatedAt = now;
-            }
-            dbObject.UpdatedAt = now;
-
-            dbObjects.Add(dbObject);
-
-            if (!exists)
-            {
-                addedObjects.Add(dbObject);
-            }
+            existingById.TryGetValue(entity.Id, out var dbObject);
+            dbObject = AddOrUpdate(dbObjects, entity, dbObject, now);
+            savedDbObjects.Add(dbObject);
         }
 
-        dbSet.AddRange(addedObjects);
+        await dbContext.SaveChangesAsync();
 
-        await data.SaveChangesAsync();
+        for (int i = 0; i < savedDbObjects.Count; i++)
+        {
+            entities[i].Id = savedDbObjects[i].Id;
+        }
 
-        return [.. dbObjects.Select(item => item.Id)];
+        return [.. savedDbObjects.Select(item => item.Id)];
     }
 
     public virtual Task DeleteAsync(TId id)
     {
-        var dbObject = dbContext.Set<TDbModel>().Where(item => item.Id.Equals(id) && !item.DeletedAt.HasValue);
-        return SoftDeleteAsync(dbObject);
+        var dbObjects = dbContext.Set<TDbModel>().AsQueryable();
+        dbObjects = BuildDbNotDeletedFilter(dbObjects, id);
+        return SoftDeleteAsync(dbObjects);
     }
 
-    public virtual async Task DeleteAsync(TSearchParams searchParams)
+    public virtual Task DeleteAsync(TSearchParams searchParams)
     {
         ArgumentNullException.ThrowIfNull(searchParams);
 
         var dbObjects = dbContext.Set<TDbModel>().AsQueryable();
-        dbObjects = await BuildDbFilterAsync(dbObjects, searchParams);
+        dbObjects = BuildDbFilter(dbObjects, searchParams);
 
-        await SoftDeleteAsync(dbObjects);
+        return SoftDeleteAsync(dbObjects);
     }
 
-    protected virtual ValueTask<IQueryable<TDbModel>> BuildDbFilterAsync(IQueryable<TDbModel> dbObjects, TSearchParams searchParams)
+    private static IQueryable<TDbModel> BuildDbNotDeletedFilter(IQueryable<TDbModel> dbObjects, TId id)
+    {
+        return dbObjects.Where(item => item.Id.Equals(id) && !item.DeletedAt.HasValue);
+    }
+
+    private static IQueryable<TDbModel> BuildDbFilter(IQueryable<TDbModel> dbObjects, TSearchParams searchParams)
     {
         if (searchParams.IsDeleted)
         {
@@ -212,47 +186,89 @@ public abstract class BaseDal<TDbContext, TId, TDbModel, TEntity, TMapper, TSear
             dbObjects = dbObjects.Where(item => item.DeletedAt <= searchParams.DeletedTo);
         }
 
-        return ValueTask.FromResult(dbObjects);
+        dbObjects = TFilter.Filter(dbObjects, searchParams);
+
+        return dbObjects;
     }
 
-    protected virtual ValueTask<IQueryable<TDbModel>> BuildSortAsync(IQueryable<TDbModel> objects, TSearchParams searchParams)
+    private static IQueryable<TDbModel> BuildDbSort(IQueryable<TDbModel> dbObjects, TSearchParams searchParams)
     {
         if (!string.IsNullOrEmpty(searchParams.SortField))
         {
             if (searchParams.SortOrder == SortOrder.Descending)
             {
-                objects = objects.OrderBy($"{searchParams.SortField} descending");
+                dbObjects = dbObjects.OrderBy($"{searchParams.SortField} descending");
             }
             else
             {
-                objects = objects.OrderBy(searchParams.SortField);
+                dbObjects = dbObjects.OrderBy(searchParams.SortField);
             }
         }
         else
         {
             var visitor = new OrderedQueryableVisitor();
-            visitor.Visit(objects.Expression);
+            visitor.Visit(dbObjects.Expression);
 
-            if (visitor.IsOrdered && objects is IOrderedQueryable<TDbModel> orderedObjects)
+            if (visitor.IsOrdered && dbObjects is IOrderedQueryable<TDbModel> orderedObjects)
             {
-                objects = orderedObjects
+                dbObjects = orderedObjects
                     .ThenByDescending(item => item.UpdatedAt)
                     .ThenByDescending(item => item.CreatedAt)
                     .ThenByDescending(item => item.Id);
             }
             else
             {
-                objects = objects
+                dbObjects = dbObjects
                     .OrderByDescending(item => item.UpdatedAt)
                     .ThenByDescending(item => item.CreatedAt)
                     .ThenByDescending(item => item.Id);
             }
         }
 
-        return ValueTask.FromResult(objects);
+        return dbObjects;
     }
 
-    protected abstract Task<IList<TEntity>> BuildEntitiesListAsync(IQueryable<TDbModel> dbObjects, TConvertParams convertParams);
+    private static IQueryable<TDbModel> BuildDbPagination(IQueryable<TDbModel> dbObjects, TSearchParams searchParams)
+    {
+        if (searchParams.ObjectsCount == 0)
+        {
+            return dbObjects.Take(0);
+        }
+
+        dbObjects = dbObjects.Skip((searchParams.Page - 1) * (searchParams.ObjectsCount ?? 0));
+
+        if (searchParams.ObjectsCount.HasValue)
+        {
+            dbObjects = dbObjects.Take(searchParams.ObjectsCount.Value);
+        }
+
+        return dbObjects;
+    }
+
+    private static async Task<IList<TEntity>> BuildEntitiesListAsync(IQueryable<TDbModel> dbObjects, TConvertParams convertParams)
+    {
+        dbObjects = TInclude.Include(dbObjects, convertParams);
+        var entities = (await dbObjects.ToListAsync()).Select(TMapper.ToEntity).ToList();
+        return entities;
+    }
+
+    private static TDbModel AddOrUpdate(DbSet<TDbModel> dbObjects, TEntity entity, TDbModel? dbObject, DateTime now)
+    {
+        var exists = dbObject != null;
+        dbObject ??= new TDbModel();
+
+        TMapper.ToDbModel(entity, dbObject);
+
+        if (!exists)
+        {
+            dbObject.CreatedAt = now;
+            dbObjects.Add(dbObject);
+        }
+
+        dbObject.UpdatedAt = now;
+
+        return dbObject;
+    }
 
     private static async Task SoftDeleteAsync(IQueryable<TDbModel> dbObjects)
     {
@@ -261,8 +277,8 @@ public abstract class BaseDal<TDbContext, TId, TDbModel, TEntity, TMapper, TSear
         await dbObjects.ExecuteUpdateAsync(item =>
         {
             item
-                .SetProperty(property => property.DeletedAt, now)
-                .SetProperty(property => property.UpdatedAt, now);
+                .SetProperty(property => property.UpdatedAt, now)
+                .SetProperty(property => property.DeletedAt, now);
         });
     }
 }
