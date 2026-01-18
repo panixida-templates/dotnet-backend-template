@@ -10,10 +10,9 @@ using Dal.MongoDb.Mappers.Core;
 
 using Entities.Core;
 
-using MongoDB.Bson;
 using MongoDB.Driver;
 
-using System.Runtime.CompilerServices;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Dal.MongoDb.Implementations.Core;
 
@@ -24,7 +23,7 @@ public abstract class BaseDal<TId, TDbModel, TEntity, TSearchParams, TConvertPar
     where TEntity : BaseEntity<TId>
     where TSearchParams : BaseSearchParams
     where TConvertParams : class, new()
-    where TMapper : IMapper<TDbModel, TEntity>
+    where TMapper : IMapper<TId, TDbModel, TEntity>
     where TFilter : IFilter<TId, TDbModel, TSearchParams>
 {
     protected IMongoCollection<TDbModel> Collection { get; } = database.GetCollection<TDbModel>(collectionName);
@@ -32,12 +31,12 @@ public abstract class BaseDal<TId, TDbModel, TEntity, TSearchParams, TConvertPar
     public virtual async Task<TEntity> GetAsync(TId id, TConvertParams? convertParams = null)
     {
         convertParams ??= new TConvertParams();
+
         var filter = BuildDbNotDeletedFilter(id);
+        var dbObjects = Collection.Find(filter).Limit(1);
 
-        var dbObject = await Collection.Find(filter).Limit(1).FirstOrDefaultAsync()
+        var entity = (await BuildEntitiesListAsync(dbObjects, convertParams)).FirstOrDefault()
             ?? throw new NotFoundException($"{typeof(TDbModel).Name} с id={id} не найдена");
-
-        var entity = (await BuildEntitiesListAsync([dbObject], convertParams))[0];
 
         return entity;
     }
@@ -58,10 +57,9 @@ public abstract class BaseDal<TId, TDbModel, TEntity, TSearchParams, TConvertPar
             RequestedPage = searchParams.Page,
         };
 
-        var find = Collection.Find(filter).Sort(sort);
-        find = BuildDbPagination(find, searchParams);
+        var dbObjects = Collection.Find(filter).Sort(sort);
+        dbObjects = BuildDbPagination(dbObjects, searchParams);
 
-        var dbObjects = await find.ToListAsync();
         searchResult.Objects = await BuildEntitiesListAsync(dbObjects, convertParams);
 
         return searchResult;
@@ -84,103 +82,75 @@ public abstract class BaseDal<TId, TDbModel, TEntity, TSearchParams, TConvertPar
     {
         ArgumentNullException.ThrowIfNull(entity);
 
+        var filter = Builders<TDbModel>.Filter.Eq(item => item.Id, entity.Id);
+        var dbObject = await Collection.Find(filter).Limit(1).FirstOrDefaultAsync();
+
+        var exists = dbObject != null;
         var now = DateTime.UtcNow;
 
-        if (EqualityComparer<TId>.Default.Equals(entity.Id, default))
+        dbObject = AddOrUpdate(entity, dbObject, exists, now);
+
+        if (!exists)
         {
-            var newDbObject = TMapper.ToDbModel(entity);
-
-            newDbObject.CreatedAt = now;
-            newDbObject.UpdatedAt = now;
-            newDbObject.DeletedAt = null;
-
-            await Collection.InsertOneAsync(newDbObject);
-
-            entity.Id = newDbObject.Id;
-            return newDbObject.Id;
-        }
-
-        // UPDATE/UPSERT с уже заданным Id
-        var id = entity.Id;
-        var filter = Builders<TDbModel>.Filter.Eq(item => item.Id, id);
-
-        var existing = await Collection.Find(filter).Limit(1).FirstOrDefaultAsync();
-
-        var dbObject = TMapper.ToDbModel(entity);
-
-        if (existing is null)
-        {
-            dbObject.CreatedAt = now;
-            dbObject.DeletedAt = null;
+            await Collection.InsertOneAsync(dbObject);
         }
         else
         {
-            dbObject.CreatedAt = existing.CreatedAt;
-            dbObject.DeletedAt = existing.DeletedAt;
+            await Collection.ReplaceOneAsync(filter, dbObject, new ReplaceOptions { IsUpsert = true });
         }
-
-        dbObject.UpdatedAt = now;
-
-        await Collection.ReplaceOneAsync(filter, dbObject, new ReplaceOptions { IsUpsert = true });
-
         entity.Id = dbObject.Id;
+
         return dbObject.Id;
     }
-
 
     public virtual async Task<IList<TId>> AddOrUpdateAsync(IList<TEntity> entities)
     {
         ArgumentNullException.ThrowIfNull(entities);
 
-        if (entities.Count == 0)
-        {
-            return [];
-        }
-
-        for (var i = 0; i < entities.Count; i++)
-        {
-            var entity = entities[i];
-            //var id = EnsureId(entity.Id);
-            entity.Id = entity.Id;
-        }
-
-        var ids = entities.Select(item => item.Id).ToArray();
-
+        var ids = entities.Select(item => item.Id).Distinct().ToArray();
         var existingFilter = Builders<TDbModel>.Filter.In(item => item.Id, ids);
-        var existingDocs = await Collection.Find(existingFilter).ToListAsync();
-        var existingDict = existingDocs.ToDictionary(item => item.Id);
+        var existingById = (await Collection.Find(existingFilter).ToListAsync()).ToDictionary(item => item.Id);
 
         var now = DateTime.UtcNow;
 
-        var models = new List<WriteModel<TDbModel>>(entities.Count);
-        var resultIds = new List<TId>(entities.Count);
+        var savedDbObjects = new List<TDbModel>(entities.Count);
+        var insertedDbObjects = new List<TDbModel>(entities.Count);
+        var updatedDbObjects = new List<WriteModel<TDbModel>>(entities.Count);
 
         foreach (var entity in entities)
         {
-            var dbObject = TMapper.ToDbModel(entity);
+            existingById.TryGetValue(entity.Id, out var dbObject);
+            var exists = dbObject != null;
 
-            if (existingDict.TryGetValue(entity.Id, out var existing))
+            dbObject = AddOrUpdate(entity, dbObject, exists, now);
+            savedDbObjects.Add(dbObject);
+
+            if (!exists)
             {
-                dbObject.CreatedAt = existing.CreatedAt;
-                dbObject.DeletedAt = existing.DeletedAt;
+                insertedDbObjects.Add(dbObject);
             }
             else
             {
-                dbObject.CreatedAt = now;
-                dbObject.DeletedAt = null;
+                var filter = Builders<TDbModel>.Filter.Eq(item => item.Id, entity.Id);
+                updatedDbObjects.Add(new ReplaceOneModel<TDbModel>(filter, dbObject) { IsUpsert = true });
             }
-
-            dbObject.UpdatedAt = now;
-
-            var filter = Builders<TDbModel>.Filter.Eq(x => x.Id, entity.Id);
-
-            models.Add(new ReplaceOneModel<TDbModel>(filter, dbObject) { IsUpsert = true });
-            resultIds.Add(dbObject.Id);
         }
 
-        await Collection.BulkWriteAsync(models, new BulkWriteOptions { IsOrdered = false });
+        if (insertedDbObjects.Count > 0)
+        {
+            await Collection.InsertManyAsync(insertedDbObjects, new InsertManyOptions { IsOrdered = false });
+        }
+        if (updatedDbObjects.Count > 0)
+        {
+            await Collection.BulkWriteAsync(updatedDbObjects, new BulkWriteOptions { IsOrdered = false });
+        }
 
-        return resultIds;
+        for (int i = 0; i < savedDbObjects.Count; i++)
+        {
+            entities[i].Id = savedDbObjects[i].Id;
+        }
+
+        return [.. savedDbObjects.Select(item => item.Id)];
     }
 
     public virtual Task DeleteAsync(TId id)
@@ -283,30 +253,27 @@ public abstract class BaseDal<TId, TDbModel, TEntity, TSearchParams, TConvertPar
         return find;
     }
 
-    protected abstract Task<IList<TEntity>> BuildEntitiesListAsync(IReadOnlyList<TDbModel> dbObjects, TConvertParams convertParams);
+    [SuppressMessage("CodeQuality", "IDE0060:Remove unused parameter", Justification = "Параметр TConvertParams оставлен для совместимости с общим контрактом.")]
+    private static async Task<IList<TEntity>> BuildEntitiesListAsync(IFindFluent<TDbModel, TDbModel> dbObjects, TConvertParams convertParams)
+    {
+        var entities = (await dbObjects.ToListAsync()).Select(TMapper.ToEntity).ToList();
+        return entities;
+    }
 
-    //private static TId EnsureId(TId id)
-    //{
-    //    if (!EqualityComparer<TId>.Default.Equals(id, default))
-    //    {
-    //        return id;
-    //    }
+    private static TDbModel AddOrUpdate(TEntity entity, TDbModel? dbObject, bool exists, DateTime now)
+    {
+        dbObject ??= new TDbModel();
 
-    //    if (typeof(TId) == typeof(ObjectId))
-    //    {
-    //        var newId = ObjectId.GenerateNewId();
-    //        return Unsafe.As<ObjectId, TId>(ref newId);
-    //    }
-    //    if (typeof(TId) == typeof(Guid))
-    //    {
-    //        var newId = Guid.NewGuid();
-    //        return Unsafe.As<Guid, TId>(ref newId);
-    //    }
+        TMapper.ToDbModel(entity, dbObject);
 
-    //    throw new NotImplementedException(
-    //        $"Генерация Id для типа {typeof(TId).Name} не реализована. " +
-    //        "Либо задайте Id заранее, либо добавьте генерацию для этого типа.");
-    //}
+        if (!exists)
+        {
+            dbObject.CreatedAt = now;
+        }
+        dbObject.UpdatedAt = now;
+
+        return dbObject;
+    }
 
     private static Task<UpdateResult> SoftDeleteAsync(FilterDefinition<TDbModel> filter, Func<FilterDefinition<TDbModel>, UpdateDefinition<TDbModel>, Task<UpdateResult>> execute)
     {

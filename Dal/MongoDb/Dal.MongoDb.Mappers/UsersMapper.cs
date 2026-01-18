@@ -8,13 +8,11 @@ using Riok.Mapperly.Abstractions;
 namespace Dal.MongoDb.Mappers;
 
 [Mapper]
-public sealed partial class UsersMapper : IMapper<UserDbModel, User>
+public sealed partial class UsersMapper : IMapper<Guid, UserDbModel, User>
 {
     [MapperRequiredMapping(RequiredMappingStrategy.Source)]
-    public static partial UserDbModel ToDbModel(User entity);
-    public static partial IEnumerable<UserDbModel> ToDbModel(IEnumerable<User> entities);
+    public static partial void ToDbModel(User entity, UserDbModel dbModel);
 
     [MapperRequiredMapping(RequiredMappingStrategy.Target)]
     public static partial User ToEntity(UserDbModel dbModel);
-    public static partial IEnumerable<User> ToEntity(IEnumerable<UserDbModel> dbModels);
 }

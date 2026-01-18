@@ -43,7 +43,7 @@ public sealed class UsersController(IUsersBl usersBl) : BaseApiController
     public async Task<ActionResult<RestApiResponse<Guid>>> Create([FromBody] UserDto dto)
     {
         dto.Id = await usersBl.AddOrUpdateAsync(UsersMapper.ToEntity(dto));
-        return Created(string.Empty, RestApiResponseBuilder<Guid>.Success(dto.Id));
+        return CreatedAtAction(nameof(Get), new { id = dto.Id }, RestApiResponseBuilder<Guid>.Success(dto.Id));
     }
 
     [HttpPut]

@@ -13,7 +13,7 @@
 
 //namespace Dal.Ef.Implementations;
 
-//public sealed class UsersDal(DefaultDbContext context) : 
+//public sealed class UsersDal(DefaultDbContext context) :
 //    BaseDal<DefaultDbContext, Guid, UserDbModel, User, UsersSearchParams, UsersConvertParams, UsersMapper, UsersFilter, UsersInclude>(context),
 //    IUsersDal
 //{
