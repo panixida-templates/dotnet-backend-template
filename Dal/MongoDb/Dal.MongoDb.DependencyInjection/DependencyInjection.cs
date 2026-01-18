@@ -1,9 +1,7 @@
 ﻿using Common.Constants;
 
-using Dal.Interfaces;
 using Dal.Interfaces.Core;
 
-using Dal.MongoDb.Implementations;
 using Dal.MongoDb.Implementations.Core;
 
 using Microsoft.Extensions.Configuration;
@@ -11,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.IdGenerators;
 using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
 
@@ -24,6 +23,7 @@ public static class DependencyInjection
     {
         BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
         BsonSerializer.RegisterSerializer(new NullableSerializer<Guid>(new GuidSerializer(GuidRepresentation.Standard)));
+        BsonSerializer.RegisterIdGenerator(typeof(Guid), GuidGenerator.Instance);
 
         serviceCollection.AddSingleton<IMongoClient>(serviceProvider =>
         {
@@ -53,7 +53,7 @@ public static class DependencyInjection
             return client.GetDatabase(databaseName);
         });
 
-        serviceCollection.RegisterDalImplementations(typeof(BaseDal<,,,,,>).Assembly);
+        serviceCollection.RegisterDalImplementations(typeof(BaseDal<,,,,,,>).Assembly);
 
         return serviceCollection;
     }

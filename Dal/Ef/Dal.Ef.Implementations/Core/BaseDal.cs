@@ -6,6 +6,7 @@ using Dal.Ef.DbModels.Core;
 using Dal.Ef.Filters.Core;
 using Dal.Ef.Includes.Core;
 using Dal.Ef.Mappers.Core;
+
 using Dal.Interfaces.Core;
 
 using Entities.Core;
@@ -235,7 +236,7 @@ public abstract class BaseDal<TDbContext, TId, TDbModel, TEntity, TSearchParams,
             return dbObjects.Take(0);
         }
 
-        dbObjects = dbObjects.Skip((searchParams.Page - 1) * (searchParams.ObjectsCount ?? 0));
+        dbObjects = dbObjects.Skip((searchParams.Page - 1) * searchParams.ObjectsCount ?? 0);
 
         if (searchParams.ObjectsCount.HasValue)
         {

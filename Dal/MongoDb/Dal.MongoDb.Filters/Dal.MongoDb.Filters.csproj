@@ -11,13 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Common\Common.ConvertParams\Common.ConvertParams.csproj" />
-    <ProjectReference Include="..\..\..\Common\Common.Exceptions\Common.Exceptions.csproj" />
     <ProjectReference Include="..\..\..\Common\Common.SearchParams\Common.SearchParams.csproj" />
-    <ProjectReference Include="..\..\Dal.Interfaces\Dal.Interfaces.csproj" />
     <ProjectReference Include="..\Dal.MongoDb.DbModels\Dal.MongoDb.DbModels.csproj" />
-    <ProjectReference Include="..\Dal.MongoDb.Filters\Dal.MongoDb.Filters.csproj" />
-    <ProjectReference Include="..\Dal.MongoDb.Mappers\Dal.MongoDb.Mappers.csproj" />
   </ItemGroup>
 
 </Project>
