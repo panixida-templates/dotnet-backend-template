@@ -13,7 +13,7 @@ using Entities;
 
 namespace Dal.Ef.Implementations;
 
-public sealed class SettingsDal(DefaultDbContext context) : 
+public sealed class SettingsDal(DefaultDbContext context) :
     BaseDal<DefaultDbContext, int, SettingDbModel, Setting, SettingsSearchParams, SettingsConvertParams, SettingsMapper, SettingsFilter, SettingsInclude>(context),
     ISettingsDal
 {

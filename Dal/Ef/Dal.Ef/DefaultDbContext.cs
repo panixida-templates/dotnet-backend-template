@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Npgsql.NameTranslation;
 
 using System.Reflection;
-using System.Text;
 
 namespace Dal.Ef;
 

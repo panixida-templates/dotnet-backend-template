@@ -15,12 +15,12 @@ public sealed class TestContainers(IConfiguration configuration)
 
     public async Task InitializeAsync()
     {
-        if (_useEf )
+        if (_useEf)
         {
             PostgresContainer = new PostgresContainer();
             await PostgresContainer.InitializeAsync();
         }
-        if (_useMongo )
+        if (_useMongo)
         {
             MongoContainer = new MongoContainer();
             await MongoContainer.InitializeAsync();
