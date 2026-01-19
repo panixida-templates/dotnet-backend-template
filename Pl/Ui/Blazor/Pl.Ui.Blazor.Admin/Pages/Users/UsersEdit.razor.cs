@@ -7,7 +7,7 @@ using Pl.Ui.Blazor.ViewModels;
 
 namespace Pl.Ui.Blazor.Admin.Pages.Users;
 
-public partial class UsersEdit : BaseEdit<int, UserViewModel, UsersSearchParams, UsersConvertParams, IUsersService>
+public partial class UsersEdit : BaseEdit<Guid, UserViewModel, UsersSearchParams, UsersConvertParams, IUsersService>
 {
     protected override string TableRoute => "/users";
     protected override string EditRoute => "/users/edit";

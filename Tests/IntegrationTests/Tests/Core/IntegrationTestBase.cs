@@ -6,11 +6,13 @@ using DataGenerator;
 
 using IntegrationTests.Constants;
 using IntegrationTests.DataFactories;
-using IntegrationTests.Infrastructure;
+using IntegrationTests.Infrastructure.Core;
 using IntegrationTests.WebApplicationFactories;
 
 using Microsoft.Extensions.DependencyInjection;
+
 using Pl.Api.Http.Dtos.Models.Core;
+
 using Xunit;
 
 using static IntegrationTests.Constants.TraitsConstants;
@@ -29,7 +31,7 @@ public abstract partial class IntegrationTestBase<TEndpoint, TId, TModel, TSearc
     protected readonly IDictionary<string, string?> DefaultHeaders;
     protected readonly IApiHttpClient ApiHttpClient;
 
-    private readonly PostgresContainer _postgresContainer;
+    private readonly TestContainers _testContainers;
 
     protected DataFacade TestDataFacade;
 
@@ -38,14 +40,14 @@ public abstract partial class IntegrationTestBase<TEndpoint, TId, TModel, TSearc
         DefaultHeaders = TestHeadersFactory.CreateAuthHeadersForUser();
         ApiHttpClient = apiWebApplicationFactory.Services.GetRequiredService<IApiHttpClient>();
 
-        _postgresContainer = apiWebApplicationFactory.Services.GetRequiredService<PostgresContainer>();
+        _testContainers = apiWebApplicationFactory.Services.GetRequiredService<TestContainers>();
 
         TestDataFacade = new DataFacade(scope: GetType().FullName);
     }
 
-    protected Task ResetDatabaseAsync()
+    protected async Task ResetDatabaseAsync()
     {
-        return _postgresContainer.ResetDatabaseAsync();
+        await _testContainers.ResetDatabaseAsync();
     }
 
     protected async Task<TId> CreateNotFoundIdAsync()

@@ -1,9 +1,12 @@
 ﻿using Common.Constants;
 using Common.Exceptions;
+
 using Grpc.Core;
 
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 using Pl.Api.Http.Dtos.Core;
@@ -39,10 +42,18 @@ public sealed class ExceptionsMiddleware(RequestDelegate next, ILogger<Exception
         catch (Exception ex)
         {
             logger.LogError(ex, "Необработанное исключение");
+
             context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-            var errorResponse = RestApiResponseBuilder<object>.Fail("Внутренняя ошибка сервера", property: ErrorMessagesConstants.InternalServerError);
+
+            var environment = context.RequestServices.GetRequiredService<IWebHostEnvironment>();
+            var isDevelopment = environment.IsDevelopment() || environment.IsEnvironment(EnvironmentConstants.Test);
+
+            var message = isDevelopment ? ex.ToString() : "Внутренняя ошибка сервера";
+            var errorResponse = RestApiResponseBuilder<object>.Fail(message, property: ErrorMessagesConstants.InternalServerError);
+
             await context.Response.WriteAsJsonAsync(errorResponse);
         }
+
     }
 
     private static int MapGrpcStatusToHttp(StatusCode statusCode)

@@ -10,7 +10,6 @@
       <ProjectReference Include="..\..\Common\Common.ConvertParams\Common.ConvertParams.csproj" />
       <ProjectReference Include="..\..\Common\Common.SearchParams\Common.SearchParams.csproj" />
       <ProjectReference Include="..\..\Domain\Entities\Entities.csproj" />
-      <ProjectReference Include="..\Dal.DbModels\Dal.DbModels.csproj" />
     </ItemGroup>
 
 </Project>

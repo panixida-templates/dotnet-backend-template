@@ -2,12 +2,12 @@
 
 namespace Common.Constants.ApiEndpoints;
 
-public sealed class UsersApiEndpointsConstants : IBaseApiEndpointsConstants<UsersApiEndpointsConstants, int>
+public sealed class UsersApiEndpointsConstants : IBaseApiEndpointsConstants<UsersApiEndpointsConstants, Guid>
 {
     public const string BaseConstant = $"{IBaseApiRoutesConstants.BasePrefix}/{VersionConstant}/{ResourceNameConstant}";
 
     public const string ResourceNameConstant = "users";
-    public const string IdConstant = "{id:int}";
+    public const string IdConstant = "{id:Guid}";
 
     public const string VersionConstant = ApiVersionsConstants.V1;
 

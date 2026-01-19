@@ -7,7 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Dal.Implementations\Dal.Implementations.csproj" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="10.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Ef\Dal.Ef.DependencyInjection\Dal.Ef.DependencyInjection.csproj" />
+    <ProjectReference Include="..\MongoDb\Dal.MongoDb.DependencyInjection\Dal.MongoDb.DependencyInjection.csproj" />
   </ItemGroup>
 
 </Project>

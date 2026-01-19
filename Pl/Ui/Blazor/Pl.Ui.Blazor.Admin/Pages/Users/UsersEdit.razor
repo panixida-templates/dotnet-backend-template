@@ -1,6 +1,6 @@
 ﻿@page "/users/edit"
-@page "/users/edit/{Id:int}"
-@inherits BaseEdit<int, UserViewModel, UsersSearchParams, UsersConvertParams, IUsersService>
+@page "/users/edit/{Id:guid}"
+@inherits BaseEdit<Guid, UserViewModel, UsersSearchParams, UsersConvertParams, IUsersService>
 
 <PageTitle>@Title</PageTitle>
 

@@ -76,7 +76,7 @@ public abstract class BaseFilterableTable<TId, TViewModel, TSearchParams, TConve
 
             return new TableData<TViewModel>
             {
-                TotalItems = result.Total,
+                TotalItems = result.Total > int.MaxValue ? int.MaxValue : (int)result.Total,
                 Items = result.Objects
             };
         }
@@ -91,7 +91,7 @@ public abstract class BaseFilterableTable<TId, TViewModel, TSearchParams, TConve
         Navigation.NavigateTo(EditRoute);
     }
 
-    protected void OnEditClicked(int id)
+    protected void OnEditClicked(Guid id)
     {
         Navigation.NavigateTo($"{EditRoute}/{id}");
     }

@@ -23,7 +23,7 @@ public sealed class UsersController(IUsersBl usersBl) : BaseApiController
     [Route(UsersApiEndpointsConstants.IdConstant)]
     [ProducesResponseType(typeof(RestApiResponse<UserDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(RestApiResponse<UserDto>), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<RestApiResponse<UserDto>>> Get([FromRoute] int id, [FromQuery] UsersConvertParams? convertParams)
+    public async Task<ActionResult<RestApiResponse<UserDto>>> Get([FromRoute] Guid id, [FromQuery] UsersConvertParams? convertParams)
     {
         var dto = UsersMapper.ToDto(await usersBl.GetAsync(id, convertParams));
         return Ok(RestApiResponseBuilder<UserDto>.Success(dto));
@@ -39,17 +39,17 @@ public sealed class UsersController(IUsersBl usersBl) : BaseApiController
     }
 
     [HttpPost]
-    [ProducesResponseType(typeof(RestApiResponse<int>), StatusCodes.Status201Created)]
-    public async Task<ActionResult<RestApiResponse<int>>> Create([FromBody] UserDto dto)
+    [ProducesResponseType(typeof(RestApiResponse<Guid>), StatusCodes.Status201Created)]
+    public async Task<ActionResult<RestApiResponse<Guid>>> Create([FromBody] UserDto dto)
     {
         dto.Id = await usersBl.AddOrUpdateAsync(UsersMapper.ToEntity(dto));
-        return Created(string.Empty, RestApiResponseBuilder<int>.Success(dto.Id));
+        return CreatedAtAction(nameof(Get), new { id = dto.Id }, RestApiResponseBuilder<Guid>.Success(dto.Id));
     }
 
     [HttpPut]
     [Route(UsersApiEndpointsConstants.IdConstant)]
     [ProducesResponseType(typeof(RestApiResponse<NoContent>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<RestApiResponse<NoContent>>> Update([FromRoute] int id, [FromBody] UserDto dto)
+    public async Task<ActionResult<RestApiResponse<NoContent>>> Update([FromRoute] Guid id, [FromBody] UserDto dto)
     {
         dto.Id = id;
         await usersBl.AddOrUpdateAsync(UsersMapper.ToEntity(dto));
@@ -59,7 +59,7 @@ public sealed class UsersController(IUsersBl usersBl) : BaseApiController
     [HttpDelete]
     [Route(UsersApiEndpointsConstants.IdConstant)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public async Task<ActionResult> Delete([FromRoute] int id)
+    public async Task<ActionResult> Delete([FromRoute] Guid id)
     {
         await usersBl.DeleteAsync(id);
         return NoContent();

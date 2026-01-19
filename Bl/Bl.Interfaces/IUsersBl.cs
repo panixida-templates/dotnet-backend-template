@@ -7,6 +7,6 @@ using Entities;
 
 namespace Bl.Interfaces;
 
-public interface IUsersBl : IBaseBl<int, User, UsersSearchParams, UsersConvertParams>
+public interface IUsersBl : IBaseBl<Guid, User, UsersSearchParams, UsersConvertParams>
 {
 }

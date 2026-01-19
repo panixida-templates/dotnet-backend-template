@@ -23,10 +23,11 @@ public sealed class PostgresContainer
     {
         var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
 
-        var npgsqlConnectionStringBuilder = new NpgsqlConnectionStringBuilder(configuration.GetConnectionString(AppsettingsKeysConstants.DefaultDbConnectionString));
+        var npgsqlConnectionStringBuilder = new NpgsqlConnectionStringBuilder(configuration.GetConnectionString(AppsettingsKeysConstants.PostgreSqlConnectionString));
 
-        _postgreSqlContainer = new PostgreSqlBuilder()
-            .WithImage("postgres:latest")
+        var postgresImage = configuration["Testcontainers:PostgresImage"] ?? "postgres:latest";
+
+        _postgreSqlContainer = new PostgreSqlBuilder(postgresImage)
             .WithDatabase(npgsqlConnectionStringBuilder.Database)
             .WithUsername(npgsqlConnectionStringBuilder.Username)
             .WithPassword(npgsqlConnectionStringBuilder.Password)

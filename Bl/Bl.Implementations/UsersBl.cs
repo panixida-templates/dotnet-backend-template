@@ -11,7 +11,7 @@ using Entities;
 namespace Bl.Implementations;
 
 public sealed class UsersBl(IUsersDal usersDal) :
-    BaseBl<int, User, UsersSearchParams, UsersConvertParams>(usersDal),
+    BaseBl<Guid, User, UsersSearchParams, UsersConvertParams>(usersDal),
     IUsersBl
 {
 }

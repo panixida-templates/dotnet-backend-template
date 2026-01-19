@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Pl.Ui.Blazor.ViewModels;
 
-public sealed record UserViewModel : BaseViewModel<int>
+public sealed record UserViewModel : BaseViewModel<Guid>
 {
     [Display(Name = "Роль")]
     public Role? Role { get; set; }
