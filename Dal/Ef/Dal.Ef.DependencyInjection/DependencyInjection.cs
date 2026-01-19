@@ -16,7 +16,7 @@ public static class DependencyInjection
     public static IServiceCollection UseEfDal(this IServiceCollection serviceCollection, IConfiguration configuration)
     {
         serviceCollection.AddDbContext<DefaultDbContext>(options =>
-            options.UseNpgsql(configuration.GetConnectionString(AppsettingsKeysConstants.DefaultDbConnectionString)).UseSnakeCaseNamingConvention());
+            options.UseNpgsql(configuration.GetConnectionString(AppsettingsKeysConstants.PostgreSqlConnectionString)).UseSnakeCaseNamingConvention());
 
         serviceCollection.RegisterDalImplementations(typeof(BaseDal<,,,,,,,,>).Assembly);
 

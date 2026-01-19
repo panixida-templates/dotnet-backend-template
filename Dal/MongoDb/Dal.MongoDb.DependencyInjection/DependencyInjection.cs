@@ -28,29 +28,15 @@ public static class DependencyInjection
         serviceCollection.AddSingleton<IMongoClient>(serviceProvider =>
         {
             var connectionString = configuration.GetConnectionString(AppsettingsKeysConstants.MongoDbConnectionString);
-
-            if (string.IsNullOrWhiteSpace(connectionString))
-            {
-                throw new InvalidOperationException("MongoDb connection string is not configured (ConnectionStrings:MongoDb).");
-            }
-
             return new MongoClient(connectionString);
         });
 
         serviceCollection.AddScoped(serviceProvider =>
         {
-            var configuration = serviceProvider.GetRequiredService<IConfiguration>();
-
-            var databaseName = configuration[$"{AppsettingsKeysConstants.MongoDbDatabase}"];
-
-            if (string.IsNullOrWhiteSpace(databaseName))
-            {
-                throw new InvalidOperationException($"MongoDb database is not configured ({AppsettingsKeysConstants.MongoDbDatabase}).");
-            }
-
+            var connectionString = configuration.GetConnectionString(AppsettingsKeysConstants.MongoDbConnectionString);
+            var mongoUrl = new MongoUrl(connectionString);
             var client = serviceProvider.GetRequiredService<IMongoClient>();
-
-            return client.GetDatabase(databaseName);
+            return client.GetDatabase(mongoUrl.DatabaseName);
         });
 
         serviceCollection.RegisterDalImplementations(typeof(BaseDal<,,,,,,>).Assembly);

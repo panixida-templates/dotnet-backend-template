@@ -5,6 +5,7 @@ using AutoFixture;
 using Common.SearchParams.Core;
 
 using FluentAssertions;
+
 using Pl.Api.Http.Dtos.Core;
 
 namespace IntegrationTests.Tests.Core;
@@ -58,7 +59,7 @@ public abstract partial class IntegrationTestBase<TEndpoint, TId, TModel, TSearc
         response.Should().NotBeNull($"{HttpMethod.Post} {endpoint} вернул null");
         response.IsSuccess.Should().BeTrue($"{HttpMethod.Post} {endpoint} должен завершиться успешно");
         response.Payload.Should().NotBeNull($"{HttpMethod.Post} {endpoint} не вернул payload");
-        (response.Payload as int?).Should().BePositive($"{HttpMethod.Post} {endpoint} должен вернуть положительный идентификатор");
+        response.Payload.Should().NotBe(default(TId), $"{HttpMethod.Post} {endpoint} должен вернуть ненулевой (не default) идентификатор");
 
         return response.Payload;
     }

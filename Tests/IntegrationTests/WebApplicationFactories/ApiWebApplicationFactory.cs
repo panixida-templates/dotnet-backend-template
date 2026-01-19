@@ -2,14 +2,13 @@
 
 using Common.Constants;
 
-using IntegrationTests.Infrastructure;
+using IntegrationTests.Infrastructure.Core;
 using IntegrationTests.Mocks;
 
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -19,12 +18,16 @@ namespace IntegrationTests.WebApplicationFactories;
 
 public sealed class ApiWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
-    private PostgresContainer? _postgresContainer;
+    private IConfiguration? _testConfiguration;
+    private TestContainers? _testContainers;
 
     async Task IAsyncLifetime.InitializeAsync()
     {
-        _postgresContainer = new PostgresContainer();
-        await _postgresContainer.InitializeAsync();
+        _testConfiguration = BuildTestConfiguration();
+
+        _testContainers = new TestContainers(_testConfiguration);
+        await _testContainers.InitializeAsync();
+
         CreateClient();
     }
 
@@ -36,9 +39,10 @@ public sealed class ApiWebApplicationFactory : WebApplicationFactory<Program>, I
     public override async ValueTask DisposeAsync()
     {
         await base.DisposeAsync();
-        if (_postgresContainer is not null)
+
+        if (_testContainers is not null)
         {
-            await _postgresContainer.DisposeAsync();
+            await _testContainers.DisposeAsync();
         }
     }
 
@@ -46,25 +50,21 @@ public sealed class ApiWebApplicationFactory : WebApplicationFactory<Program>, I
     {
         builder.UseEnvironment(EnvironmentConstants.Test);
 
-        builder.ConfigureAppConfiguration((webHostBuilderContext, configurationBuilder) =>
+        builder.ConfigureAppConfiguration((_, configurationBuilder) =>
         {
-            var testJson = Path.Combine(AppContext.BaseDirectory, "appsettings.json");
-            configurationBuilder.AddJsonFile(testJson, optional: true, reloadOnChange: false);
-            var appsettingsDictionary = new Dictionary<string, string?>
+            if (_testConfiguration is not null)
             {
-                [AppsettingsKeysConstants.ConnectionStringsDefaultDbConnectionString] = _postgresContainer?.ConnectionString,
-            };
-            configurationBuilder.AddInMemoryCollection(appsettingsDictionary);
+                configurationBuilder.AddConfiguration(_testConfiguration);
+            }
+            if (_testContainers is not null)
+            {
+                configurationBuilder.AddInMemoryCollection(_testContainers.BuildAppsettingsOverrides());
+            }
         });
 
-        builder.ConfigureTestServices(services =>
+        builder.ConfigureServices((context, services) =>
         {
-            var configuration = services.BuildServiceProvider().GetRequiredService<IConfiguration>();
-
-            if (_postgresContainer is not null)
-            {
-                services.AddSingleton(_postgresContainer);
-            }
+            _testContainers!.RegisterServices(services);
 
             services.AddAuthentication(options =>
             {
@@ -75,11 +75,20 @@ public sealed class ApiWebApplicationFactory : WebApplicationFactory<Program>, I
 
             services.AddAuthorizationBuilder()
                 .SetDefaultPolicy(new AuthorizationPolicyBuilder(AuthenticationMock.SchemeName)
-                .RequireAuthenticatedUser()
-                .Build());
+                    .RequireAuthenticatedUser()
+                    .Build());
 
-            services.UseHttpClients(configuration);
+            services.UseHttpClients(context.Configuration);
             services.AddHttpClient(ClientsConstants.ApiClient).ConfigurePrimaryHttpMessageHandler(_ => Server.CreateHandler());
         });
+    }
+
+    private static IConfiguration BuildTestConfiguration()
+    {
+        var testJson = Path.Combine(AppContext.BaseDirectory, "appsettings.json");
+
+        return new ConfigurationBuilder()
+            .AddJsonFile(testJson, optional: false, reloadOnChange: false)
+            .Build();
     }
 }
