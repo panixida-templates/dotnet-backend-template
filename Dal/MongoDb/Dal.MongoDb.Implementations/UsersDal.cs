@@ -14,8 +14,8 @@ using MongoDB.Driver;
 
 namespace Dal.MongoDb.Implementations;
 
-public sealed class UsersDal(IMongoDatabase database)
-    : BaseDal<Guid, UserDbModel, User, UsersSearchParams, UsersConvertParams, UsersMapper, UsersFilter>(database, "users"),
-      IUsersDal
+public sealed class UsersDal(IMongoDatabase database) : 
+    BaseDal<Guid, UserDbModel, User, UsersSearchParams, UsersConvertParams, UsersMapper, UsersFilter>(database, "users"), 
+    IUsersDal
 {
 }

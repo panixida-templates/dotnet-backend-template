@@ -15,6 +15,24 @@ public static class AppsettingsKeysConstants
     public const string DalSection = "Dal";
     public const string DalUseEf = $"{DalSection}:UseEf";
     public const string DalUseMongo = $"{DalSection}:UseMongo";
+    public const string DalUseS3 = $"{DalSection}:UseS3";
+
+    #endregion
+
+    #region AWS / S3
+
+    public const string S3Section = "S3";
+
+    public const string S3ServiceUrl = $"{S3Section}:ServiceUrl";
+    public const string S3Region = $"{S3Section}:Region";
+    public const string S3ForcePathStyle = $"{S3Section}:ForcePathStyle";
+
+    public const string S3AccessKey = $"{S3Section}:AccessKey";
+    public const string S3SecretKey = $"{S3Section}:SecretKey";
+
+    public const string S3BucketName = $"{S3Section}:BucketName";
+    public const string S3BasePrefix = $"{S3Section}:BasePrefix";
+    public const string S3DefaultPresignTtl = $"{S3Section}:DefaultPresignTtl";
 
     #endregion
 

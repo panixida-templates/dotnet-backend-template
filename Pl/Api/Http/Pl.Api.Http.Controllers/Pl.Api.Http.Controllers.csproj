@@ -16,6 +16,7 @@
         <ProjectReference Include="..\..\..\..\Common\Common.Constants\Common.Constants.csproj" />
         <ProjectReference Include="..\..\..\..\Common\Common.ConvertParams\Common.ConvertParams.csproj" />
         <ProjectReference Include="..\..\..\..\Common\Common.SearchParams\Common.SearchParams.csproj" />
+        <ProjectReference Include="..\..\..\..\Domain\Dto\Dto.csproj" />
         <ProjectReference Include="..\..\..\..\Domain\Entities\Entities.csproj" />
         <ProjectReference Include="..\Pl.Api.Http.Dtos\Pl.Api.Http.Dtos.csproj" />
         <ProjectReference Include="..\Pl.Api.Http.Mappers\Pl.Api.Http.Mappers.csproj" />
