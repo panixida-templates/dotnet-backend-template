@@ -1,4 +1,5 @@
 ﻿using Common.SearchParams.Core;
+using Common.Storage.Dtos;
 
 using System.Net;
 
@@ -14,11 +15,23 @@ public interface IApiHttpClient
         HttpStatusCode expectedStatus = HttpStatusCode.OK,
         CancellationToken cancellationToken = default);
 
+    Task<FileContent> DownloadAsync(
+        string endpoint,
+        IDictionary<string, string?>? headers = null,
+        CancellationToken cancellationToken = default);
+
     Task<TResponse> PostAsync<TRequest, TResponse>(
         string endpoint,
         TRequest request,
         IDictionary<string, string?>? headers = null,
         HttpStatusCode expectedStatus = HttpStatusCode.Created,
+        CancellationToken cancellationToken = default);
+
+    Task<TResponse> UploadAsync<TResponse>(
+        string endpoint,
+        FileContent fileContent,
+        IDictionary<string, string?>? headers = null,
+        HttpStatusCode expectedStatus = HttpStatusCode.OK,
         CancellationToken cancellationToken = default);
 
     Task<TResponse> PutAsync<TRequest, TResponse>(

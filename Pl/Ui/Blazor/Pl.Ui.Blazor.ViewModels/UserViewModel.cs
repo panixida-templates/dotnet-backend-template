@@ -51,4 +51,7 @@ public sealed record UserViewModel : BaseViewModel<Guid>
     public DateTime? Birthday { get; set; }
 
     private string _phone = string.Empty;
+
+    [Display(Name = "Аватар")]
+    public string? Avatar { get; set; }
 }

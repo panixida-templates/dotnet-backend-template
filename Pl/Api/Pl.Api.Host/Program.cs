@@ -9,6 +9,7 @@ using Dal.DependencyInjection;
 using Logging.OpenSearch;
 
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
 using Pl.Api.Host.Extensions.Configurations;
@@ -19,6 +20,11 @@ using Serilog;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.ConfigureGrpcClients(builder.Configuration);
+
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.Limits.MaxRequestBodySize = FilesConstants.FileRequestSizeLimit;
+});
 
 builder.Services.UseBl();
 builder.Services.UseDal(builder.Configuration);

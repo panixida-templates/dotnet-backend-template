@@ -30,7 +30,7 @@ public sealed class SettingsController(ISettingsBl settingsBl) : BaseApiControll
     }
 
     [HttpGet]
-    [Route(IBaseApiRoutesConstants.GetByFilterSuffix)]
+    [Route(IBaseApiRoutesConstants.GetByFilterSuffixConstant)]
     [ProducesResponseType(typeof(RestApiResponse<SearchResult<SettingDto>>), StatusCodes.Status200OK)]
     public async Task<ActionResult<RestApiResponse<SearchResult<SettingDto>>>> Get([FromQuery] SettingsSearchParams searchParams, [FromQuery] SettingsConvertParams? convertParams)
     {

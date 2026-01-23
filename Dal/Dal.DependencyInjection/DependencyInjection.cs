@@ -1,8 +1,8 @@
 using Common.Constants;
 
 using Dal.Ef.DependencyInjection;
-
 using Dal.MongoDb.DependencyInjection;
+using Dal.S3.DependencyInjection;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -21,6 +21,10 @@ public static class DependencyInjection
         if (configuration.GetValue<bool>(AppsettingsKeysConstants.DalUseMongo))
         {
             serviceCollection.UseMongoDal(configuration);
+        }
+        if (configuration.GetValue<bool>(AppsettingsKeysConstants.DalUseS3))
+        {
+            serviceCollection.UseS3Storage(configuration);
         }
 
         return serviceCollection;

@@ -9,6 +9,7 @@
     <ItemGroup>
         <ProjectReference Include="..\..\Common\Common.Helpers\Common.Helpers.csproj" />
         <ProjectReference Include="..\..\Dal\Dal.Interfaces\Dal.Interfaces.csproj" />
+        <ProjectReference Include="..\..\Dal\S3\Dal.S3.Interfaces\Dal.S3.Interfaces.csproj" />
         <ProjectReference Include="..\Bl.Interfaces\Bl.Interfaces.csproj" />
     </ItemGroup>
 

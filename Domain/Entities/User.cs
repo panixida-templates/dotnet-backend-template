@@ -12,6 +12,7 @@ public sealed class User : BaseEntity<Guid>
     public string Phone { get; set; }
     public int Age { get; set; }
     public DateTime Birthday { get; set; }
+    public string? Avatar { get; set; }
 
     public User(
         Guid id,
@@ -20,7 +21,8 @@ public sealed class User : BaseEntity<Guid>
         string email,
         string phone,
         int age,
-        DateTime birthday) : base(id)
+        DateTime birthday,
+        string? avatar) : base(id)
     {
         Role = role;
         Name = name;
@@ -28,5 +30,6 @@ public sealed class User : BaseEntity<Guid>
         Phone = phone;
         Age = age;
         Birthday = birthday;
+        Avatar = avatar;
     }
 }

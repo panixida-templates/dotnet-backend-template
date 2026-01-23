@@ -60,7 +60,8 @@ public abstract class BaseEdit<TId, TViewModel, TSearchParams, TConvertParams, T
             _loading = false;
         }
     }
-    protected async Task OnValidSubmit()
+
+    protected virtual async Task OnValidSubmit()
     {
         _saving = true;
         _error = null;

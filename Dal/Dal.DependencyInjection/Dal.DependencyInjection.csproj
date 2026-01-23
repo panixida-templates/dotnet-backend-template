@@ -13,6 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Ef\Dal.Ef.DependencyInjection\Dal.Ef.DependencyInjection.csproj" />
     <ProjectReference Include="..\MongoDb\Dal.MongoDb.DependencyInjection\Dal.MongoDb.DependencyInjection.csproj" />
+    <ProjectReference Include="..\S3\Dal.S3.DependencyInjection\Dal.S3.DependencyInjection.csproj" />
   </ItemGroup>
 
 </Project>
