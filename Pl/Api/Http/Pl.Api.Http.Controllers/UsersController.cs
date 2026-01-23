@@ -30,7 +30,7 @@ public sealed class UsersController(IUsersBl usersBl) : BaseApiController
     }
 
     [HttpGet]
-    [Route(IBaseApiRoutesConstants.GetByFilterSuffix)]
+    [Route(IBaseApiRoutesConstants.GetByFilterSuffixConstant)]
     [ProducesResponseType(typeof(RestApiResponse<SearchResult<UserDto>>), StatusCodes.Status200OK)]
     public async Task<ActionResult<RestApiResponse<SearchResult<UserDto>>>> Get([FromQuery] UsersSearchParams searchParams, [FromQuery] UsersConvertParams? convertParams)
     {

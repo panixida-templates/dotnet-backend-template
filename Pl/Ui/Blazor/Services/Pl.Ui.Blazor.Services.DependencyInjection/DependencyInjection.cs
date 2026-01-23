@@ -10,5 +10,6 @@ public static class DependencyInjection
     public static void UseServices(this IServiceCollection services)
     {
         services.AddScoped<IUsersService, UsersService>();
+        services.AddScoped<IAvatarsService, AvatarsService>();
     }
 }

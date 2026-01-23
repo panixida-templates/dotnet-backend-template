@@ -18,4 +18,6 @@ public sealed class UserDbModel : BaseDbModel<Guid>
 
     public int Age { get; set; }
     public DateTime Birthday { get; set; }
+
+    public string? Avatar { get; set; }
 }

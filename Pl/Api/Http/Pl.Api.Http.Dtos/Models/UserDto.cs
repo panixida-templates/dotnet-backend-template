@@ -12,4 +12,5 @@ public sealed record UserDto : BaseDto<Guid>
     public required string Phone { get; set; }
     public required int Age { get; set; }
     public required DateTime Birthday { get; set; }
+    public string? Avatar { get; set; }
 }

@@ -1,21 +1,21 @@
 ﻿using Bl.Interfaces.Core;
 
-using Dal.S3.Interfaces.Core;
+using Common.Storage.Dtos;
 
-using Dto.Storage;
+using Dal.S3.Interfaces.Core;
 
 namespace Bl.Implementations.Core;
 
 public abstract class BaseStorageBl(IStorage storage) : IBaseStorageBl
 {
-    public Task<PresignedUrl> GetPresignedUploadUrlAsync(string fileName, string? contentType = null, TimeSpan? expiresIn = null)
-    {
-        return storage.GetPresignedUploadUrlAsync(fileName, contentType, expiresIn);
-    }
-
     public Task<PresignedUrl> GetPresignedDownloadUrlAsync(string key, TimeSpan? expiresIn = null)
     {
         return storage.GetPresignedDownloadUrlAsync(key, expiresIn);
+    }
+
+    public Task<PresignedUrl> GetPresignedUploadUrlAsync(string fileName, string? contentType = null, TimeSpan? expiresIn = null)
+    {
+        return storage.GetPresignedUploadUrlAsync(fileName, contentType, expiresIn);
     }
 
     public Task<FileContent> DownloadAsync(string key, CancellationToken cancellationToken = default)

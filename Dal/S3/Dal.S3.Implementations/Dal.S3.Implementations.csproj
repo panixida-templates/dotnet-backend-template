@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\Common.Storage.Dtos\Common.Storage.Dtos.csproj" />
     <ProjectReference Include="..\Dal.S3.Configurations\Dal.S3.Configurations.csproj" />
     <ProjectReference Include="..\Dal.S3.Interfaces\Dal.S3.Interfaces.csproj" />
   </ItemGroup>

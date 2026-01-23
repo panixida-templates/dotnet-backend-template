@@ -23,9 +23,7 @@ builder.Services.ConfigureGrpcClients(builder.Configuration);
 
 builder.WebHost.ConfigureKestrel(options =>
 {
-    options.Limits.MaxRequestBodySize = 1_073_741_824;
-    // если долгие загрузки по медленному каналу:
-    // options.Limits.MinRequestBodyDataRate = null;
+    options.Limits.MaxRequestBodySize = FilesConstants.FileRequestSizeLimit;
 });
 
 builder.Services.UseBl();

@@ -4,7 +4,7 @@ namespace Common.Constants.ApiEndpoints;
 
 public sealed class UsersApiEndpointsConstants : IBaseApiEndpointsConstants<UsersApiEndpointsConstants, Guid>
 {
-    public const string BaseConstant = $"{IBaseApiRoutesConstants.BasePrefix}/{VersionConstant}/{ResourceNameConstant}";
+    public const string BaseConstant = $"{IBaseApiRoutesConstants.BasePrefixConstant}/{VersionConstant}/{ResourceNameConstant}";
 
     public const string ResourceNameConstant = "users";
     public const string IdConstant = "{id:Guid}";

@@ -10,6 +10,7 @@
     <ItemGroup>
       <ProjectReference Include="..\..\..\..\..\Common\Common.ConvertParams\Common.ConvertParams.csproj" />
       <ProjectReference Include="..\..\..\..\..\Common\Common.SearchParams\Common.SearchParams.csproj" />
+      <ProjectReference Include="..\..\..\..\..\Common\Common.Storage.Dtos\Common.Storage.Dtos.csproj" />
       <ProjectReference Include="..\..\Pl.Ui.Blazor.ViewModels\Pl.Ui.Blazor.ViewModels.csproj" />
     </ItemGroup>
 

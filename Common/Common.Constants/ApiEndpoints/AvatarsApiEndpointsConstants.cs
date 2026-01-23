@@ -2,9 +2,9 @@
 
 namespace Common.Constants.ApiEndpoints;
 
-public sealed class AvatarsApiEndpointsConstants : IBaseApiEndpointsConstants<AvatarsApiEndpointsConstants, string>
+public sealed class AvatarsApiEndpointsConstants : IBaseStorageApiEndpointsConstants<AvatarsApiEndpointsConstants>
 {
-    public const string BaseConstant = $"{IBaseApiRoutesConstants.BasePrefix}/{VersionConstant}/{ResourceNameConstant}";
+    public const string BaseConstant = $"{IBaseApiRoutesConstants.BasePrefixConstant}/{VersionConstant}/{ResourceNameConstant}";
 
     public const string ResourceNameConstant = "avatars";
 

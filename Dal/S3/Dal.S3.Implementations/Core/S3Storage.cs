@@ -2,28 +2,30 @@
 using Amazon.S3.Model;
 using Amazon.S3.Transfer;
 
+using Common.Storage.Dtos;
+
 using Dal.S3.Configurations;
 using Dal.S3.Interfaces.Core;
-
-using Dto.Storage;
 
 namespace Dal.S3.Implementations.Core;
 
 public abstract class S3Storage(IAmazonS3 amazonS3, ITransferUtility transferUtility, S3StorageOptions options, string storagePrefix) : IStorage
 {
+    public virtual Task<PresignedUrl> GetPresignedDownloadUrlAsync(string key, TimeSpan? expiresIn = null)
+    {
+        key = BuildKey(key);
+        return GetPresignedUrlAsync(key, HttpVerb.GET, expiresIn: expiresIn);
+    }
+
     public virtual Task<PresignedUrl> GetPresignedUploadUrlAsync(string fileName, string? contentType = null, TimeSpan? expiresIn = null)
     {
         var key = BuildKey(fileName);
         return GetPresignedUrlAsync(key, HttpVerb.PUT, contentType, expiresIn);
     }
 
-    public virtual Task<PresignedUrl> GetPresignedDownloadUrlAsync(string key, TimeSpan? expiresIn = null)
-    {
-        return GetPresignedUrlAsync(key, HttpVerb.GET, expiresIn: expiresIn);
-    }
-
     public virtual async Task<FileContent> DownloadAsync(string key, CancellationToken cancellationToken = default)
     {
+        key = BuildKey(key);
         var request = new TransferUtilityOpenStreamRequest
         {
             BucketName = options.BucketName,
@@ -49,11 +51,12 @@ public abstract class S3Storage(IAmazonS3 amazonS3, ITransferUtility transferUti
         };
         await transferUtility.UploadWithResponseAsync(request, cancellationToken);
 
-        return key;
+        return objectContent.FileName;
     }
 
     public virtual Task DeleteAsync(string key, CancellationToken cancellationToken = default)
     {
+        key = BuildKey(key);
         var request = new DeleteObjectRequest
         {
             BucketName = options.BucketName,
@@ -73,7 +76,7 @@ public abstract class S3Storage(IAmazonS3 amazonS3, ITransferUtility transferUti
             {
                 BucketName = options.BucketName,
                 Quiet = true,
-                Objects = [.. batch.Select(key => new KeyVersion { Key = key })],
+                Objects = [.. batch.Select(key => new KeyVersion { Key = BuildKey(key) })],
             };
 
             if (request.Objects.Count == 0)
@@ -93,6 +96,9 @@ public abstract class S3Storage(IAmazonS3 amazonS3, ITransferUtility transferUti
 
     private async Task<PresignedUrl> GetPresignedUrlAsync(string key, HttpVerb verb, string? contentType = null, TimeSpan? expiresIn = null)
     {
+        var protocol = options.ServiceUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase)
+            ? Protocol.HTTPS
+            : Protocol.HTTP;
         var expiresAtUtc = DateTime.UtcNow.Add(expiresIn ?? options.DefaultPresignTtl);
 
         var request = new GetPreSignedUrlRequest
@@ -101,7 +107,7 @@ public abstract class S3Storage(IAmazonS3 amazonS3, ITransferUtility transferUti
             Key = key,
             Verb = verb,
             Expires = expiresAtUtc,
-            Protocol = Protocol.HTTPS,
+            Protocol = protocol,
         };
 
         if (!string.IsNullOrWhiteSpace(contentType))

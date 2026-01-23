@@ -12,6 +12,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\Common.SearchParams\Common.SearchParams.csproj" />
+      <ProjectReference Include="..\..\Common.Storage.Dtos\Common.Storage.Dtos.csproj" />
     </ItemGroup>
 
 </Project>

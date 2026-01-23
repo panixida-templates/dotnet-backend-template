@@ -55,6 +55,9 @@ public static class DependencyInjection
         serviceCollection.AddOptions<S3StorageOptions>()
             .Configure(options =>
             {
+                options.ServiceUrl = configuration[AppsettingsKeysConstants.S3ServiceUrl]
+                    ?? throw new InvalidOperationException($"{AppsettingsKeysConstants.S3ServiceUrl} не задан в конфигурации.");
+
                 options.BucketName = configuration[AppsettingsKeysConstants.S3BucketName] 
                     ?? throw new InvalidOperationException($"{AppsettingsKeysConstants.S3BucketName} не задан в конфигурации.");
 

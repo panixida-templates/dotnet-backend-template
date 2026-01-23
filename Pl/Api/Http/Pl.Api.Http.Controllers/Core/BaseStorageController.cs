@@ -1,6 +1,8 @@
 ﻿using Bl.Interfaces.Core;
 
-using Dto.Storage;
+using Common.Constants;
+using Common.Constants.ApiEndpoints.Core;
+using Common.Storage.Dtos;
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -12,15 +14,7 @@ namespace Pl.Api.Http.Controllers.Core;
 [ApiController]
 public abstract class BaseStorageController(IBaseStorageBl storageBl) : ControllerBase
 {
-    [HttpGet("presigned/upload")]
-    [ProducesResponseType(typeof(RestApiResponse<PresignedUrl>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<PresignedUrl>> GetPresignedUploadUrlAsync([FromQuery] string fileName, [FromQuery] string? contentType = null)
-    {
-        var presignedUrl = await storageBl.GetPresignedUploadUrlAsync(fileName, contentType);
-        return Ok(RestApiResponseBuilder<PresignedUrl>.Success(presignedUrl));
-    }
-
-    [HttpGet("presigned/download")]
+    [HttpGet(IBaseApiRoutesConstants.PresignedDownloadConstant)]
     [ProducesResponseType(typeof(RestApiResponse<PresignedUrl>), StatusCodes.Status200OK)]
     public async Task<ActionResult<PresignedUrl>> GetPresignedDownloadUrlAsync([FromQuery] string key)
     {
@@ -28,16 +22,24 @@ public abstract class BaseStorageController(IBaseStorageBl storageBl) : Controll
         return Ok(RestApiResponseBuilder<PresignedUrl>.Success(presignedUrl));
     }
 
-    [HttpGet("download/{*key}")]
-    [ResponseCache(Duration = 60 * 60 * 24)]
+    [HttpGet(IBaseApiRoutesConstants.PresignedUploadConstant)]
+    [ProducesResponseType(typeof(RestApiResponse<PresignedUrl>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<PresignedUrl>> GetPresignedUploadUrlAsync([FromQuery] string fileName, [FromQuery] string? contentType = null)
+    {
+        var presignedUrl = await storageBl.GetPresignedUploadUrlAsync(fileName, contentType);
+        return Ok(RestApiResponseBuilder<PresignedUrl>.Success(presignedUrl));
+    }
+
+    [HttpGet(IBaseApiRoutesConstants.DownloadByKeyConstant)]
+    [ResponseCache(Duration = FilesConstants.ResponseCacheDurationSeconds)]
     public async Task<IActionResult> DownloadAsync([FromRoute] string key, CancellationToken cancellationToken)
     {
         var fileContent = await storageBl.DownloadAsync(key, cancellationToken);
         return File(fileContent.Content, fileContent.ContentType, fileContent.FileName, enableRangeProcessing: true);
     }
 
-    [HttpPost("upload")]
-    [RequestFormLimits(MultipartBodyLengthLimit = 1073741824)]
+    [HttpPost(IBaseApiRoutesConstants.UploadConstant)]
+    [RequestFormLimits(MultipartBodyLengthLimit = FilesConstants.FileRequestSizeLimit)]
     [ProducesResponseType(typeof(RestApiResponse<string>), StatusCodes.Status200OK)]
     public async Task<ActionResult<string>> UploadAsync(IFormFile file, CancellationToken cancellationToken)
     {
@@ -46,7 +48,7 @@ public abstract class BaseStorageController(IBaseStorageBl storageBl) : Controll
         return Ok(RestApiResponseBuilder<string>.Success(key));
     }
 
-    [HttpDelete("{*key}")]
+    [HttpDelete(IBaseApiRoutesConstants.KeyConstant)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> DeleteAsync([FromRoute] string key, CancellationToken cancellationToken)
     {
@@ -54,7 +56,7 @@ public abstract class BaseStorageController(IBaseStorageBl storageBl) : Controll
         return NoContent();
     }
 
-    [HttpPost("delete-batch")]
+    [HttpPost(IBaseApiRoutesConstants.DeleteBatchConstant)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> DeleteAsync([FromBody] List<string> keys, CancellationToken cancellationToken)
     {

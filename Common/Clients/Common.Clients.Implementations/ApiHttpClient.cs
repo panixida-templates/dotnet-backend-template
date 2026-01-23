@@ -3,8 +3,10 @@ using Common.Constants;
 using Common.Helpers;
 using Common.JsonConverters;
 using Common.SearchParams.Core;
+using Common.Storage.Dtos;
 
 using System.Net;
+using System.Net.Http.Headers;
 using System.Net.Mime;
 using System.Text;
 using System.Text.Encodings.Web;
@@ -13,10 +15,8 @@ using System.Text.Json.Serialization;
 
 namespace Common.Clients.Implementations;
 
-public sealed class ApiHttpClient : IApiHttpClient
+public sealed class ApiHttpClient(IHttpClientFactory httpClientFactory) : IApiHttpClient
 {
-    private readonly IHttpClientFactory _httpClientFactory;
-
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
         PropertyNameCaseInsensitive = true,
@@ -37,11 +37,6 @@ public sealed class ApiHttpClient : IApiHttpClient
         HttpMethod.Patch
     ];
 
-    public ApiHttpClient(IHttpClientFactory httpClientFactory)
-    {
-        _httpClientFactory = httpClientFactory;
-    }
-
     public Task<TResponse> GetAsync<TResponse>(
         string endpoint,
         BaseSearchParams? searchParams = null,
@@ -54,6 +49,33 @@ public sealed class ApiHttpClient : IApiHttpClient
         return SendAsync<TResponse>(requestMessage, expectedStatus, cancellationToken);
     }
 
+    public async Task<FileContent> DownloadAsync(
+        string endpoint,
+        IDictionary<string, string?>? headers = null,
+        CancellationToken cancellationToken = default)
+    {
+        var request = BuildRequestMessage(HttpMethod.Get, endpoint, searchParams: null, convertParams: null, headers, body: null);
+        var client = httpClientFactory.CreateClient(ClientsConstants.ApiClient);
+
+        using var response = await client.SendAsync(request, cancellationToken);
+
+        response.EnsureSuccessStatusCode();
+
+        var contentType = response.Content.Headers.ContentType?.ToString() ?? MediaTypeNames.Application.Octet;
+
+        var fileName =
+            response.Content.Headers.ContentDisposition?.FileNameStar
+            ?? response.Content.Headers.ContentDisposition?.FileName
+            ?? "download";
+
+        fileName = fileName.Trim('"');
+
+        var bytes = await response.Content.ReadAsByteArrayAsync(cancellationToken);
+        var content = new MemoryStream(bytes, writable: false);
+
+        return new FileContent(content, contentType, fileName);
+    }
+
     public Task<TResponse> PostAsync<TRequest, TResponse>(
         string endpoint,
         TRequest request,
@@ -63,6 +85,27 @@ public sealed class ApiHttpClient : IApiHttpClient
     {
         var requestMessage = BuildRequestMessage(HttpMethod.Post, endpoint, searchParams: null, convertParams: null, headers, body: request);
         return SendAsync<TResponse>(requestMessage, expectedStatus, cancellationToken);
+    }
+
+    public async Task<TResponse> UploadAsync<TResponse>(
+        string endpoint,
+        FileContent fileContent,
+        IDictionary<string, string?>? headers = null,
+        HttpStatusCode expectedStatus = HttpStatusCode.OK,
+        CancellationToken cancellationToken = default)
+    {
+        var requestMessage = BuildRequestMessage(HttpMethod.Post, endpoint, searchParams: null, convertParams: null, headers, body: null);
+
+        var multipart = new MultipartFormDataContent();
+
+        var streamContent = new StreamContent(fileContent.Content);
+        streamContent.Headers.ContentType = new MediaTypeHeaderValue(fileContent.ContentType);
+
+        multipart.Add(streamContent, "file", fileContent.FileName);
+
+        requestMessage.Content = multipart;
+
+        return await SendAsync<TResponse>(requestMessage, expectedStatus, cancellationToken);
     }
 
     public Task<TResponse> PutAsync<TRequest, TResponse>(
@@ -122,7 +165,7 @@ public sealed class ApiHttpClient : IApiHttpClient
         HttpStatusCode expectedStatus,
         CancellationToken cancellationToken = default)
     {
-        var client = _httpClientFactory.CreateClient(ClientsConstants.ApiClient);
+        var client = httpClientFactory.CreateClient(ClientsConstants.ApiClient);
         var url = request.RequestUri?.ToString() ?? string.Empty;
 
         using var response = await client.SendAsync(request, cancellationToken);

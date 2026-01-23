@@ -31,6 +31,15 @@
 
                     <MudGrid Spacing="3">
 
+                        <MudItem xs="12" Class="d-flex justify-center">
+                            <FileEditor TStorageService="IAvatarsService"
+                                        StorageService="AvatarsService"
+                                        @bind-Key="_model.Avatar"
+                                        OnRegisterSubmitHandler="RegisterAvatarCommit"
+                                        AltText="avatar"
+                                        Label="@ModelType.DisplayNameFor(nameof(UserViewModel.Avatar))" />
+                        </MudItem>
+
                         <MudItem xs="12" md="6" lg="4">
                             <MudTextField T="string"
                                           Label="@ModelType.DisplayNameFor(nameof(UserViewModel.Name))"
