@@ -19,6 +19,7 @@ COPY ["Common/Clients/Common.Clients.DependencyInjection/Common.Clients.Dependen
 COPY ["Common/Clients/Common.Clients.Implementations/Common.Clients.Implementations.csproj", "Common/Clients/Common.Clients.Implementations/"]
 COPY ["Common/Clients/Common.Clients.Interfaces/Common.Clients.Interfaces.csproj", "Common/Clients/Common.Clients.Interfaces/"]
 
+COPY ["Common/Common.Storage.Dtos/Common.Storage.Dtos.csproj", "Common/Common.Storage.Dtos/"]
 COPY ["Common/Common.ConvertParams/Common.ConvertParams.csproj", "Common/Common.ConvertParams/"]
 COPY ["Common/Common.SearchParams/Common.SearchParams.csproj", "Common/Common.SearchParams/"]
 COPY ["Common/Common.Constants/Common.Constants.csproj", "Common/Common.Constants/"]
