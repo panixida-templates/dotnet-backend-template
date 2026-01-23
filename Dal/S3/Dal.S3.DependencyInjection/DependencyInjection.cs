@@ -58,10 +58,10 @@ public static class DependencyInjection
                 options.ServiceUrl = configuration[AppsettingsKeysConstants.S3ServiceUrl]
                     ?? throw new InvalidOperationException($"{AppsettingsKeysConstants.S3ServiceUrl} не задан в конфигурации.");
 
-                options.BucketName = configuration[AppsettingsKeysConstants.S3BucketName] 
+                options.BucketName = configuration[AppsettingsKeysConstants.S3BucketName]
                     ?? throw new InvalidOperationException($"{AppsettingsKeysConstants.S3BucketName} не задан в конфигурации.");
 
-                options.BasePrefix = configuration[AppsettingsKeysConstants.S3BasePrefix] 
+                options.BasePrefix = configuration[AppsettingsKeysConstants.S3BasePrefix]
                     ?? throw new InvalidOperationException($"{AppsettingsKeysConstants.S3BasePrefix} не задан в конфигурации.");
 
                 var ttlRaw = configuration[AppsettingsKeysConstants.S3DefaultPresignTtl];
