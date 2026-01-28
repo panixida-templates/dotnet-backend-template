@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <DisableTransitiveProjectReferences>true</DisableTransitiveProjectReferences>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="EFCore.NamingConventions" Version="10.0.1" />
+        <PackageReference Include="Humanizer" Version="3.0.1" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.2" />
+        <PackageReference Include="Npgsql" Version="10.0.1" />
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0" />
+        <PackageReference Include="Riok.Mapperly" Version="4.3.1" />
+        <PackageReference Include="System.Linq.Dynamic.Core" Version="1.7.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\..\..\Application\Abstractions\Application.Abstractions.Persistence\Application.Abstractions.Persistence.csproj" />
+        <ProjectReference Include="..\..\..\..\Common\Common.Constants\Common.Constants.csproj" />
+        <ProjectReference Include="..\..\..\..\Common\Common.ConvertParams\Common.ConvertParams.csproj" />
+        <ProjectReference Include="..\..\..\..\Common\Common.Exceptions\Common.Exceptions.csproj" />
+        <ProjectReference Include="..\..\..\..\Common\Common.SearchParams\Common.SearchParams.csproj" />
+        <ProjectReference Include="..\..\..\..\Domain\Domain.Entities\Domain.Entities.csproj" />
+        <ProjectReference Include="..\..\..\..\Domain\Domain.Enums\Domain.Enums.csproj" />
+        <ProjectReference Include="..\..\..\..\Domain\Domain.ValueObjects\Domain.ValueObjects.csproj" />
+    </ItemGroup>
+
+</Project>

@@ -8,15 +8,15 @@ public sealed class User(
     Guid id,
     UserRole role,
     string name,
-    Email email,
-    PhoneNumber phone,
+    string email,
+    string phone,
     DateOnly birthday,
     string? avatar) : Entity<Guid>(id)
 {
     public UserRole Role { get; private set; } = role;
     public string Name { get; private set; } = name;
-    public Email Email { get; private set; } = email;
-    public PhoneNumber Phone { get; private set; } = phone;
+    public Email Email { get; private set; } = Email.Create(email);
+    public PhoneNumber Phone { get; private set; } = PhoneNumber.Create(phone);
     public DateOnly Birthday { get; private set; } = birthday;
     public string? Avatar { get; private set; } = avatar;
 
@@ -24,7 +24,9 @@ public sealed class User(
     {
         var years = from.Year - Birthday.Year;
 
-        var hadBirthdayThisYear = from.Month > Birthday.Month || (from.Month == Birthday.Month && from.Day >= Birthday.Day);
+        var hadBirthdayThisYear = from.Month > Birthday.Month
+            || (from.Month == Birthday.Month && from.Day >= Birthday.Day);
+
         if (!hadBirthdayThisYear)
         {
             years--;
@@ -42,9 +44,6 @@ public sealed class User(
 
         Avatar = avatar;
 
-        //AddDomainEvent(
-        //    new UserAvatarChanged(Id, Avatar, occurredOn)
-        //);
+        // AddDomainEvent(new UserAvatarChanged(Id, Avatar, occurredOn));
     }
-
 }

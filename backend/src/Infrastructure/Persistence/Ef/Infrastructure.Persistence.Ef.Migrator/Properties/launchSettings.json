@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Infrastructure.Persistence.Ef": {
+      "commandName": "Project"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker"
+    }
+  }
+}

@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\Common.ConvertParams\Common.ConvertParams.csproj" />
+    <ProjectReference Include="..\..\Common\Common.SearchParams\Common.SearchParams.csproj" />
+    <ProjectReference Include="..\..\Domain\Domain.Entities\Domain.Entities.csproj" />
+    <ProjectReference Include="..\..\Domain\Domain.Enums\Domain.Enums.csproj" />
+    <ProjectReference Include="..\Abstractions\Application.Abstractions.Mediator\Application.Abstractions.Mediator.csproj" />
+    <ProjectReference Include="..\Abstractions\Application.Abstractions.Persistence\Application.Abstractions.Persistence.csproj" />
+  </ItemGroup>
+
+</Project>
