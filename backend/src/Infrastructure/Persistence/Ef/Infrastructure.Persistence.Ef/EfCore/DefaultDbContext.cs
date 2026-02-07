@@ -17,6 +17,7 @@ public sealed class DefaultDbContext(DbContextOptions<DefaultDbContext> options)
     {
         base.OnModelCreating(modelBuilder);
 
+        modelBuilder.UseHiLo();
         RegisterDbModels(modelBuilder, typeof(DefaultDbContext).Assembly);
         ConfigureTableNames(modelBuilder);
         ConfigureGuidKeyGeneration(modelBuilder);

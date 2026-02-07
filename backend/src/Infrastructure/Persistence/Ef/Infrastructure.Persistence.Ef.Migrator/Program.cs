@@ -13,6 +13,6 @@ await Host.CreateDefaultBuilder(args)
     })
     .ConfigureServices((ctx, services) =>
     {
-        services.AddEfDal(ctx.Configuration);
+        services.AddEfRepository(ctx.Configuration);
     })
     .RunMigrationsAsync<DefaultDbContext>();

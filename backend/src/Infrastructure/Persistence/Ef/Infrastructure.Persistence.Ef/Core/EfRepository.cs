@@ -3,6 +3,7 @@
 using Common.Enums;
 using Common.Exceptions;
 using Common.SearchParams.Core;
+
 using Domain.Entities.Core;
 
 using Microsoft.EntityFrameworkCore;
@@ -19,7 +20,7 @@ internal abstract class EfRepository<TDbContext, TId, TDbModel, TEntity, TSearch
     where TEntity : Entity<TId>
     where TSearchParams : BaseSearchParams
     where TConvertParams : class, new()
-    where TMapper : IMapper<TId, TDbModel, TEntity>
+    where TMapper : IWriteMapper<TId, TDbModel, TEntity>
     where TFilter : IFilter<TId, TDbModel, TSearchParams>
     where TInclude : IInclude<TId, TDbModel, TConvertParams>
 {
@@ -46,16 +47,16 @@ internal abstract class EfRepository<TDbContext, TId, TDbModel, TEntity, TSearch
         dbObjects = BuildDbFilter(dbObjects, searchParams);
         dbObjects = BuildDbSort(dbObjects, searchParams);
 
+        dbObjects = BuildDbPagination(dbObjects, searchParams);
+        var entities = (await BuildEntitiesListAsync(dbObjects, convertParams)).ToList();
+
         var searchResult = new SearchResult<TEntity>
         {
             Total = await dbObjects.CountAsync(),
-            Objects = [],
+            Objects = entities,
             RequestedObjectsCount = searchParams.ObjectsCount,
             RequestedPage = searchParams.Page,
         };
-
-        dbObjects = BuildDbPagination(dbObjects, searchParams);
-        searchResult.Objects = await BuildEntitiesListAsync(dbObjects, convertParams);
 
         return searchResult;
     }

@@ -7,7 +7,7 @@ using Riok.Mapperly.Abstractions;
 namespace Infrastructure.Persistence.Ef.Features.Users;
 
 [Mapper]
-internal sealed partial class UsersMapper : IMapper<Guid, UserDbModel, User>
+internal sealed partial class UsersMapper : IWriteMapper<Guid, UserDbModel, User>
 {
     [MapperRequiredMapping(RequiredMappingStrategy.Source)]
     public static partial void ToDbModel(User entity, UserDbModel dbModel);

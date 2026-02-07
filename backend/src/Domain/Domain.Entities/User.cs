@@ -1,5 +1,6 @@
 ﻿using Domain.Entities.Core;
 using Domain.Enums;
+using Domain.Events.Users;
 using Domain.ValueObjects;
 
 namespace Domain.Entities;
@@ -11,7 +12,7 @@ public sealed class User(
     string email,
     string phone,
     DateOnly birthday,
-    string? avatar) : Entity<Guid>(id)
+    string? avatar) : AggregateRoot<Guid>(id)
 {
     public UserRole Role { get; private set; } = role;
     public string Name { get; private set; } = name;
@@ -44,6 +45,6 @@ public sealed class User(
 
         Avatar = avatar;
 
-        // AddDomainEvent(new UserAvatarChanged(Id, Avatar, occurredOn));
+        AddDomainEvent(new UserAvatarChanged(Id, Avatar, occurredOn));
     }
 }

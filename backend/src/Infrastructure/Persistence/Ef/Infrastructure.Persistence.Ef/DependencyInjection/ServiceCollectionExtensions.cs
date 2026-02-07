@@ -15,17 +15,18 @@ namespace Infrastructure.Persistence.Ef.DependencyInjection;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddEfDal(this IServiceCollection serviceCollection, IConfiguration configuration)
+    public static IServiceCollection AddEfRepository(this IServiceCollection serviceCollection, IConfiguration configuration)
     {
         serviceCollection.AddDbContext<DefaultDbContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString(AppsettingsKeysConstants.PostgreSqlConnectionString)).UseSnakeCaseNamingConvention());
 
-        serviceCollection.RegisterDalImplementations(typeof(EfRepository<,,,,,,,,>).Assembly);
+        serviceCollection.AddScoped<IUnitOfWork, EfUnitOfWork<DefaultDbContext>>();
+        serviceCollection.RegisterRepositoryImplementations(typeof(EfRepository<,,,,,,,,>).Assembly);
 
         return serviceCollection;
     }
 
-    private static IServiceCollection RegisterDalImplementations(this IServiceCollection serviceCollection, Assembly assembly)
+    private static IServiceCollection RegisterRepositoryImplementations(this IServiceCollection serviceCollection, Assembly assembly)
     {
         foreach (var dalImplementation in assembly.GetTypes())
         {

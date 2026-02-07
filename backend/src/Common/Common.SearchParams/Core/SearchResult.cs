@@ -3,7 +3,7 @@
 public sealed class SearchResult<T>
 {
     public long Total { get; set; }
-    public IList<T> Objects { get; set; } = [];
+    public IReadOnlyList<T> Objects { get; set; } = [];
     public int RequestedPage { get; set; }
     public int? RequestedObjectsCount { get; set; }
 

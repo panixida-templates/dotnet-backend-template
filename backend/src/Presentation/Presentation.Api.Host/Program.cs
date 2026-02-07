@@ -1,8 +1,7 @@
 using Application.Users.Create;
 
 using Common.Constants;
-
-using Infrastructure.Mediator.Wolverine;
+using Infrastructure.Mediator.Wolverine.DependencyInjection;
 using Infrastructure.Persistence.Ef.DependencyInjection;
 
 using Logging.OpenSearch;
@@ -22,10 +21,10 @@ builder.WebHost.ConfigureKestrel(options =>
 });
 
 //builder.Services.UseBl();
-builder.Services.AddEfDal(builder.Configuration);
+builder.Services.AddEfRepository(builder.Configuration);
 builder.Services.AddHttp();
 builder.Services.AddWolverineMediator();
-builder.Host.UseWolverineMediator(mediatorOnly: true, typeof(CreateUserCommand).Assembly, typeof(DependencyInjection).Assembly);
+builder.Host.UseWolverineMediator(typeof(CreateUserCommand).Assembly);
 
 builder.Services.AddAuthenticationAndAuthorization(builder.Configuration);
 builder.Services.AddSwagger(AppsettingsKeysConstants.ServiceName);
