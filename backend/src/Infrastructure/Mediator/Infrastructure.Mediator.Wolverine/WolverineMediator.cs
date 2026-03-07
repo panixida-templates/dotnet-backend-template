@@ -1,5 +1,7 @@
 ﻿using Application.Abstractions.Mediator;
 
+using Domain.Abstractions;
+
 using Wolverine;
 
 namespace Infrastructure.Mediator.Wolverine;
@@ -22,7 +24,7 @@ public sealed class WolverineMediator(IMessageBus messageBus) : IMediator
     }
 
     public Task PublishAsync<TEvent>(TEvent @event, CancellationToken cancellationToken = default)
-        where TEvent : IEvent
+        where TEvent : DomainEvent
     {
         return messageBus.PublishAsync(@event).AsTask();
     }

@@ -3,5 +3,5 @@
 public abstract record BaseDto<TId>
     where TId : struct
 {
-    public required TId Id { get; set; }
+    public TId Id { get; set; }
 }

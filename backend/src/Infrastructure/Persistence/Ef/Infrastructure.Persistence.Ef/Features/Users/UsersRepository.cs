@@ -1,17 +1,14 @@
-﻿using Application.Abstractions.Persistence;
+﻿using Application.Users.Abstractions;
 
-using Common.ConvertParams;
-using Common.SearchParams;
-
-using Domain.Entities;
+using Domain.Users;
 
 using Infrastructure.Persistence.Ef.Core;
 using Infrastructure.Persistence.Ef.EfCore;
 
 namespace Infrastructure.Persistence.Ef.Features.Users;
 
-internal sealed class UsersRepository(DefaultDbContext context) :
-    EfRepository<DefaultDbContext, Guid, UserDbModel, User, UsersSearchParams, UsersConvertParams, UsersMapper, UsersFilter, UsersInclude>(context),
+internal sealed class UsersRepository(DefaultDbContext dbContext) :
+    Repository<DefaultDbContext, Guid, UserDbModel, User, UserMapper>(dbContext),
     IUsersRepository
 {
 }

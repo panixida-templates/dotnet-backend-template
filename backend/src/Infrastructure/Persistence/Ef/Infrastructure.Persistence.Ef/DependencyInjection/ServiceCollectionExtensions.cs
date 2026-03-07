@@ -1,4 +1,5 @@
-﻿using Application.Abstractions.Persistence.Core;
+﻿using Application.Abstractions.Persistence;
+using Application.Abstractions.Queries;
 
 using Common.Constants;
 
@@ -20,8 +21,8 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddDbContext<DefaultDbContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString(AppsettingsKeysConstants.PostgreSqlConnectionString)).UseSnakeCaseNamingConvention());
 
-        serviceCollection.AddScoped<IUnitOfWork, EfUnitOfWork<DefaultDbContext>>();
-        serviceCollection.RegisterRepositoryImplementations(typeof(EfRepository<,,,,,,,,>).Assembly);
+        serviceCollection.AddScoped<IUnitOfWork, UnitOfWork<DefaultDbContext>>();
+        serviceCollection.RegisterRepositoryImplementations(typeof(Repository<,,,,>).Assembly);
 
         return serviceCollection;
     }
@@ -45,7 +46,9 @@ public static class ServiceCollectionExtensions
 
                     return iface.GetInterfaces().Any(parent =>
                     {
-                        return parent.IsGenericType && parent.GetGenericTypeDefinition() == typeof(IRepository<,,,>);
+                        return parent.IsGenericType
+                            && (parent.GetGenericTypeDefinition() == typeof(IRepository<,>)
+                                || parent.GetGenericTypeDefinition() == typeof(IQueryService<,,,>));
                     });
                 })
                 .ToArray();

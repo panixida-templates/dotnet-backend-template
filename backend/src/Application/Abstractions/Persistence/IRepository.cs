@@ -1,0 +1,13 @@
+﻿using Domain.Abstractions;
+
+namespace Application.Abstractions.Persistence;
+
+public interface IRepository<TId, TAggregateRoot>
+    where TId : struct
+    where TAggregateRoot : AggregateRoot<TId>
+{
+    Task<TAggregateRoot> GetByIdAsync(TId id, CancellationToken cancellationToken);
+    void Add(TAggregateRoot aggregateRoot);
+    void Update(TAggregateRoot aggregateRoot);
+    void Delete(TAggregateRoot aggregateRoot);
+}

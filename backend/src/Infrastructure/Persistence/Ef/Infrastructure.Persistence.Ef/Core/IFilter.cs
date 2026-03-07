@@ -1,4 +1,4 @@
-﻿using Common.SearchParams.Core;
+﻿using Application.Abstractions.Queries;
 
 namespace Infrastructure.Persistence.Ef.Core;
 

@@ -1,15 +1,13 @@
-﻿using Domain.Enums;
-
-using Infrastructure.Persistence.Ef.Core;
+﻿using Infrastructure.Persistence.Ef.Core;
 
 namespace Infrastructure.Persistence.Ef.Features.Users;
 
-internal sealed class UserDbModel : DbModel<Guid>
+internal sealed class UserDbModel : AuditableDbModel<Guid>
 {
-    public UserRole Role { get; set; }
+    public string Role { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
     public string Phone { get; set; } = string.Empty;
-    public DateOnly Birthday { get; set; }
+    public DateOnly BirthDate { get; set; }
     public string? Avatar { get; set; }
 }

@@ -1,18 +1,19 @@
-﻿using Domain.Entities;
-
-using Pl.Api.Http.Mappers.Core;
+﻿using Pl.Api.Http.Mappers.Core;
 
 using Presentation.Api.Http.Dtos.Models;
 
 using Riok.Mapperly.Abstractions;
 
+using ApplicationUserDto = Application.Contracts.Dtos.Users.UserDto;
+
 namespace Presentation.Api.Http.Mappers;
 
 [Mapper]
-public sealed partial class UsersMapper : IMapper<UserDto, User>
+public sealed partial class UsersMapper : IMapper<UserDto, ApplicationUserDto>
 {
-    public static partial UserDto ToDto(User entity);
-    public static partial IEnumerable<UserDto> ToDto(IEnumerable<User> entities);
-    public static partial User ToEntity(UserDto dto);
-    public static partial IEnumerable<User> ToEntity(IEnumerable<UserDto> dtos);
+    public static partial UserDto ToDto(ApplicationUserDto entity);
+    public static partial IEnumerable<UserDto> ToDto(IEnumerable<ApplicationUserDto> entities);
+
+    public static partial ApplicationUserDto ToEntity(UserDto dto);
+    public static partial IEnumerable<ApplicationUserDto> ToEntity(IEnumerable<UserDto> dtos);
 }

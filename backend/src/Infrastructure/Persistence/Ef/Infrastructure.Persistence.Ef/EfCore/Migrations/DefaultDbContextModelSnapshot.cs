@@ -20,7 +20,10 @@ namespace Infrastructure.Persistence.Ef.EfCore.Migrations
                 .HasAnnotation("ProductVersion", "10.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+            NpgsqlModelBuilderExtensions.UseHiLo(modelBuilder, "EntityFrameworkHiLoSequence");
+
+            modelBuilder.HasSequence("EntityFrameworkHiLoSequence")
+                .IncrementsBy(10);
 
             modelBuilder.Entity("Infrastructure.Persistence.Ef.Features.Users.UserDbModel", b =>
                 {
@@ -30,9 +33,9 @@ namespace Infrastructure.Persistence.Ef.EfCore.Migrations
                         .HasColumnName("id")
                         .HasDefaultValueSql("gen_random_uuid()");
 
-                    b.Property<string>("Avatar")
+                    b.Property<string>("AvatarKey")
                         .HasColumnType("text")
-                        .HasColumnName("avatar");
+                        .HasColumnName("avatar_key");
 
                     b.Property<DateOnly>("Birthday")
                         .HasColumnType("date")

@@ -18,14 +18,10 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\..\..\Application\Abstractions\Application.Abstractions.Persistence\Application.Abstractions.Persistence.csproj" />
+        <ProjectReference Include="..\..\..\..\Application\Application.csproj" />
         <ProjectReference Include="..\..\..\..\Common\Common.Constants\Common.Constants.csproj" />
-        <ProjectReference Include="..\..\..\..\Common\Common.ConvertParams\Common.ConvertParams.csproj" />
         <ProjectReference Include="..\..\..\..\Common\Common.Exceptions\Common.Exceptions.csproj" />
-        <ProjectReference Include="..\..\..\..\Common\Common.SearchParams\Common.SearchParams.csproj" />
-        <ProjectReference Include="..\..\..\..\Domain\Domain.Entities\Domain.Entities.csproj" />
-        <ProjectReference Include="..\..\..\..\Domain\Domain.Enums\Domain.Enums.csproj" />
-        <ProjectReference Include="..\..\..\..\Domain\Domain.ValueObjects\Domain.ValueObjects.csproj" />
+        <ProjectReference Include="..\..\..\..\Domain\Domain.csproj" />
     </ItemGroup>
 
 </Project>

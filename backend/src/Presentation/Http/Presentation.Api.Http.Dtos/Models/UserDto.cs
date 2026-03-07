@@ -6,10 +6,10 @@ namespace Presentation.Api.Http.Dtos.Models;
 
 public sealed record UserDto : BaseDto<Guid>
 {
-    public required UserRole Role { get; set; }
-    public required string Name { get; set; }
-    public required string Email { get; set; }
-    public required string Phone { get; set; }
-    public required DateOnly Birthday { get; set; }
-    public string? Avatar { get; set; }
+    public UserRole Role { get; set; }
+    public string Name { get; set; }
+    public string Email { get; set; }
+    public string Phone { get; set; }
+    public DateOnly Birthday { get; set; }
+    public string? AvatarKey { get; set; }
 }

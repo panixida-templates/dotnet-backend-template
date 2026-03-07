@@ -11,8 +11,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\..\Application\Abstractions\Application.Abstractions.Mediator\Application.Abstractions.Mediator.csproj" />
-      <ProjectReference Include="..\..\..\Application\Application\Application.csproj" />
       <ProjectReference Include="..\..\..\Common\Common.Constants\Common.Constants.csproj" />
       <ProjectReference Include="..\..\..\Common\Common.ConvertParams\Common.ConvertParams.csproj" />
       <ProjectReference Include="..\..\..\Common\Common.SearchParams\Common.SearchParams.csproj" />

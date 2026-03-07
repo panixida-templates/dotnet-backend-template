@@ -1,4 +1,4 @@
-using Application.Users.Create;
+using Application.Users.CommandHandlers;
 
 using Common.Constants;
 using Infrastructure.Mediator.Wolverine.DependencyInjection;
@@ -24,7 +24,7 @@ builder.WebHost.ConfigureKestrel(options =>
 builder.Services.AddEfRepository(builder.Configuration);
 builder.Services.AddHttp();
 builder.Services.AddWolverineMediator();
-builder.Host.UseWolverineMediator(typeof(CreateUserCommand).Assembly);
+builder.Host.UseWolverineMediator(typeof(CreateUserHandler).Assembly);
 
 builder.Services.AddAuthenticationAndAuthorization(builder.Configuration);
 builder.Services.AddSwagger(AppsettingsKeysConstants.ServiceName);
