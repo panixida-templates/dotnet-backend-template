@@ -20,10 +20,10 @@ public sealed class CreateUserHandler(
             name: UserName.Create(command.Name),
             email: Email.Create(command.Email),
             phone: PhoneNumber.Create(command.Phone),
-            birthDate: BirthDate.Create(command.Birthday),
+            birthDate: BirthDate.Create(command.BirthDate),
             avatar: Avatar.Create(command.Avatar));
 
-        usersRepository.Add(user, cancellationToken);
+        usersRepository.Add(user);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return user.Id;

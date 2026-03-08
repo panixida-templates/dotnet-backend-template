@@ -8,5 +8,5 @@ public sealed record CreateUserCommand(
     string Name,
     string Email,
     string Phone,
-    DateOnly Birthday,
+    DateOnly BirthDate,
     string? Avatar) : ICommand<Guid>;

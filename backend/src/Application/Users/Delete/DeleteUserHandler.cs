@@ -11,7 +11,7 @@ public sealed class DeleteUserHandler(
     public async Task HandleAsync(DeleteUserCommand command, CancellationToken cancellationToken)
     {
         var user = await usersRepository.GetByIdAsync(command.Id, cancellationToken);
-        usersRepository.Delete(user, cancellationToken);
+        usersRepository.Delete(user);
         await unitOfWork.SaveChangesAsync(cancellationToken);
     }
 }

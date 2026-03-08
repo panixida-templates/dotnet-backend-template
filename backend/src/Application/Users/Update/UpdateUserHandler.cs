@@ -7,7 +7,7 @@ using Domain.Users.ValueObjects;
 
 namespace Application.Users.Update;
 
-internal sealed class UpdateUserHandler(
+public sealed class UpdateUserHandler(
     IUsersRepository usersRepository,
     IUnitOfWork unitOfWork) : ICommandHandler<UpdateUserCommand>
 {
@@ -22,7 +22,7 @@ internal sealed class UpdateUserHandler(
         user.ChangeBirthDate(BirthDate.Create(command.BirthDate));
         user.ChangeAvatar(Avatar.Create(command.Avatar));
 
-        usersRepository.Update(user, cancellationToken);
+        usersRepository.Update(user);
         await unitOfWork.SaveChangesAsync(cancellationToken);
     }
 }

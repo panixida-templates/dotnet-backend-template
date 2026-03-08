@@ -7,6 +7,6 @@ public sealed class GetByIdUserHandler(IUsersQueryService usersQueryService) : I
 {
     public Task<GetByIdUserDto> HandleAsync(GetByIdUserQuery query, CancellationToken cancellationToken)
     {
-        return usersQueryService.GetAsync(query.Id, cancellationToken);
+        return usersQueryService.GetByIdAsync(query.Id, cancellationToken);
     }
 }
