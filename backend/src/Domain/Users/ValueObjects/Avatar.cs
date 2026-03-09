@@ -1,4 +1,5 @@
 ﻿using Domain.Abstractions;
+using Domain.Abstractions.ResultPattern;
 
 namespace Domain.Users.ValueObjects;
 
@@ -13,23 +14,23 @@ public sealed class Avatar : ValueObject
 
     public string Value { get; }
 
-    public static Avatar? Create(string? value)
+    public static Result<Avatar?> Create(string? value)
     {
         if (string.IsNullOrWhiteSpace(value))
         {
-            return null;
+            return Result.Success<Avatar?>(null);
         }
 
-        value = value.Trim();
+        var normalizedValue = value.Trim();
 
-        if (value.Length > MaxLength)
+        if (normalizedValue.Length > MaxLength)
         {
-            throw new ArgumentOutOfRangeException(
-                nameof(value),
-                $"Avatar cannot be longer than {MaxLength} characters.");
+            return Result.Failure<Avatar?>(
+                Error.Validation($"Avatar cannot be longer than {MaxLength} characters.")
+                .WithField(nameof(Avatar)));
         }
 
-        return new Avatar(value);
+        return Result.Success<Avatar?>(new Avatar(normalizedValue));
     }
 
     public override string ToString()

@@ -1,4 +1,5 @@
 ﻿using Domain.Abstractions;
+using Domain.Abstractions.ResultPattern;
 
 namespace Domain.Users.ValueObjects;
 
@@ -13,18 +14,25 @@ public sealed class UserName : ValueObject
 
     public string Value { get; }
 
-    public static UserName Create(string value)
+    public static Result<UserName> Create(string value)
     {
-        value = value.Trim();
-
-        if (value.Length > MaxLength)
+        if (string.IsNullOrWhiteSpace(value))
         {
-            throw new ArgumentOutOfRangeException(
-                nameof(value),
-                $"User name cannot be longer than {MaxLength} characters.");
+            return Result.Failure<UserName>(
+                Error.Validation("User name cannot be empty.")
+                .WithField(nameof(PhoneNumber)));
         }
 
-        return new UserName(value);
+        var normalizedValue = value.Trim();
+
+        if (normalizedValue.Length > MaxLength)
+        {
+            return Result.Failure<UserName>(
+                Error.Validation($"User name cannot be longer than {MaxLength} characters.")
+                .WithField(nameof(PhoneNumber)));
+        }
+
+        return Result.Success(new UserName(normalizedValue));
     }
 
     public override string ToString()

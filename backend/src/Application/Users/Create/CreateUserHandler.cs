@@ -2,6 +2,7 @@
 using Application.Abstractions.Persistence;
 using Application.Users.Abstractions;
 
+using Domain.Abstractions.ResultPattern;
 using Domain.Users;
 using Domain.Users.Enumerations;
 using Domain.Users.ValueObjects;
@@ -10,22 +11,42 @@ namespace Application.Users.Create;
 
 public sealed class CreateUserHandler(
     IUsersRepository usersRepository,
-    IUnitOfWork unitOfWork) : ICommandHandler<CreateUserCommand, Guid>
+    IUnitOfWork unitOfWork) : ICommandHandler<CreateUserCommand, Result<Guid>>
 {
-    public async Task<Guid> HandleAsync(CreateUserCommand command, CancellationToken cancellationToken)
+    public async Task<Result<Guid>> HandleAsync(CreateUserCommand command, CancellationToken cancellationToken)
     {
-        var user = User.Create(
-            id: command.Id,
-            role: UserRole.FromName(command.Role),
-            name: UserName.Create(command.Name),
-            email: Email.Create(command.Email),
-            phone: PhoneNumber.Create(command.Phone),
-            birthDate: BirthDate.Create(command.BirthDate),
-            avatar: Avatar.Create(command.Avatar));
+        var idResult = UserId.Create(command.Id);
+        var roleResult = UserRole.Create(command.Role);
+        var nameResult = UserName.Create(command.Name);
+        var emailResult = Email.Create(command.Email);
+        var phoneResult = PhoneNumber.Create(command.Phone);
+        var birthDateResult = BirthDate.Create(command.BirthDate);
+        var avatarResult = Avatar.Create(command.Avatar);
 
-        usersRepository.Add(user);
-        await unitOfWork.SaveChangesAsync(cancellationToken);
-
-        return user.Id;
+        return await Result.Combine(
+                idResult,
+                roleResult,
+                nameResult,
+                emailResult,
+                phoneResult,
+                birthDateResult,
+                avatarResult)
+            .Bind(() =>
+            {
+                return User.Create(
+                    idResult.Value,
+                    roleResult.Value,
+                    nameResult.Value,
+                    emailResult.Value,
+                    phoneResult.Value,
+                    birthDateResult.Value,
+                    avatarResult.Value);
+            })
+            .Tap(usersRepository.Add)
+            .BindAsync(async user =>
+            {
+                await unitOfWork.SaveChangesAsync(cancellationToken);
+                return Result.Success(user.Id.Value);
+            });
     }
 }

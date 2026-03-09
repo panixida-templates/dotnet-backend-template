@@ -119,6 +119,23 @@ public abstract class Enumeration<TEnumeration>(int id, string name) : IEquatabl
             $"'{name}' is not a valid name in {typeof(TEnumeration).Name}");
     }
 
+    public static bool TryFromId(int id, out TEnumeration? item)
+    {
+        return Cache.Value.ById.TryGetValue(id, out item);
+    }
+
+    public static bool TryFromName(string name, out TEnumeration? item)
+    {
+        item = null;
+
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            return false;
+        }
+
+        return Cache.Value.ByName.TryGetValue(name.Trim(), out item);
+    }
+
     private static int Compare(Enumeration<TEnumeration>? left, Enumeration<TEnumeration>? right)
     {
         if (ReferenceEquals(left, right))

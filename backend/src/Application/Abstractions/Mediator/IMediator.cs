@@ -1,12 +1,12 @@
 ﻿using Domain.Abstractions;
+using Domain.Abstractions.ResultPattern;
 
 namespace Application.Abstractions.Mediator;
 
 public interface IMediator
 {
-    Task SendAsync(ICommand command, CancellationToken cancellationToken = default);
-
-    Task<TResult> SendAsync<TResult>(ICommand<TResult> command, CancellationToken cancellationToken = default);
+    Task<TResult> SendAsync<TResult>(ICommand<TResult> command, CancellationToken cancellationToken = default)
+        where TResult : Result;
 
     Task<TResult> QueryAsync<TResult>(IQuery<TResult> query, CancellationToken cancellationToken = default);
 

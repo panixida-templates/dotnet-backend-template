@@ -1,6 +1,7 @@
-﻿using System.Text;
+﻿using Domain.Abstractions;
+using Domain.Abstractions.ResultPattern;
 
-using Domain.Abstractions;
+using System.Text;
 
 namespace Domain.Users.ValueObjects;
 
@@ -13,19 +14,33 @@ public sealed class PhoneNumber : ValueObject
 
     public string Value { get; }
 
-    public static PhoneNumber Create(string value)
+    public static Result<PhoneNumber> Create(string value)
     {
-        var normalizedValue = Normalize(value);
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return Result.Failure<PhoneNumber>(
+                Error.Validation("Phone number cannot be empty.")
+                .WithField(nameof(PhoneNumber)));
+        }
+
+        var normalizeResult = Normalize(value);
+
+        if (normalizeResult.IsFailure)
+        {
+            return Result.Failure<PhoneNumber>(normalizeResult.Errors);
+        }
+
+        var normalizedValue = normalizeResult.Value;
         var digitsCount = CountDigits(normalizedValue);
 
         if (digitsCount < 8 || digitsCount > 15)
         {
-            throw new ArgumentException(
-                "Phone number must contain from 8 to 15 digits.",
-                nameof(value));
+            return Result.Failure<PhoneNumber>(
+                Error.Validation("Phone number must contain from 8 to 15 digits.")
+                .WithField(nameof(PhoneNumber)));
         }
 
-        return new PhoneNumber(normalizedValue);
+        return Result.Success(new PhoneNumber(normalizedValue));
     }
 
     public override string ToString()
@@ -38,7 +53,7 @@ public sealed class PhoneNumber : ValueObject
         yield return Value;
     }
 
-    private static string Normalize(string value)
+    private static Result<string> Normalize(string value)
     {
         var trimmedValue = value.Trim();
         var builder = new StringBuilder(trimmedValue.Length);
@@ -61,10 +76,12 @@ public sealed class PhoneNumber : ValueObject
 
         if (builder.Length == 0)
         {
-            throw new ArgumentException("Phone number has invalid format.", nameof(value));
+            return Result.Failure<string>(
+                Error.Validation("Phone number has invalid format.")
+                .WithField(nameof(PhoneNumber)));
         }
 
-        return builder.ToString();
+        return Result.Success(builder.ToString());
     }
 
     private static int CountDigits(string value)

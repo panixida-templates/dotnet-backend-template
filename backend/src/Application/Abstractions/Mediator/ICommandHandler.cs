@@ -1,13 +1,10 @@
-﻿namespace Application.Abstractions.Mediator;
+﻿using Domain.Abstractions.ResultPattern;
 
-internal interface ICommandHandler<in TCommand>
-    where TCommand : ICommand
-{
-    Task HandleAsync(TCommand command, CancellationToken cancellationToken);
-}
+namespace Application.Abstractions.Mediator;
 
 internal interface ICommandHandler<in TCommand, TResult>
     where TCommand : ICommand<TResult>
+    where TResult : Result
 {
     Task<TResult> HandleAsync(TCommand command, CancellationToken cancellationToken);
 }

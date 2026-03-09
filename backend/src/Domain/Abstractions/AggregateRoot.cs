@@ -1,6 +1,6 @@
 ﻿namespace Domain.Abstractions;
 
-public abstract class AggregateRoot<TId>(TId id) : Entity<TId>(id)
+public abstract class AggregateRoot<TId>(TId id) : Entity<TId>(id), IAggregateRoot
     where TId : struct
 {
     private readonly List<DomainEvent> _domainEvents = [];

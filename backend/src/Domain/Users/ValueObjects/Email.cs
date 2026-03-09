@@ -1,6 +1,7 @@
-﻿using System.Net.Mail;
+﻿using Domain.Abstractions;
+using Domain.Abstractions.ResultPattern;
 
-using Domain.Abstractions;
+using System.Net.Mail;
 
 namespace Domain.Users.ValueObjects;
 
@@ -15,15 +16,22 @@ public sealed class Email : ValueObject
 
     public string Value { get; }
 
-    public static Email Create(string value)
+    public static Result<Email> Create(string value)
     {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return Result.Failure<Email>(
+                Error.Validation("Email cannot be empty.")
+                .WithField(nameof(Email)));
+        }
+
         var normalizedValue = value.Trim().ToLowerInvariant();
 
         if (normalizedValue.Length > MaxLength)
         {
-            throw new ArgumentOutOfRangeException(
-                nameof(value),
-                $"Email cannot be longer than {MaxLength} characters.");
+            return Result.Failure<Email>(
+                Error.Validation($"Email cannot be longer than {MaxLength} characters.")
+                .WithField(nameof(Email)));
         }
 
         try
@@ -32,15 +40,19 @@ public sealed class Email : ValueObject
 
             if (!string.Equals(mailAddress.Address, normalizedValue, StringComparison.Ordinal))
             {
-                throw new ArgumentException("Email has invalid format.", nameof(value));
+                return Result.Failure<Email>(
+                    Error.Validation("Email has invalid format.")
+                    .WithField(nameof(Email)));
             }
         }
         catch (FormatException)
         {
-            throw new ArgumentException("Email has invalid format.", nameof(value));
+            return Result.Failure<Email>(
+                Error.Validation("Email has invalid format.")
+                .WithField(nameof(Email)));
         }
 
-        return new Email(normalizedValue);
+        return Result.Success(new Email(normalizedValue));
     }
 
     public override string ToString()

@@ -22,7 +22,6 @@
     <ItemGroup>
         <ProjectReference Include="..\..\..\..\Application\Application.csproj" />
         <ProjectReference Include="..\..\..\..\Common\Common.Constants\Common.Constants.csproj" />
-        <ProjectReference Include="..\..\..\..\Common\Common.Exceptions\Common.Exceptions.csproj" />
         <ProjectReference Include="..\..\..\..\Domain\Domain.csproj" />
     </ItemGroup>
 

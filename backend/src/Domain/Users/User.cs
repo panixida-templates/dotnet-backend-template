@@ -1,16 +1,17 @@
 ﻿using Domain.Abstractions;
+using Domain.Abstractions.ResultPattern;
 using Domain.Users.Enumerations;
 using Domain.Users.Events;
 using Domain.Users.ValueObjects;
 
 namespace Domain.Users;
 
-public sealed class User : AggregateRoot<Guid>
+public sealed class User : AggregateRoot<UserId>
 {
     private const int MinimumAge = 18;
 
     private User(
-        Guid id,
+        UserId id,
         UserRole role,
         UserName name,
         Email email,
@@ -34,8 +35,8 @@ public sealed class User : AggregateRoot<Guid>
     public BirthDate BirthDate { get; private set; }
     public Avatar? Avatar { get; private set; }
 
-    public static User Create(
-        Guid id,
+    public static Result<User> Create(
+        UserId id,
         UserRole role,
         UserName name,
         Email email,
@@ -43,7 +44,12 @@ public sealed class User : AggregateRoot<Guid>
         BirthDate birthDate,
         Avatar? avatar)
     {
-        EnsureBirthDateIsValid(birthDate);
+        var birthDateValidationResult = ValidateBirthDate(birthDate);
+
+        if (birthDateValidationResult.IsFailure)
+        {
+            return Result.Failure<User>(birthDateValidationResult.Errors);
+        }
 
         var user = new User(
             id,
@@ -54,18 +60,7 @@ public sealed class User : AggregateRoot<Guid>
             birthDate,
             avatar);
 
-        user.AddDomainEvent(
-            new UserCreated(
-                user.Id,
-                user.Role.Id,
-                user.Role.Name,
-                user.Name.Value,
-                user.Email.Value,
-                user.Phone.Value,
-                user.BirthDate.Value,
-                user.Avatar?.Value));
-
-        return user;
+        return Result.Success(user);
     }
 
     public int GetAge(DateOnly from)
@@ -79,17 +74,7 @@ public sealed class User : AggregateRoot<Guid>
         {
             return;
         }
-
-        var oldRole = Role;
         Role = role;
-
-        AddDomainEvent(
-            new UserRoleChanged(
-                Id,
-                oldRole.Id,
-                oldRole.Name,
-                Role.Id,
-                Role.Name));
     }
 
     public void ChangeName(UserName name)
@@ -98,15 +83,7 @@ public sealed class User : AggregateRoot<Guid>
         {
             return;
         }
-
-        var oldName = Name;
         Name = name;
-
-        AddDomainEvent(
-            new UserNameChanged(
-                Id,
-                oldName.Value,
-                Name.Value));
     }
 
     public void ChangeEmail(Email email)
@@ -122,8 +99,8 @@ public sealed class User : AggregateRoot<Guid>
         AddDomainEvent(
             new UserEmailChanged(
                 Id,
-                oldEmail.Value,
-                Email.Value));
+                oldEmail,
+                Email));
     }
 
     public void ChangePhone(PhoneNumber phone)
@@ -132,34 +109,25 @@ public sealed class User : AggregateRoot<Guid>
         {
             return;
         }
-
-        var oldPhone = Phone;
         Phone = phone;
-
-        AddDomainEvent(
-            new UserPhoneChanged(
-                Id,
-                oldPhone.Value,
-                Phone.Value));
     }
 
-    public void ChangeBirthDate(BirthDate birthDate)
+    public Result ChangeBirthDate(BirthDate birthDate)
     {
-        EnsureBirthDateIsValid(birthDate);
+        var birthDateValidationResult = ValidateBirthDate(birthDate);
+
+        if (birthDateValidationResult.IsFailure)
+        {
+            return birthDateValidationResult;
+        }
 
         if (BirthDate == birthDate)
         {
-            return;
+            return Result.Success();
         }
 
-        var oldBirthDate = BirthDate;
         BirthDate = birthDate;
-
-        AddDomainEvent(
-            new UserBirthDateChanged(
-                Id,
-                oldBirthDate.Value,
-                BirthDate.Value));
+        return Result.Success();
     }
 
     public void ChangeAvatar(Avatar? avatar)
@@ -168,20 +136,12 @@ public sealed class User : AggregateRoot<Guid>
         {
             return;
         }
-
-        var oldAvatar = Avatar;
         Avatar = avatar;
-
-        AddDomainEvent(
-            new UserAvatarChanged(
-                Id,
-                oldAvatar?.Value,
-                Avatar?.Value));
     }
 
-    private static void EnsureBirthDateIsValid(BirthDate birthDate)
+    private static Result ValidateBirthDate(BirthDate birthDate)
     {
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
-        birthDate.EnsureAtLeast(MinimumAge, today);
+        return birthDate.EnsureAtLeast(MinimumAge, today);
     }
 }

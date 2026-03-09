@@ -1,5 +1,7 @@
 ﻿using Application.Abstractions.Mediator;
 
+using Domain.Abstractions.ResultPattern;
+
 namespace Application.Users.Create;
 
 public sealed record CreateUserCommand(
@@ -9,4 +11,4 @@ public sealed record CreateUserCommand(
     string Email,
     string Phone,
     DateOnly BirthDate,
-    string? Avatar) : ICommand<Guid>;
+    string? Avatar) : ICommand<Result<Guid>>;

@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
+using Presentation.Http.Common;
+
 namespace Presentation.Http.Features.Users.Update;
 
 internal static class UpdateUserEndpoint
@@ -14,7 +16,8 @@ internal static class UpdateUserEndpoint
             .WithName("UpdateUser")
             .WithSummary("Update user")
             .Produces(StatusCodes.Status204NoContent)
-            .ProducesValidationProblem(StatusCodes.Status400BadRequest);
+            .ProducesValidationProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status404NotFound);
 
         return group;
     }
@@ -26,7 +29,8 @@ internal static class UpdateUserEndpoint
         CancellationToken cancellationToken)
     {
         var command = UpdateUserMapper.ToCommand(request, id);
-        await mediator.SendAsync(command, cancellationToken);
-        return TypedResults.NoContent();
+        var result = await mediator.SendAsync(command, cancellationToken);
+
+        return result.ToHttpResult(TypedResults.NoContent);
     }
 }

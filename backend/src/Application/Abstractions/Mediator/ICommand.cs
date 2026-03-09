@@ -1,9 +1,8 @@
-﻿namespace Application.Abstractions.Mediator;
+﻿using Domain.Abstractions.ResultPattern;
 
-public interface ICommand
-{
-}
+namespace Application.Abstractions.Mediator;
 
-public interface ICommand<out TResult> : ICommand
+public interface ICommand<out TResult>
+    where TResult : Result
 {
 }

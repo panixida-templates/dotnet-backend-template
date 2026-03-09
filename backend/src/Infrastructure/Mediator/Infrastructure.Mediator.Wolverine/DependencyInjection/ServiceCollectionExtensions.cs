@@ -12,8 +12,6 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddWolverineMediator(this IServiceCollection services)
     {
-        ArgumentNullException.ThrowIfNull(services);
-
         services.AddScoped<IMediator, WolverineMediator>();
 
         return services;
@@ -21,8 +19,6 @@ public static class ServiceCollectionExtensions
 
     public static IHostBuilder UseWolverineMediator(this IHostBuilder hostBuilder, params Assembly[] discoveryAssemblies)
     {
-        ArgumentNullException.ThrowIfNull(hostBuilder);
-
         hostBuilder.UseWolverine(options =>
         {
             options.Durability.Mode = DurabilityMode.MediatorOnly;

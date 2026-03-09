@@ -1,7 +1,5 @@
 ﻿using Application.Abstractions.Persistence;
 
-using Common.Exceptions;
-
 using Domain.Abstractions;
 
 using Microsoft.EntityFrameworkCore;
@@ -14,16 +12,19 @@ internal abstract class Repository<TDbContext, TId, TDbModel, TAggregateRoot, TM
     where TDbContext : DbContext
     where TId : struct
     where TDbModel : DbModel<TId>, new()
-    where TAggregateRoot : AggregateRoot<TId>
+    where TAggregateRoot : class, IAggregateRoot
     where TMapper : IEntityMapper<TId, TDbModel, TAggregateRoot>
 {
-    public virtual async Task<TAggregateRoot> GetByIdAsync(TId id, CancellationToken cancellationToken)
+    public virtual async Task<TAggregateRoot?> GetByIdAsync(TId id, CancellationToken cancellationToken)
     {
         var dbObjects = dbContext.Set<TDbModel>().AsNoTracking();
         dbObjects = QueryableExtensions<TId, TDbModel>.ApplyGetByIdFilter(dbObjects, id);
 
-        var dbObject = await dbObjects.FirstOrDefaultAsync(cancellationToken)
-            ?? throw new NotFoundException($"{typeof(TDbModel).Name} с id={id} не найдена");
+        var dbObject = await dbObjects.FirstOrDefaultAsync(cancellationToken);
+        if (dbObject is null)
+        {
+            return null;
+        }
 
         return TMapper.ToEntity(dbObject);
     }

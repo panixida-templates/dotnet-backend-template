@@ -1,7 +1,5 @@
 ﻿using Application.Abstractions.Queries;
 
-using Common.Exceptions;
-
 using Microsoft.EntityFrameworkCore;
 
 using System.Linq.Dynamic.Core;
@@ -23,15 +21,18 @@ internal abstract class QueryService
 {
     private static readonly bool IsAuditable = typeof(AuditableDbModel<TId>).IsAssignableFrom(typeof(TDbModel));
 
-    public virtual async Task<TGetByIdDto> GetByIdAsync(TId id, CancellationToken cancellationToken)
+    public virtual async Task<TGetByIdDto?> GetByIdAsync(TId id, CancellationToken cancellationToken)
     {
         var dbObjects = dbContext.Set<TDbModel>().AsNoTracking();
         dbObjects = QueryableExtensions<TId, TDbModel>.ApplyGetByIdFilter(dbObjects, id);
 
         var dtoQuery = TGetByIdMapper.ProjectTo(dbObjects);
 
-        var dto = await dtoQuery.FirstOrDefaultAsync(cancellationToken)
-            ?? throw new NotFoundException($"{typeof(TDbModel).Name} с id={id} не найдена");
+        var dto = await dtoQuery.FirstOrDefaultAsync(cancellationToken);
+        if (dto is null)
+        {
+            return null;
+        }
 
         return dto;
     }

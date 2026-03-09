@@ -1,4 +1,5 @@
 ﻿using Domain.Abstractions;
+using Domain.Abstractions.ResultPattern;
 
 namespace Domain.Users.ValueObjects;
 
@@ -11,18 +12,18 @@ public sealed class BirthDate : ValueObject
 
     public DateOnly Value { get; }
 
-    public static BirthDate Create(DateOnly value)
+    public static Result<BirthDate> Create(DateOnly value)
     {
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
 
         if (value > today)
         {
-            throw new ArgumentOutOfRangeException(
-                nameof(value),
-                "Birth date cannot be in the future.");
+            return Result.Failure<BirthDate>(
+                Error.Validation("Birth date cannot be in the future.")
+                .WithField(nameof(BirthDate)));
         }
 
-        return new BirthDate(value);
+        return Result.Success(new BirthDate(value));
     }
 
     public int GetAge(DateOnly onDate)
@@ -52,13 +53,16 @@ public sealed class BirthDate : ValueObject
         return GetAge(onDate) >= age;
     }
 
-    public void EnsureAtLeast(int age, DateOnly onDate)
+    public Result EnsureAtLeast(int age, DateOnly onDate)
     {
         if (!IsAtLeast(age, onDate))
         {
-            throw new InvalidOperationException(
-                $"User must be at least {age} years old.");
+            return Result.Failure(
+                Error.Validation($"User must be at least {age} years old.")
+                .WithField(nameof(BirthDate)));
         }
+
+        return Result.Success();
     }
 
     public override string ToString()

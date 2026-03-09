@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
+using Presentation.Http.Common;
+
 namespace Presentation.Http.Features.Users.GetById;
 
 internal static class GetByIdUserEndpoint
@@ -14,7 +16,8 @@ internal static class GetByIdUserEndpoint
         group.MapGet("/{id:guid}", HandleAsync)
             .WithName("GetUserById")
             .WithSummary("Get user by id")
-            .Produces<GetByIdUserResponse>(StatusCodes.Status200OK);
+            .Produces<GetByIdUserResponse>(StatusCodes.Status200OK)
+            .ProducesProblem(StatusCodes.Status404NotFound);
 
         return group;
     }
@@ -24,8 +27,12 @@ internal static class GetByIdUserEndpoint
         IMediator mediator,
         CancellationToken cancellationToken)
     {
-        var dto = await mediator.QueryAsync(new GetByIdUserQuery(id), cancellationToken);
-        var response = GetByIdUserMapper.ToResponse(dto);
-        return TypedResults.Ok(response);
+        var result = await mediator.QueryAsync(new GetByIdUserQuery(id), cancellationToken);
+
+        return result.ToHttpResult(dto =>
+        {
+            var response = GetByIdUserMapper.ToResponse(dto);
+            return TypedResults.Ok(response);
+        });
     }
 }

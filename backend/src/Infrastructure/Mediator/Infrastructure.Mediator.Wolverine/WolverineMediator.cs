@@ -1,6 +1,7 @@
 ﻿using Application.Abstractions.Mediator;
 
 using Domain.Abstractions;
+using Domain.Abstractions.ResultPattern;
 
 using Wolverine;
 
@@ -8,12 +9,8 @@ namespace Infrastructure.Mediator.Wolverine;
 
 public sealed class WolverineMediator(IMessageBus messageBus) : IMediator
 {
-    public Task SendAsync(ICommand command, CancellationToken cancellationToken = default)
-    {
-        return messageBus.InvokeAsync(command, cancellationToken);
-    }
-
     public Task<TResult> SendAsync<TResult>(ICommand<TResult> command, CancellationToken cancellationToken = default)
+        where TResult : Result
     {
         return messageBus.InvokeAsync<TResult>(command, cancellationToken);
     }

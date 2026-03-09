@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
+using Presentation.Http.Common;
+
 namespace Presentation.Http.Features.Users.Create;
 
 internal static class CreateUserEndpoint
@@ -26,8 +28,13 @@ internal static class CreateUserEndpoint
     {
         var id = Guid.NewGuid();
         var command = CreateUserMapper.ToCommand(request, id);
-        var createdId = await mediator.SendAsync(command, cancellationToken);
-        var response = CreateUserMapper.ToResponse(createdId);
-        return TypedResults.Created($"/api/users/{createdId}", response);
+
+        var result = await mediator.SendAsync(command, cancellationToken);
+
+        return result.ToHttpResult(createdId =>
+        {
+            var response = CreateUserMapper.ToResponse(createdId);
+            return TypedResults.Created($"/api/users/{createdId}", response);
+        });
     }
 }

@@ -1,5 +1,7 @@
 ﻿using Application.Abstractions.Mediator;
 
+using Domain.Abstractions.ResultPattern;
+
 namespace Application.Users.Update;
 
 public sealed record UpdateUserCommand(
@@ -9,4 +11,4 @@ public sealed record UpdateUserCommand(
     string Email,
     string Phone,
     DateOnly BirthDate,
-    string? Avatar) : ICommand;
+    string? Avatar) : ICommand<Result>;

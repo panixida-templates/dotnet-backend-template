@@ -1,4 +1,5 @@
 ﻿using Domain.Abstractions;
+using Domain.Abstractions.ResultPattern;
 
 namespace Domain.Users.Enumerations;
 
@@ -11,5 +12,26 @@ public sealed class UserRole : Enumeration<UserRole>
     private UserRole(int id, string name)
         : base(id, name)
     {
+    }
+
+    public static Result<UserRole> Create(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return Result.Failure<UserRole>(
+                Error.Validation("User role cannot be empty.")
+                .WithField(nameof(UserRole)));
+        }
+
+        var normalizedValue = value.Trim();
+
+        if (TryFromName(normalizedValue, out var role) && role is not null)
+        {
+            return Result.Success(role);
+        }
+
+        return Result.Failure<UserRole>(
+            Error.Validation($"User role '{normalizedValue}' is invalid.")
+            .WithField(nameof(UserRole)));
     }
 }
