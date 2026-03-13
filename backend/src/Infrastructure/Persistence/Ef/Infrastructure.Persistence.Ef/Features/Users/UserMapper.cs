@@ -17,6 +17,7 @@ internal sealed partial class UserMapper : IEntityMapper<Guid, UserDbModel, User
     [MapperRequiredMapping(RequiredMappingStrategy.Target)]
     public static partial User ToEntity(UserDbModel dbModel);
 
-    private static UserRole MapRole(string role) => UserRole.FromName(role);
-    private static DateOnly MapBirthDate(BirthDate birthDate) => birthDate.Value;
+    private static Guid MapToGuid(UserId source) => source.Value;
+    private static UserRole MapRole(string source) => UserRole.FromName(source);
+    private static DateOnly MapBirthDate(BirthDate source) => source.Value;
 }

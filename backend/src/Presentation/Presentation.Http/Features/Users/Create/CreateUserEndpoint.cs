@@ -5,16 +5,20 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
 using Presentation.Http.Common;
+using Presentation.Http.Features.Users.GetById;
 
 namespace Presentation.Http.Features.Users.Create;
 
 internal static class CreateUserEndpoint
 {
+    internal const string Name = "CreateUser";
+    internal const string Summary = "Create user";
+
     internal static RouteGroupBuilder MapCreateUserEndpoint(this RouteGroupBuilder group)
     {
         group.MapPost("/", HandleAsync)
-            .WithName("CreateUser")
-            .WithSummary("Create user")
+            .WithName(Name)
+            .WithSummary(Summary)
             .Produces<CreateUserResponse>(StatusCodes.Status201Created)
             .ProducesValidationProblem(StatusCodes.Status400BadRequest);
 
@@ -26,15 +30,16 @@ internal static class CreateUserEndpoint
         IMediator mediator,
         CancellationToken cancellationToken)
     {
-        var id = Guid.NewGuid();
-        var command = CreateUserMapper.ToCommand(request, id);
-
+        var command = CreateUserMapper.ToCommand(request);
         var result = await mediator.SendAsync(command, cancellationToken);
 
         return result.ToHttpResult(createdId =>
         {
             var response = CreateUserMapper.ToResponse(createdId);
-            return TypedResults.Created($"/api/users/{createdId}", response);
+            return TypedResults.CreatedAtRoute(
+                response,
+                GetByIdUserEndpoint.Name,
+                new { id = createdId });
         });
     }
 }

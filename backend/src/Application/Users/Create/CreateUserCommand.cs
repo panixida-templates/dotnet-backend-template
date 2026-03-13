@@ -5,7 +5,6 @@ using Domain.Abstractions.ResultPattern;
 namespace Application.Users.Create;
 
 public sealed record CreateUserCommand(
-    Guid Id,
     string Role,
     string Name,
     string Email,

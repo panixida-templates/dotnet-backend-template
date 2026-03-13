@@ -14,7 +14,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Common\Common.Constants\Common.Constants.csproj" />
       <ProjectReference Include="..\..\Infrastructure\Mediator\Infrastructure.Mediator.Wolverine\Infrastructure.Mediator.Wolverine.csproj" />
       <ProjectReference Include="..\..\Infrastructure\Persistence\Ef\Infrastructure.Persistence.Ef\Infrastructure.Persistence.Ef.csproj" />
       <ProjectReference Include="..\Presentation.Http\Presentation.Http.csproj" />

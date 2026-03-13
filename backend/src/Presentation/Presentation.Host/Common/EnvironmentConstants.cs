@@ -1,4 +1,4 @@
-﻿namespace Common.Constants;
+﻿namespace Presentation.Host.Common;
 
 public static class EnvironmentConstants
 {

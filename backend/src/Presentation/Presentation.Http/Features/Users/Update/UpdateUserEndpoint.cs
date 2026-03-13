@@ -10,11 +10,14 @@ namespace Presentation.Http.Features.Users.Update;
 
 internal static class UpdateUserEndpoint
 {
+    internal const string Name = "UpdateUser";
+    internal const string Summary = "Update user";
+
     internal static RouteGroupBuilder MapUpdateUserEndpoint(this RouteGroupBuilder group)
     {
-        group.MapPut("/{id:guid}", HandleAsync)
-            .WithName("UpdateUser")
-            .WithSummary("Update user")
+        group.MapPut($"/{UsersEndpoints.IdRoute}", HandleAsync)
+            .WithName(Name)
+            .WithSummary(Summary)
             .Produces(StatusCodes.Status204NoContent)
             .ProducesValidationProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status404NotFound);

@@ -1,13 +1,13 @@
 using Application.Users.Create;
 
-using Common.Constants;
-
 using Infrastructure.Mediator.Wolverine.DependencyInjection;
 using Infrastructure.Persistence.Ef.DependencyInjection;
 
 using Logging.OpenSearch;
 
+using Presentation.Host.Common;
 using Presentation.Http.Bootstrapper;
+using Presentation.Http.Common;
 
 using Serilog;
 

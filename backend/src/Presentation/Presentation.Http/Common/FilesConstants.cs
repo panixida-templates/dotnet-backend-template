@@ -1,4 +1,4 @@
-﻿namespace Common.Constants;
+﻿namespace Presentation.Http.Common;
 
 public static class FilesConstants
 {

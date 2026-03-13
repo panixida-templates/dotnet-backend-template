@@ -15,7 +15,9 @@ public sealed class CreateUserHandler(
 {
     public async Task<Result<Guid>> HandleAsync(CreateUserCommand command, CancellationToken cancellationToken)
     {
-        var idResult = UserId.Create(command.Id);
+        var id = Guid.CreateVersion7();
+
+        var idResult = UserId.Create(id);
         var roleResult = UserRole.Create(command.Role);
         var nameResult = UserName.Create(command.Name);
         var emailResult = Email.Create(command.Email);

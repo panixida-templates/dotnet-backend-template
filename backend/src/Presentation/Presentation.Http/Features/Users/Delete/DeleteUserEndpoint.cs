@@ -11,11 +11,14 @@ namespace Presentation.Http.Features.Users.Delete;
 
 internal static class DeleteUserEndpoint
 {
+    internal const string Name = "DeleteUser";
+    internal const string Summary = "Delete user";
+
     internal static RouteGroupBuilder MapDeleteUserEndpoint(this RouteGroupBuilder group)
     {
-        group.MapDelete("/{id:guid}", HandleAsync)
-            .WithName("DeleteUser")
-            .WithSummary("Delete user")
+        group.MapDelete($"/{UsersEndpoints.IdRoute}", HandleAsync)
+            .WithName(Name)
+            .WithSummary(Summary)
             .Produces(StatusCodes.Status204NoContent)
             .ProducesProblem(StatusCodes.Status404NotFound);
 

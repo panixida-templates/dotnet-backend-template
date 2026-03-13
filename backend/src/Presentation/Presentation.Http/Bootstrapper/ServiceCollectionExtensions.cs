@@ -1,7 +1,9 @@
-﻿using System.Text.Json;
+﻿using Asp.Versioning;
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+
+using System.Text.Json;
 
 namespace Presentation.Http.Bootstrapper;
 
@@ -38,6 +40,19 @@ public static class ServiceCollectionExtensions
 
                 context.ProblemDetails = normalizedProblem;
             };
+        });
+
+        services.AddApiVersioning(options =>
+        {
+            options.DefaultApiVersion = new ApiVersion(1, 0);
+            options.AssumeDefaultVersionWhenUnspecified = false;
+            options.ReportApiVersions = true;
+            options.ApiVersionReader = new UrlSegmentApiVersionReader();
+        })
+        .AddApiExplorer(options =>
+        {
+            options.GroupNameFormat = "'v'V";
+            options.SubstituteApiVersionInUrl = true;
         });
 
         services.AddValidation();

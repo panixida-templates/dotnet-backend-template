@@ -1,8 +1,6 @@
 ﻿using Application.Abstractions.Persistence;
 using Application.Abstractions.Queries;
 
-using Common.Constants;
-
 using Infrastructure.Persistence.Ef.Core;
 using Infrastructure.Persistence.Ef.EfCore;
 
@@ -16,10 +14,12 @@ namespace Infrastructure.Persistence.Ef.DependencyInjection;
 
 public static class ServiceCollectionExtensions
 {
+    internal const string PostgreSqlConnectionString = "PostgreSqlConnectionString";
+
     public static IServiceCollection AddEfRepository(this IServiceCollection serviceCollection, IConfiguration configuration)
     {
         serviceCollection.AddDbContext<DefaultDbContext>(options =>
-            options.UseNpgsql(configuration.GetConnectionString(AppsettingsKeysConstants.PostgreSqlConnectionString)).UseSnakeCaseNamingConvention());
+            options.UseNpgsql(configuration.GetConnectionString(PostgreSqlConnectionString)).UseSnakeCaseNamingConvention());
 
         serviceCollection.AddScoped<IUnitOfWork, UnitOfWork<DefaultDbContext>>();
         serviceCollection.RegisterRepositoryImplementations(typeof(Repository<,,,,>).Assembly);

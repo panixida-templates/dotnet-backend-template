@@ -11,11 +11,14 @@ namespace Presentation.Http.Features.Users.GetById;
 
 internal static class GetByIdUserEndpoint
 {
+    internal const string Name = "GetUserById";
+    internal const string Summary = "Get user by id";
+
     internal static RouteGroupBuilder MapGetByIdUserEndpoint(this RouteGroupBuilder group)
     {
-        group.MapGet("/{id:guid}", HandleAsync)
-            .WithName("GetUserById")
-            .WithSummary("Get user by id")
+        group.MapGet($"/{UsersEndpoints.IdRoute}", HandleAsync)
+            .WithName(Name)
+            .WithSummary(Summary)
             .Produces<GetByIdUserResponse>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status404NotFound);
 
