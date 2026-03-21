@@ -1,6 +1,5 @@
 ﻿namespace Domain.Abstractions.ResultPattern;
 
-
 public enum ErrorType
 {
     Validation = 1,

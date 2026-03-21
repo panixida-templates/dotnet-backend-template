@@ -3,6 +3,8 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
+using Presentation.Http.Middlewares;
+
 using System.Text.Json;
 
 namespace Presentation.Http.Bootstrapper;
@@ -41,6 +43,7 @@ public static class ServiceCollectionExtensions
                 context.ProblemDetails = normalizedProblem;
             };
         });
+        services.AddExceptionHandler<ExceptionHandler>();
 
         services.AddApiVersioning(options =>
         {

@@ -2,12 +2,15 @@
 using Application.Abstractions.Queries;
 using Application.Users.Abstractions;
 
+using Domain.Abstractions.ResultPattern;
+
 namespace Application.Users.Search;
 
-public sealed class SearchUsersHandler(IUsersQueryService usersQueryService) : IQueryHandler<SearchUsersQuery, SearchResult<SearchUserDto>>
+public sealed class SearchUsersHandler(IUsersQueryService usersQueryService) : IQueryHandler<SearchUsersQuery, Result<SearchResult<SearchUserDto>>>
 {
-    public Task<SearchResult<SearchUserDto>> HandleAsync(SearchUsersQuery query, CancellationToken cancellationToken)
+    public async Task<Result<SearchResult<SearchUserDto>>> HandleAsync(SearchUsersQuery query, CancellationToken cancellationToken)
     {
-        return usersQueryService.SearchAsync(query.SearchParams, cancellationToken);
+        var users = await usersQueryService.SearchAsync(query.SearchParams, cancellationToken);
+        return Result.Success(users);
     }
 }

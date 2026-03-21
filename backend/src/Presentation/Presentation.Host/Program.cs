@@ -26,7 +26,6 @@ builder.Services.AddWolverineMediator();
 builder.Host.UseWolverineMediator(typeof(CreateUserHandler).Assembly);
 
 //builder.Services.AddAuthenticationAndAuthorization(builder.Configuration);
-//builder.Services.AddSwagger(AppsettingsKeysConstants.ServiceName);
 
 if (!builder.Environment.IsEnvironment(EnvironmentConstants.Test))
 {
@@ -45,7 +44,6 @@ if (!builder.Environment.IsEnvironment(EnvironmentConstants.Test))
     //app.UsePrometheusMetrics();
 }
 
-//app.UseSwaggerAndSwaggerUI();
 //app.UseAuthenticationAndAuthorization();
 
 await app.RunAsync();

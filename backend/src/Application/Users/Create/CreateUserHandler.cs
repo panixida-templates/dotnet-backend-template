@@ -1,5 +1,4 @@
 ﻿using Application.Abstractions.Mediator;
-using Application.Abstractions.Persistence;
 using Application.Users.Abstractions;
 
 using Domain.Abstractions.ResultPattern;
@@ -10,8 +9,7 @@ using Domain.Users.ValueObjects;
 namespace Application.Users.Create;
 
 public sealed class CreateUserHandler(
-    IUsersRepository usersRepository,
-    IUnitOfWork unitOfWork) : ICommandHandler<CreateUserCommand, Result<Guid>>
+    IUsersRepository usersRepository) : ICommandHandler<CreateUserCommand, Result<Guid>>
 {
     public async Task<Result<Guid>> HandleAsync(CreateUserCommand command, CancellationToken cancellationToken)
     {
@@ -25,7 +23,7 @@ public sealed class CreateUserHandler(
         var birthDateResult = BirthDate.Create(command.BirthDate);
         var avatarResult = Avatar.Create(command.Avatar);
 
-        return await Result.Combine(
+        return Result.Combine(
                 idResult,
                 roleResult,
                 nameResult,
@@ -45,10 +43,6 @@ public sealed class CreateUserHandler(
                     avatarResult.Value);
             })
             .Tap(usersRepository.Add)
-            .BindAsync(async user =>
-            {
-                await unitOfWork.SaveChangesAsync(cancellationToken);
-                return Result.Success(user.Id.Value);
-            });
+            .Bind(user => Result.Success(user.Id.Value));
     }
 }

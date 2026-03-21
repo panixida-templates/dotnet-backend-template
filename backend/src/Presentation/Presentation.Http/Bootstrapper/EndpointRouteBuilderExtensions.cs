@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Hosting;
 
 using Presentation.Http.Features.Users;
+using Presentation.Http.Middlewares;
 
 namespace Presentation.Http.Bootstrapper;
 
@@ -10,6 +11,10 @@ public static class EndpointRouteBuilderExtensions
 {
     public static WebApplication MapHttp(this WebApplication app)
     {
+        app.UseForwardedHeaders();
+        app.UseExceptionHandler();
+        app.UseMiddleware<LoggingMiddleware>();
+
         if (app.Environment.IsDevelopment())
         {
             app.MapOpenApi();

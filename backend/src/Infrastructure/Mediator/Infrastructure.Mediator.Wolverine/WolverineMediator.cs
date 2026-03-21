@@ -16,6 +16,7 @@ public sealed class WolverineMediator(IMessageBus messageBus) : IMediator
     }
 
     public Task<TResult> QueryAsync<TResult>(IQuery<TResult> query, CancellationToken cancellationToken = default)
+        where TResult : Result
     {
         return messageBus.InvokeAsync<TResult>(query, cancellationToken);
     }
