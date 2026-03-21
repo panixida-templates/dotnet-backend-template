@@ -1,7 +1,7 @@
 ﻿using Application.Abstractions.Mediator;
 using Application.Behaviors;
 
-using Infrastructure.Mediator.Wolverine.Policies;
+using Infrastructure.Mediator.Wolverine.Policies.Core;
 
 using JasperFx.CodeGeneration;
 
@@ -31,11 +31,12 @@ public static class ServiceCollectionExtensions
 
             options.Durability.Mode = DurabilityMode.MediatorOnly;
 
-            var registry = new AfterCommandMiddlewareRegistry(
-                typeof(CommitUnitOfWorkBehavior<,>)
-            );
+            var registry = RequestMiddlewareRegistry.Create(builder =>
+            {
+                builder.AddAfter(typeof(CommitUnitOfWorkBehavior<,>));
+            });
 
-            options.Policies.Add(new AfterCommandChainPolicy(registry));
+            options.Policies.Add(new RequestMiddlewareChainPolicy(registry));
 
             for (var i = 0; i < discoveryAssemblies.Length; i++)
             {
@@ -51,9 +52,4 @@ public static class ServiceCollectionExtensions
 
         return hostBuilder;
     }
-}
-
-public sealed class AfterCommandMiddlewareRegistry(params Type[] middlewareTypes)
-{
-    public IReadOnlyList<Type> MiddlewareTypes { get; } = middlewareTypes;
 }
