@@ -1,16 +1,20 @@
 ﻿using Application.Abstractions.Mediator;
 using Application.Behaviors;
 
+using Infrastructure.Mediator.Wolverine.Behaviors;
 using Infrastructure.Mediator.Wolverine.Policies.Core;
 
 using JasperFx.CodeGeneration;
 
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 using System.Reflection;
 
 using Wolverine;
+using Wolverine.EntityFrameworkCore;
+using Wolverine.Postgresql;
 
 namespace Infrastructure.Mediator.Wolverine.DependencyInjection;
 
@@ -23,17 +27,24 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static IHostBuilder UseWolverineMediator(this IHostBuilder hostBuilder, params Assembly[] discoveryAssemblies)
+    public static IHostBuilder UseWolverineMediator(
+        this IHostBuilder hostBuilder,
+        IConfiguration configuration,
+        params Assembly[] discoveryAssemblies)
     {
         hostBuilder.UseWolverine(options =>
         {
             options.CodeGeneration.TypeLoadMode = TypeLoadMode.Auto;
 
-            options.Durability.Mode = DurabilityMode.MediatorOnly;
+            ConfigureOutbox(options, configuration);
 
             var registry = RequestMiddlewareRegistry.Create(builder =>
             {
-                builder.AddAfter(typeof(CommitUnitOfWorkBehavior<,>));
+                builder.AddBefore(typeof(BeginTransactionBehavior<,>));
+                builder.AddAfter(typeof(SaveChangesBehavior<,>));
+                builder.AddAfter(typeof(CommitTransactionBehavior<,>));
+                builder.AddAfter(typeof(FlushOutgoingMessagesBehavior<,>));
+                builder.AddFinally(typeof(CleanupTransactionBehavior<,>));
             });
 
             options.Policies.Add(new RequestMiddlewareChainPolicy(registry));
@@ -51,5 +62,27 @@ public static class ServiceCollectionExtensions
         });
 
         return hostBuilder;
+    }
+
+    private static void ConfigureOutbox(
+        WolverineOptions options,
+        IConfiguration configuration)
+    {
+        const string postgreSqlConnectionString = "PostgreSqlConnectionString";
+
+        var connectionString = configuration.GetConnectionString(postgreSqlConnectionString);
+        if (string.IsNullOrWhiteSpace(connectionString))
+        {
+            throw new InvalidOperationException(
+                $"Connection string '{postgreSqlConnectionString}' was not found.");
+        }
+
+        options.PersistMessagesWithPostgresql(connectionString);
+        options.UseEntityFrameworkCoreTransactions();
+
+        options.Policies.UseDurableLocalQueues();
+
+        options.Policies.UseDurableInboxOnAllListeners();
+        options.Policies.UseDurableOutboxOnAllSendingEndpoints();
     }
 }

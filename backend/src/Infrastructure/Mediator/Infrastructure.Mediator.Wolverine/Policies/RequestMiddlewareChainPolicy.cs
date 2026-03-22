@@ -1,6 +1,7 @@
 ﻿using Application.Abstractions.Mediator;
 
 using Domain.Abstractions.ResultPattern;
+using Infrastructure.Mediator.Wolverine.Policies.Core;
 using JasperFx;
 using JasperFx.CodeGeneration;
 using JasperFx.CodeGeneration.Model;
@@ -8,7 +9,7 @@ using JasperFx.CodeGeneration.Model;
 using Wolverine.Configuration;
 using Wolverine.Runtime.Handlers;
 
-namespace Infrastructure.Mediator.Wolverine.Policies.Core;
+namespace Infrastructure.Mediator.Wolverine.Policies;
 
 public sealed class RequestMiddlewareChainPolicy(RequestMiddlewareRegistry registry) : IChainPolicy
 {
@@ -80,7 +81,7 @@ public sealed class RequestMiddlewareChainPolicy(RequestMiddlewareRegistry regis
 
     private void AddAfterMiddleware(HandlerChain chain, Variable resultVariable)
     {
-        for (var i = registry.AfterMiddlewareTypes.Count - 1; i >= 0; i--)
+        for (var i = 0; i < registry.AfterMiddlewareTypes.Count; i++)
         {
             var frame = AfterRequestMiddlewareFrame.TryCreate(
                 chain.MessageType,

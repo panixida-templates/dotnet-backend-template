@@ -23,7 +23,7 @@ builder.WebHost.ConfigureKestrel(options =>
 builder.Services.AddEfRepository(builder.Configuration);
 builder.Services.AddHttp();
 builder.Services.AddWolverineMediator();
-builder.Host.UseWolverineMediator(typeof(CreateUserHandler).Assembly);
+builder.Host.UseWolverineMediator(builder.Configuration, typeof(CreateUserHandler).Assembly);
 
 //builder.Services.AddAuthenticationAndAuthorization(builder.Configuration);
 

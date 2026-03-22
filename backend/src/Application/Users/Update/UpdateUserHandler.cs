@@ -1,5 +1,4 @@
 ﻿using Application.Abstractions.Mediator;
-using Application.Abstractions.Persistence;
 using Application.Users.Abstractions;
 
 using Domain.Abstractions.ResultPattern;
@@ -10,8 +9,8 @@ using Domain.Users.ValueObjects;
 namespace Application.Users.Update;
 
 public sealed class UpdateUserHandler(
-    IUsersRepository usersRepository,
-    IUnitOfWork unitOfWork) : ICommandHandler<UpdateUserCommand, Result>
+    IMediator mediator,
+    IUsersRepository usersRepository) : ICommandHandler<UpdateUserCommand, Result>
 {
     public async Task<Result> HandleAsync(UpdateUserCommand command, CancellationToken cancellationToken)
     {
@@ -57,7 +56,11 @@ public sealed class UpdateUserHandler(
         user.ChangeAvatar(avatarResult.Value);
 
         usersRepository.Update(user);
-        await unitOfWork.SaveChangesAsync(cancellationToken);
+
+        foreach (var @event in user.GetDomainEvents())
+        {
+            await mediator.PublishAsync(@event, cancellationToken);
+        }
 
         return Result.Success();
     }

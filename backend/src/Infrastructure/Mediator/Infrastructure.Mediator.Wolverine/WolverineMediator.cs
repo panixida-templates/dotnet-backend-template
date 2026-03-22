@@ -3,11 +3,16 @@
 using Domain.Abstractions;
 using Domain.Abstractions.ResultPattern;
 
+using Infrastructure.Persistence.Ef.EfCore;
+
 using Wolverine;
+using Wolverine.EntityFrameworkCore;
 
 namespace Infrastructure.Mediator.Wolverine;
 
-public sealed class WolverineMediator(IMessageBus messageBus) : IMediator
+public sealed class WolverineMediator(
+    IMessageBus messageBus,
+    IDbContextOutbox<DefaultDbContext> outbox) : IMediator
 {
     public Task<TResult> SendAsync<TResult>(ICommand<TResult> command, CancellationToken cancellationToken = default)
         where TResult : Result
@@ -21,9 +26,9 @@ public sealed class WolverineMediator(IMessageBus messageBus) : IMediator
         return messageBus.InvokeAsync<TResult>(query, cancellationToken);
     }
 
-    public Task PublishAsync<TEvent>(TEvent @event, CancellationToken cancellationToken = default)
+    public async Task PublishAsync<TEvent>(TEvent @event, CancellationToken cancellationToken = default)
         where TEvent : DomainEvent
     {
-        return messageBus.PublishAsync(@event).AsTask();
+        await outbox.PublishAsync(@event);
     }
 }

@@ -5,7 +5,7 @@ using Domain.Abstractions.ResultPattern;
 
 namespace Application.Behaviors;
 
-public sealed class CommitUnitOfWorkBehavior<TCommand, TResult>(IUnitOfWork unitOfWork)
+public sealed class CommitTransactionBehavior<TCommand, TResult>(IUnitOfWork unitOfWork)
     : IAfterRequestBehavior<TCommand, TResult>
     where TCommand : ICommand<TResult>
     where TResult : Result
@@ -15,9 +15,16 @@ public sealed class CommitUnitOfWorkBehavior<TCommand, TResult>(IUnitOfWork unit
         TResult result,
         CancellationToken cancellationToken)
     {
-        if (result.IsSuccess)
+        if (!unitOfWork.HasActiveTransaction)
         {
-            await unitOfWork.SaveChangesAsync(cancellationToken);
+            return;
         }
+
+        if (!result.IsSuccess)
+        {
+            return;
+        }
+
+        await unitOfWork.CommitTransactionAsync(cancellationToken);
     }
 }

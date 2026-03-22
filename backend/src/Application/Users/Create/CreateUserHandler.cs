@@ -9,6 +9,7 @@ using Domain.Users.ValueObjects;
 namespace Application.Users.Create;
 
 public sealed class CreateUserHandler(
+    IMediator mediator,
     IUsersRepository usersRepository) : ICommandHandler<CreateUserCommand, Result<Guid>>
 {
     public async Task<Result<Guid>> HandleAsync(CreateUserCommand command, CancellationToken cancellationToken)
@@ -23,7 +24,7 @@ public sealed class CreateUserHandler(
         var birthDateResult = BirthDate.Create(command.BirthDate);
         var avatarResult = Avatar.Create(command.Avatar);
 
-        return Result.Combine(
+        return await Result.Combine(
                 idResult,
                 roleResult,
                 nameResult,
@@ -43,6 +44,13 @@ public sealed class CreateUserHandler(
                     avatarResult.Value);
             })
             .Tap(usersRepository.Add)
-            .Bind(user => Result.Success(user.Id.Value));
+            .BindAsync(async user => 
+            {
+                foreach (var @event in user.GetDomainEvents())
+                {
+                    await mediator.PublishAsync(@event, cancellationToken);
+                }
+                return Result.Success(user.Id.Value);
+            });
     }
 }
