@@ -1,5 +1,4 @@
 ﻿using Application.Abstractions.Mediator;
-using Application.Abstractions.Persistence;
 using Application.Users.Abstractions;
 
 using Domain.Abstractions.ResultPattern;
@@ -7,9 +6,8 @@ using Domain.Users;
 
 namespace Application.Users.Delete;
 
-public sealed class DeleteUserHandler(
-    IUsersRepository usersRepository,
-    IUnitOfWork unitOfWork) : ICommandHandler<DeleteUserCommand, Result>
+public sealed class DeleteUserHandler(IUsersRepository usersRepository)
+    : ICommandHandler<DeleteUserCommand, Result>
 {
     public async Task<Result> HandleAsync(DeleteUserCommand command, CancellationToken cancellationToken)
     {
@@ -22,7 +20,6 @@ public sealed class DeleteUserHandler(
         }
 
         usersRepository.Delete(user);
-        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }

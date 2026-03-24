@@ -41,6 +41,7 @@ public static class ServiceCollectionExtensions
             var registry = RequestMiddlewareRegistry.Create(builder =>
             {
                 builder.AddBefore(typeof(BeginTransactionBehavior<,>));
+                builder.AddAfter(typeof(PublishDomainEventsBehavior<,>));
                 builder.AddAfter(typeof(SaveChangesBehavior<,>));
                 builder.AddAfter(typeof(CommitTransactionBehavior<,>));
                 builder.AddAfter(typeof(FlushOutgoingMessagesBehavior<,>));

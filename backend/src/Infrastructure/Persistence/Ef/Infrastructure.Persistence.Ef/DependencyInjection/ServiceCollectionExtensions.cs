@@ -22,6 +22,7 @@ public static class ServiceCollectionExtensions
             options.UseNpgsql(configuration.GetConnectionString(PostgreSqlConnectionString)).UseSnakeCaseNamingConvention());
 
         serviceCollection.AddScoped<IUnitOfWork, UnitOfWork<DefaultDbContext>>();
+        serviceCollection.AddScoped<IAggregateTracker, AggregateTracker>();
         serviceCollection.RegisterRepositoryImplementations(typeof(Repository<,,,,>).Assembly);
 
         return serviceCollection;

@@ -7,8 +7,9 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Infrastructure.Persistence.Ef.Core;
 
-internal abstract class Repository<TDbContext, TId, TDbModel, TAggregateRoot, TMapper>(TDbContext dbContext)
-    : IRepository<TId, TAggregateRoot>
+internal abstract class Repository<TDbContext, TId, TDbModel, TAggregateRoot, TMapper>(
+    TDbContext dbContext,
+    IAggregateTracker aggregateTracker) : IRepository<TId, TAggregateRoot>
     where TDbContext : DbContext
     where TId : struct
     where TDbModel : DbModel<TId>, new()
@@ -40,6 +41,8 @@ internal abstract class Repository<TDbContext, TId, TDbModel, TAggregateRoot, TM
         }
 
         dbContext.Set<TDbModel>().Add(dbObject);
+
+        aggregateTracker.Track(aggregateRoot);
     }
 
     public virtual void Update(TAggregateRoot aggregateRoot)
@@ -63,6 +66,8 @@ internal abstract class Repository<TDbContext, TId, TDbModel, TAggregateRoot, TM
             var entry = dbContext.Entry(dbObject);
             entry.State = EntityState.Modified;
         }
+
+        aggregateTracker.Track(aggregateRoot);
     }
 
     public virtual void Delete(TAggregateRoot aggregateRoot)
@@ -83,6 +88,8 @@ internal abstract class Repository<TDbContext, TId, TDbModel, TAggregateRoot, TM
         {
             dbContext.Remove(dbObject);
         }
+
+        aggregateTracker.Track(aggregateRoot);
     }
 
     private static void ApplyCreateAudit(AuditableDbModel<TId> dbObject)

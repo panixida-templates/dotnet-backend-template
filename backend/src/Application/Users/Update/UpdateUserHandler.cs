@@ -8,9 +8,8 @@ using Domain.Users.ValueObjects;
 
 namespace Application.Users.Update;
 
-public sealed class UpdateUserHandler(
-    IMediator mediator,
-    IUsersRepository usersRepository) : ICommandHandler<UpdateUserCommand, Result>
+public sealed class UpdateUserHandler(IUsersRepository usersRepository) 
+    : ICommandHandler<UpdateUserCommand, Result>
 {
     public async Task<Result> HandleAsync(UpdateUserCommand command, CancellationToken cancellationToken)
     {
@@ -56,11 +55,6 @@ public sealed class UpdateUserHandler(
         user.ChangeAvatar(avatarResult.Value);
 
         usersRepository.Update(user);
-
-        foreach (var @event in user.GetDomainEvents())
-        {
-            await mediator.PublishAsync(@event, cancellationToken);
-        }
 
         return Result.Success();
     }
