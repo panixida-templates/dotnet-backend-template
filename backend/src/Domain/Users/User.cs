@@ -36,29 +36,47 @@ public sealed class User : AggregateRoot<UserId>
     public Avatar? Avatar { get; private set; }
 
     public static Result<User> Create(
-        UserId id,
-        UserRole role,
-        UserName name,
-        Email email,
-        PhoneNumber phone,
-        BirthDate birthDate,
-        Avatar? avatar)
+        string role,
+        string name,
+        string email,
+        string phone,
+        DateOnly birthDate,
+        string? avatar)
     {
-        var birthDateValidationResult = ValidateBirthDate(birthDate);
+        var roleResult = UserRole.Create(role);
+        var nameResult = UserName.Create(name);
+        var emailResult = Email.Create(email);
+        var phoneResult = PhoneNumber.Create(phone);
+        var birthDateResult = BirthDate.Create(birthDate);
+        var avatarResult = Avatar.Create(avatar);
 
-        if (birthDateValidationResult.IsFailure)
+        var validationResult = Result.Combine(
+            roleResult,
+            nameResult,
+            emailResult,
+            phoneResult,
+            birthDateResult,
+            avatarResult);
+
+        if (validationResult.IsFailure)
         {
-            return Result.Failure<User>(birthDateValidationResult.Errors);
+            return Result.Failure<User>(validationResult.Errors);
+        }
+
+        var ageValidationResult = birthDateResult.Value.EnsureAtLeast(MinimumAge, birthDate);
+        if (ageValidationResult.IsFailure)
+        {
+            return Result.Failure<User>(ageValidationResult.Errors);
         }
 
         var user = new User(
-            id,
-            role,
-            name,
-            email,
-            phone,
-            birthDate,
-            avatar);
+            UserId.New(),
+            roleResult.Value,
+            nameResult.Value,
+            emailResult.Value,
+            phoneResult.Value,
+            birthDateResult.Value,
+            avatarResult.Value);
 
         return Result.Success(user);
     }

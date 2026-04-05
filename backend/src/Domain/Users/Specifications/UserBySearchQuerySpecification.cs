@@ -1,0 +1,15 @@
+﻿using Domain.Abstractions.SpecificationPattern.Core;
+
+using System.Linq.Expressions;
+
+namespace Domain.Users.Specifications;
+
+public sealed class UserBySearchQuerySpecification(string searchQuery) : Specification<User>
+{
+    public override Expression<Func<User, bool>> ToExpression()
+    {
+        return item =>
+            item.Name.Value.Contains(searchQuery) ||
+            item.Email.Value.Contains(searchQuery);
+    }
+}
