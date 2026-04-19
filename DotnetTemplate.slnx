@@ -1,27 +1,15 @@
 <Solution>
-  <Folder Name="/backend/">
-    <Project Path="backend/src/Application/Application.csproj" />
-    <Project Path="backend/src/Domain/Domain.csproj" />
-  </Folder>
-  <Folder Name="/backend/Infrastructure/" />
-  <Folder Name="/backend/Infrastructure/Cache/" />
-  <Folder Name="/backend/Infrastructure/EventBus/" />
-  <Folder Name="/backend/Infrastructure/Mediator/">
-    <Project Path="backend/src/Infrastructure/Mediator/Infrastructure.Mediator.Wolverine/Infrastructure.Mediator.Wolverine.csproj" />
-  </Folder>
-  <Folder Name="/backend/Infrastructure/ObjectStorage/" />
-  <Folder Name="/backend/Infrastructure/Persistence/" />
-  <Folder Name="/backend/Infrastructure/Persistence/Ef/">
-    <Project Path="backend/src/Infrastructure/Persistence/Ef/Infrastructure.Persistence.Ef.Migrator/Infrastructure.Persistence.Ef.Migrator.csproj" />
-    <Project Path="backend/src/Infrastructure/Persistence/Ef/Infrastructure.Persistence.Ef/Infrastructure.Persistence.Ef.csproj" />
-  </Folder>
-  <Folder Name="/backend/Presentation/">
-    <Project Path="backend/src/Presentation/Presentation.Host/Presentation.Host.csproj" />
-    <Project Path="backend/src/Presentation/Presentation.Http/Presentation.Http.csproj" />
-  </Folder>
   <Folder Name="/Solution Items/">
     <File Path=".editorconfig" />
     <File Path=".github/workflows/ci.yml" />
   </Folder>
-  <Folder Name="/tools/" />
+  <Folder Name="/src/">
+    <Project Path="src/Application/Application.csproj" />
+    <Project Path="src/Domain/Domain.csproj" />
+    <Project Path="src/Host/Host.csproj" />
+    <Project Path="src/Infrastructure/Infrastructure.Ef/Infrastructure.Ef.csproj" />
+    <Project Path="src/Infrastructure/Infrastructure.Wolverine/Infrastructure.Wolverine.csproj" />
+    <Project Path="src/Presentation/Presentation.csproj" />
+  </Folder>
+  <Folder Name="/tests/" />
 </Solution>
