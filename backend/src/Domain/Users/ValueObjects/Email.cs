@@ -1,5 +1,4 @@
 ﻿using Domain.Abstractions;
-using Domain.Abstractions.ResultPattern;
 
 using System.Net.Mail;
 

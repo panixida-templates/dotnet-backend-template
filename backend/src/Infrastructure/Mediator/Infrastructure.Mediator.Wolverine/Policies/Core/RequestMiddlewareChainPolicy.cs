@@ -1,6 +1,5 @@
 ﻿using Application.Abstractions.Mediator;
 
-using Domain.Abstractions.ResultPattern;
 using JasperFx;
 using JasperFx.CodeGeneration;
 using JasperFx.CodeGeneration.Model;

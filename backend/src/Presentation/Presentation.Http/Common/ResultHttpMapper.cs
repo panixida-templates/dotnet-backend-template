@@ -1,6 +1,4 @@
-﻿using Domain.Abstractions.ResultPattern;
-
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace Presentation.Http.Common;
 

@@ -1,7 +1,6 @@
 ﻿using Application.Abstractions.Mediator;
 
 using Domain.Abstractions;
-using Domain.Abstractions.ResultPattern;
 
 using Infrastructure.Persistence.Ef.EfCore;
 

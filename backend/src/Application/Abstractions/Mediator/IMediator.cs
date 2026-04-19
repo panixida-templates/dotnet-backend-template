@@ -1,5 +1,4 @@
 ﻿using Domain.Abstractions;
-using Domain.Abstractions.ResultPattern;
 
 namespace Application.Abstractions.Mediator;
 

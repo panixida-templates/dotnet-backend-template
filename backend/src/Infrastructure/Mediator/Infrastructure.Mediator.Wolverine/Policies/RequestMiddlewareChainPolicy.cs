@@ -1,7 +1,7 @@
 ﻿using Application.Abstractions.Mediator;
 
-using Domain.Abstractions.ResultPattern;
 using Infrastructure.Mediator.Wolverine.Policies.Core;
+
 using JasperFx;
 using JasperFx.CodeGeneration;
 using JasperFx.CodeGeneration.Model;

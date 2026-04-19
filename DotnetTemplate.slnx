@@ -19,8 +19,6 @@
     <Project Path="backend/src/Presentation/Presentation.Host/Presentation.Host.csproj" />
     <Project Path="backend/src/Presentation/Presentation.Http/Presentation.Http.csproj" />
   </Folder>
-  <Folder Name="/frontend/" />
-  <Folder Name="/shared/" />
   <Folder Name="/Solution Items/">
     <File Path=".editorconfig" />
     <File Path=".github/workflows/ci.yml" />

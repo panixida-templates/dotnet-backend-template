@@ -10,4 +10,7 @@
         <ProjectReference Include="..\Domain\Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+        <Using Include="PANiXiDA.Core.ResultPattern" />
+    </ItemGroup>
 </Project>

@@ -2,7 +2,6 @@
 using Application.Abstractions.Persistence;
 
 using Domain.Abstractions;
-using Domain.Abstractions.ResultPattern;
 
 namespace Application.Behaviors;
 

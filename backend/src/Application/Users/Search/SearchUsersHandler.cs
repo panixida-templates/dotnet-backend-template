@@ -2,8 +2,6 @@
 using Application.Abstractions.Queries;
 using Application.Users.Abstractions;
 
-using Domain.Abstractions.ResultPattern;
-
 namespace Application.Users.Search;
 
 public sealed class SearchUsersHandler(IUsersQueryService usersQueryService) : IQueryHandler<SearchUsersQuery, Result<SearchResult<SearchUserDto>>>

@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions.Mediator;
+
 using Infrastructure.Mediator.Wolverine.Policies.Core;
 
 namespace Infrastructure.Mediator.Wolverine.Policies;

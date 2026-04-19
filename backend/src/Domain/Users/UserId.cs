@@ -1,6 +1,4 @@
-﻿using Domain.Abstractions.ResultPattern;
-
-namespace Domain.Users;
+﻿namespace Domain.Users;
 
 public readonly record struct UserId
 {

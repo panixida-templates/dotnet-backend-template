@@ -1,8 +1,6 @@
 ﻿using Application.Abstractions.Mediator;
 using Application.Abstractions.Persistence;
 
-using Domain.Abstractions.ResultPattern;
-
 namespace Application.Behaviors;
 
 public sealed class BeginTransactionBehavior<TCommand, TResult>(IUnitOfWork unitOfWork)

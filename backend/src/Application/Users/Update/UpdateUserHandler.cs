@@ -1,7 +1,6 @@
 ﻿using Application.Abstractions.Mediator;
 using Application.Users.Abstractions;
 
-using Domain.Abstractions.ResultPattern;
 using Domain.Users;
 using Domain.Users.Enumerations;
 using Domain.Users.ValueObjects;

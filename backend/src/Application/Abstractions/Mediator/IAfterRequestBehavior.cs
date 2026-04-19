@@ -1,6 +1,4 @@
-﻿using Domain.Abstractions.ResultPattern;
-
-namespace Application.Abstractions.Mediator;
+﻿namespace Application.Abstractions.Mediator;
 
 public interface IAfterRequestBehavior<TRequest, in TResult>
     where TRequest : IRequest<TResult>

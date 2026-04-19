@@ -1,5 +1,4 @@
 ﻿using Domain.Abstractions;
-using Domain.Abstractions.ResultPattern;
 using Domain.Users.Enumerations;
 using Domain.Users.Events;
 using Domain.Users.ValueObjects;

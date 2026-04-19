@@ -1,7 +1,5 @@
 ﻿using Application.Abstractions.Mediator;
 
-using Domain.Abstractions.ResultPattern;
-
 namespace Application.Users.Update;
 
 public sealed record UpdateUserCommand(

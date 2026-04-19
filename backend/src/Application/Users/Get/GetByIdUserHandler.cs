@@ -1,8 +1,6 @@
 ﻿using Application.Abstractions.Mediator;
 using Application.Users.Abstractions;
 
-using Domain.Abstractions.ResultPattern;
-
 namespace Application.Users.Get;
 
 public sealed class GetByIdUserHandler(IUsersQueryService usersQueryService)
