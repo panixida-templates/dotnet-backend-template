@@ -1,6 +1,4 @@
-﻿using Domain.Abstractions;
-
-namespace Domain.Users.ValueObjects;
+﻿namespace Domain.Users.ValueObjects;
 
 public sealed class BirthDate : ValueObject
 {

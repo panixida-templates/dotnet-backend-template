@@ -1,7 +1,5 @@
 ﻿using Application.Abstractions.Persistence;
 
-using Domain.Abstractions;
-
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 

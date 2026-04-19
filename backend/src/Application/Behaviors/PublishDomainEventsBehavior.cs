@@ -1,8 +1,6 @@
 ﻿using Application.Abstractions.Mediator;
 using Application.Abstractions.Persistence;
 
-using Domain.Abstractions;
-
 namespace Application.Behaviors;
 
 public sealed class PublishDomainEventsBehavior<TRequest, TResult>(

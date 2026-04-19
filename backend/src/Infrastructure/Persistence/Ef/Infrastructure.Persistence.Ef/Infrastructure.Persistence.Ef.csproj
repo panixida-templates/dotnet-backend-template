@@ -24,4 +24,10 @@
         <ProjectReference Include="..\..\..\..\Domain\Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+        <Using Include="PANiXiDA.Core.Domain" />
+        <Using Include="PANiXiDA.Core.Domain.AggregateRoots" />
+        <Using Include="PANiXiDA.Core.Domain.DomainEvents" />
+        <Using Include="PANiXiDA.Core.Domain.Entities" />
+    </ItemGroup>
 </Project>

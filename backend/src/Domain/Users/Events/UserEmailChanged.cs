@@ -1,5 +1,4 @@
-﻿using Domain.Abstractions;
-using Domain.Users.ValueObjects;
+﻿using Domain.Users.ValueObjects;
 
 namespace Domain.Users.Events;
 

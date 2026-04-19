@@ -1,6 +1,4 @@
-﻿using Domain.Abstractions;
-
-namespace Application.Abstractions.Mediator;
+﻿namespace Application.Abstractions.Mediator;
 
 public interface IMediator
 {

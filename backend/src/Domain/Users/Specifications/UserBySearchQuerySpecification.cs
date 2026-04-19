@@ -1,6 +1,4 @@
-﻿using Domain.Abstractions.SpecificationPattern.Core;
-
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 
 namespace Domain.Users.Specifications;
 

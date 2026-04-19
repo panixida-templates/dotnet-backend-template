@@ -1,6 +1,4 @@
-﻿using Domain.Abstractions;
-
-namespace Domain.Users.Enumerations;
+﻿namespace Domain.Users.Enumerations;
 
 public sealed class UserRole : Enumeration<UserRole>
 {

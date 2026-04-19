@@ -1,6 +1,4 @@
-﻿using Domain.Abstractions;
-
-using System.Net.Mail;
+﻿using System.Net.Mail;
 
 namespace Domain.Users.ValueObjects;
 

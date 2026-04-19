@@ -1,7 +1,5 @@
 ﻿using Application.Abstractions.Persistence;
 
-using Domain.Abstractions;
-
 namespace Infrastructure.Persistence.Ef.Core;
 
 internal sealed class AggregateTracker : IAggregateTracker

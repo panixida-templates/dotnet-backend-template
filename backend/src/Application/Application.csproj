@@ -12,5 +12,15 @@
 
     <ItemGroup>
         <Using Include="PANiXiDA.Core.ResultPattern" />
+
+        <Using Include="PANiXiDA.Core.Domain" />
+        <Using Include="PANiXiDA.Core.Domain.AggregateRoots" />
+        <Using Include="PANiXiDA.Core.Domain.DomainEvents" />
+        <Using Include="PANiXiDA.Core.Domain.Entities" />
+
+        <Using Include="PANiXiDA.Core.SpecificationPattern.Abstractions" />
+        <Using Include="PANiXiDA.Core.SpecificationPattern.Core" />
+        <Using Include="PANiXiDA.Core.SpecificationPattern.Extensions" />
+        <Using Include="PANiXiDA.Core.SpecificationPattern.Factories" />
     </ItemGroup>
 </Project>

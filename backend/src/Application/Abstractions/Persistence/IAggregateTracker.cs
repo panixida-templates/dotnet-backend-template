@@ -1,6 +1,4 @@
-﻿using Domain.Abstractions;
-
-namespace Application.Abstractions.Persistence;
+﻿namespace Application.Abstractions.Persistence;
 
 public interface IAggregateTracker
 {

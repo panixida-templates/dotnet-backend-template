@@ -1,6 +1,4 @@
-﻿using Domain.Abstractions;
-
-namespace Infrastructure.Persistence.Ef.Core;
+﻿namespace Infrastructure.Persistence.Ef.Core;
 
 internal interface IEntityMapper<TId, TDbModel, TEntity>
     where TId : struct
