@@ -8,7 +8,9 @@ namespace Application.Users.Create;
 public sealed class CreateUserHandler(IUsersRepository usersRepository)
     : ICommandHandler<CreateUserCommand, Result<Guid>>
 {
-    public Task<Result<Guid>> HandleAsync(CreateUserCommand command, CancellationToken cancellationToken)
+    public Task<Result<Guid>> HandleAsync(
+        CreateUserCommand command,
+        CancellationToken cancellationToken)
     {
         var userResult = User.Create(
             command.Role,

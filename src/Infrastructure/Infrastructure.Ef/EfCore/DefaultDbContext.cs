@@ -1,6 +1,6 @@
 ﻿using Humanizer;
 
-using Infrastructure.Persistence.Ef.Core;
+using Infrastructure.Ef.Core.Read;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -9,7 +9,7 @@ using Npgsql.NameTranslation;
 
 using System.Reflection;
 
-namespace Infrastructure.Persistence.Ef.EfCore;
+namespace Infrastructure.Ef.EfCore;
 
 public sealed class DefaultDbContext(DbContextOptions<DefaultDbContext> options) : DbContext(options)
 {
@@ -74,7 +74,7 @@ public sealed class DefaultDbContext(DbContextOptions<DefaultDbContext> options)
                 continue;
             }
 
-            var idProperty = entityType.FindProperty(nameof(DbModel<>.Id));
+            var idProperty = entityType.FindProperty(nameof(ReadDbModel<>.Id));
             if (idProperty == null)
             {
                 continue;
@@ -87,7 +87,7 @@ public sealed class DefaultDbContext(DbContextOptions<DefaultDbContext> options)
 
     private static bool IsBaseDbModel(Type type, Type? idType = null)
     {
-        return IsDerivedFromGenericBase(type, typeof(DbModel<>), idType);
+        return IsDerivedFromGenericBase(type, typeof(ReadDbModel<>), idType);
     }
 
     private static bool IsDerivedFromGenericBase(Type type, Type genericBaseType, Type? genericArgument = null)

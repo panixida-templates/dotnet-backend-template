@@ -3,9 +3,8 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
-
+using Presentation.Features.Users.GetDetails;
 using Presentation.Http.Common;
-using Presentation.Http.Features.Users.GetById;
 
 namespace Presentation.Http.Features.Users.Create;
 
@@ -38,7 +37,7 @@ internal static class CreateUserEndpoint
             var response = CreateUserMapper.ToResponse(createdId);
             return TypedResults.CreatedAtRoute(
                 response,
-                GetByIdUserEndpoint.Name,
+                GetUserDetailsEndpoint.Name,
                 new { id = createdId });
         });
     }

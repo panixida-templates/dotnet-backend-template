@@ -3,11 +3,10 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
-
+using Presentation.Features.Users.GetDetails;
 using Presentation.Http.Common;
 using Presentation.Http.Features.Users.Create;
 using Presentation.Http.Features.Users.Delete;
-using Presentation.Http.Features.Users.GetById;
 using Presentation.Http.Features.Users.Update;
 
 namespace Presentation.Http.Features.Users;

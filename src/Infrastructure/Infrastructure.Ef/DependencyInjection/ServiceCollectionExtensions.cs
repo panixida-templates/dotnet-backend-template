@@ -1,9 +1,8 @@
 ﻿using Application.Abstractions.Persistence;
-using Application.Abstractions.Queries;
+using Application.Abstractions.Persistence.Read;
 
-using Infrastructure.Persistence.Ef.Core;
-using Infrastructure.Persistence.Ef.EfCore;
-
+using Infrastructure.Ef.Core.Write;
+using Infrastructure.Ef.EfCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,7 +22,7 @@ public static class ServiceCollectionExtensions
 
         serviceCollection.AddScoped<IUnitOfWork, UnitOfWork<DefaultDbContext>>();
         serviceCollection.AddScoped<IAggregateTracker, AggregateTracker>();
-        serviceCollection.RegisterRepositoryImplementations(typeof(Repository<,,,,>).Assembly);
+        serviceCollection.RegisterRepositoryImplementations(typeof(Repository<,,>).Assembly);
 
         return serviceCollection;
     }
@@ -49,7 +48,7 @@ public static class ServiceCollectionExtensions
                     {
                         return parent.IsGenericType
                             && (parent.GetGenericTypeDefinition() == typeof(IRepository<,>)
-                                || parent.GetGenericTypeDefinition() == typeof(IQueryService<,,,>));
+                                || parent.GetGenericTypeDefinition() == typeof(IReadRepository<>));
                     });
                 })
                 .ToArray();

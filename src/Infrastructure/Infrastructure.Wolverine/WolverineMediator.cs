@@ -1,6 +1,5 @@
 ﻿using Application.Abstractions.Mediator;
-
-using Infrastructure.Persistence.Ef.EfCore;
+using Infrastructure.Ef.EfCore;
 
 using Wolverine;
 using Wolverine.EntityFrameworkCore;

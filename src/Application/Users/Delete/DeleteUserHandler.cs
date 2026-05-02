@@ -8,18 +8,23 @@ namespace Application.Users.Delete;
 public sealed class DeleteUserHandler(IUsersRepository usersRepository)
     : ICommandHandler<DeleteUserCommand, Result>
 {
-    public async Task<Result> HandleAsync(DeleteUserCommand command, CancellationToken cancellationToken)
+    public async Task<Result> HandleAsync(
+        DeleteUserCommand command,
+        CancellationToken cancellationToken)
     {
-        var user = await usersRepository.GetByIdAsync(command.Id, cancellationToken);
-        if (user is null)
-        {
-            return Result.Failure(
-                Error.NotFound($"User with id '{command.Id}' was not found.")
-                .WithField(nameof(User)));
-        }
+        var result = (await UserId.Create(command.Id)
+            .BindAsync(async userId =>
+            {
+                var user = await usersRepository.GetByIdAsync(
+                    userId,
+                    cancellationToken);
 
-        usersRepository.Delete(user);
+                return user is null
+                    ? Result.Failure<User>(Error.NotFound($"User with id '{command.Id}' was not found."))
+                    : Result.Success(user);
+            }))
+            .Tap(usersRepository.Delete);
 
-        return Result.Success();
+        return result;
     }
 }

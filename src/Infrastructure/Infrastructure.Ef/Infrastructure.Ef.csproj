@@ -29,5 +29,6 @@
         <Using Include="PANiXiDA.Core.Domain.AggregateRoots" />
         <Using Include="PANiXiDA.Core.Domain.DomainEvents" />
         <Using Include="PANiXiDA.Core.Domain.Entities" />
+        <Using Include="Application.Abstractions.Persistence.Read.Paged" Alias="ReadPaged" />
     </ItemGroup>
 </Project>
