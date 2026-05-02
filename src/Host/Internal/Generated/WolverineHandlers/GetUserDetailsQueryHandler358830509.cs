@@ -22,24 +22,29 @@ namespace Internal.Generated.WolverineHandlers
             await using var serviceScope = _serviceScopeFactory.CreateAsyncScope();
             
             /*
-            * Concrete type Infrastructure.Ef.Features.Users.Read.UsersReadRepository is not public, so requires service location
-            */
-            var usersReadRepository = Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<Application.Users.Abstractions.IUsersReadRepository>(serviceScope.ServiceProvider);
-            
-            /*
             * Concrete type Infrastructure.Ef.Core.Write.AggregateTracker is not public, so requires service location
             */
             var aggregateTracker = Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<Application.Abstractions.Persistence.IAggregateTracker>(serviceScope.ServiceProvider);
             
             /*
-            * Dependency: Descriptor: ServiceType: Wolverine.EntityFrameworkCore.IDbContextOutbox"1[Infrastructure.Ef.EfCore.DefaultDbContext] Lifetime: Scoped ImplementationType: Wolverine.EntityFrameworkCore.DbContextOutbox"1[Infrastructure.Ef.EfCore.DefaultDbContext]
+            * Dependency: Descriptor: ServiceType: Wolverine.EntityFrameworkCore.IDbContextOutbox"1[Infrastructure.Ef.EfCore.TemplateWriteDbContext] Lifetime: Scoped ImplementationType: Wolverine.EntityFrameworkCore.DbContextOutbox"1[Infrastructure.Ef.EfCore.TemplateWriteDbContext]
             * 
-            * Dependency: Descriptor: ServiceType: Infrastructure.Ef.EfCore.DefaultDbContext Lifetime: Scoped ImplementationType: Infrastructure.Ef.EfCore.DefaultDbContext
+            * Dependency: Descriptor: ServiceType: Infrastructure.Ef.EfCore.TemplateWriteDbContext Lifetime: Scoped ImplementationType: Infrastructure.Ef.EfCore.TemplateWriteDbContext
             * 
-            * Dependency: Descriptor: ServiceType: Microsoft.EntityFrameworkCore.DbContextOptions"1[Infrastructure.Ef.EfCore.DefaultDbContext] Lifetime: Scoped ImplementationFactory: Microsoft.Extensions.DependencyInjection.EntityFrameworkServiceCollectionExtensions.CreateDbContextOptions
-            * The service registration for Microsoft.EntityFrameworkCore.DbContextOptions<Infrastructure.Ef.EfCore.DefaultDbContext> is an 'opaque' lambda factory with the Scoped lifetime and requires service location
+            * Dependency: Descriptor: ServiceType: Microsoft.EntityFrameworkCore.DbContextOptions"1[Infrastructure.Ef.EfCore.TemplateWriteDbContext] Lifetime: Scoped ImplementationFactory: Microsoft.Extensions.DependencyInjection.EntityFrameworkServiceCollectionExtensions.CreateDbContextOptions
+            * The service registration for Microsoft.EntityFrameworkCore.DbContextOptions<Infrastructure.Ef.EfCore.TemplateWriteDbContext> is an 'opaque' lambda factory with the Scoped lifetime and requires service location
+            * 
+            * Dependency: Descriptor: ServiceType: System.Collections.Generic.IEnumerable"1[Microsoft.EntityFrameworkCore.Diagnostics.IInterceptor] Lifetime: Scoped ImplementationType: System.Collections.Generic.IEnumerable"1[Microsoft.EntityFrameworkCore.Diagnostics.IInterceptor]
+            * 
+            * Dependency: Descriptor: ServiceType: Microsoft.EntityFrameworkCore.Diagnostics.IInterceptor Lifetime: Scoped ImplementationType: Infrastructure.Ef.Core.Interceptors.AuditSaveChangesInterceptor
+            * Concrete type Infrastructure.Ef.Core.Interceptors.AuditSaveChangesInterceptor is not public, so requires service location
             */
             var mediator = Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<Application.Abstractions.Mediator.IMediator>(serviceScope.ServiceProvider);
+            
+            /*
+            * Concrete type Infrastructure.Ef.Features.Users.Read.UsersReadRepository is not public, so requires service location
+            */
+            var usersReadRepository = Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<Application.Users.Abstractions.IUsersReadRepository>(serviceScope.ServiceProvider);
             // The actual message body
             var getUserDetailsQuery = (Application.Users.GetDetails.GetUserDetailsQuery)context.Envelope.Message;
 
@@ -55,8 +60,8 @@ namespace Internal.Generated.WolverineHandlers
 
             
             // Run PublishDomainEventsBehavior after handler execution
-            var publishDomainEventsBehavior_c100e8fc = new Application.Behaviors.PublishDomainEventsBehavior<Application.Users.GetDetails.GetUserDetailsQuery, PANiXiDA.Core.ResultPattern.Result<Application.Users.GetDetails.UserDetailsReadModel>>(mediator, aggregateTracker);
-            await publishDomainEventsBehavior_c100e8fc.AfterAsync(getUserDetailsQuery, outgoing1, cancellation).ConfigureAwait(false);
+            var publishDomainEventsBehavior_38a8cd72 = new Application.Behaviors.PublishDomainEventsBehavior<Application.Users.GetDetails.GetUserDetailsQuery, PANiXiDA.Core.ResultPattern.Result<Application.Users.GetDetails.UserDetailsReadModel>>(mediator, aggregateTracker);
+            await publishDomainEventsBehavior_38a8cd72.AfterAsync(getUserDetailsQuery, outgoing1, cancellation).ConfigureAwait(false);
         }
 
     }

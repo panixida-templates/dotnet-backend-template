@@ -8,8 +8,8 @@ using Infrastructure.Ef.EfCore;
 
 namespace Infrastructure.Ef.Features.Users.Write;
 
-internal sealed class UsersRepository(DefaultDbContext dbContext, IAggregateTracker aggregateTracker)
-    : Repository<DefaultDbContext, UserId, User>(dbContext, aggregateTracker),
+internal sealed class UsersRepository(TemplateWriteDbContext dbContext, IAggregateTracker aggregateTracker)
+    : Repository<TemplateWriteDbContext, UserId, User>(dbContext, aggregateTracker),
     IUsersRepository
 {
 }

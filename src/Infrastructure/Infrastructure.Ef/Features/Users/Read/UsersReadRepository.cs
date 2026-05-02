@@ -11,8 +11,8 @@ using Infrastructure.Ef.Features.Users.Read.Mappers;
 
 namespace Infrastructure.Ef.Features.Users.Read;
 
-internal sealed class UsersReadRepository(DefaultDbContext dbContext) :
-    ReadRepository<DefaultDbContext, Guid, UserReadDbModel>(dbContext),
+internal sealed class UsersReadRepository(TemplateReadDbContext dbContext) :
+    ReadRepository<TemplateReadDbContext, Guid, UserReadDbModel>(dbContext),
     IUsersReadRepository
 {
     public Task<UserDetailsReadModel?> GetByIdAsync(Guid id, CancellationToken cancellationToken)

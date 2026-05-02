@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Infrastructure.Persistence.Ef.EfCore.Migrations
 {
-    [DbContext(typeof(DefaultDbContext))]
+    [DbContext(typeof(TemplateWriteDbContext))]
     [Migration("20260308133016_2026-03-08_13-30-15_CreateSequence_Add_users_Table")]
     partial class _20260308_133015_CreateSequence_Add_users_Table
     {

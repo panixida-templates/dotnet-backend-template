@@ -3,6 +3,8 @@ using Application.Abstractions.Persistence.Read.Cursor;
 using Application.Abstractions.Persistence.Read.Paged;
 using Application.Abstractions.Persistence.Read.Sorting;
 
+using Infrastructure.Ef.Core.Contexts;
+
 using Microsoft.EntityFrameworkCore;
 
 using System.Linq.Dynamic.Core;
@@ -11,7 +13,7 @@ namespace Infrastructure.Ef.Core.Read;
 
 internal abstract class ReadRepository
     <TDbContext, TId, TReadDbModel>(TDbContext dbContext) : IReadRepository<TId>
-    where TDbContext : DbContext
+    where TDbContext : ReadDbContext<TDbContext>
     where TId : struct
     where TReadDbModel : ReadDbModel<TId>
 {

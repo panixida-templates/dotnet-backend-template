@@ -1,5 +1,7 @@
 ﻿using Application.Abstractions.Persistence;
 
+using Infrastructure.Ef.Core.Contexts;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Ef.Core.Write;
@@ -7,7 +9,7 @@ namespace Infrastructure.Ef.Core.Write;
 internal abstract class Repository<TDbContext, TId, TAggregateRoot>(
     TDbContext dbContext,
     IAggregateTracker aggregateTracker) : IRepository<TId, TAggregateRoot>
-    where TDbContext : DbContext
+    where TDbContext : WriteDbContext<TDbContext>
     where TId : struct
     where TAggregateRoot : AggregateRoot<TId>
 {

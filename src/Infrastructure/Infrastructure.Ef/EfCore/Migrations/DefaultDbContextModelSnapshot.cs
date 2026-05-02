@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Infrastructure.Persistence.Ef.EfCore.Migrations
 {
-    [DbContext(typeof(DefaultDbContext))]
+    [DbContext(typeof(TemplateWriteDbContext))]
     partial class DefaultDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

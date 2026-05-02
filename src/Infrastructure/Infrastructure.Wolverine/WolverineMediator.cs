@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions.Mediator;
+
 using Infrastructure.Ef.EfCore;
 
 using Wolverine;
@@ -8,7 +9,7 @@ namespace Infrastructure.Mediator.Wolverine;
 
 public sealed class WolverineMediator(
     IMessageBus messageBus,
-    IDbContextOutbox<DefaultDbContext> outbox) : IMediator
+    IDbContextOutbox<TemplateWriteDbContext> outbox) : IMediator
 {
     public Task<TResult> SendAsync<TResult>(ICommand<TResult> command, CancellationToken cancellationToken = default)
         where TResult : Result

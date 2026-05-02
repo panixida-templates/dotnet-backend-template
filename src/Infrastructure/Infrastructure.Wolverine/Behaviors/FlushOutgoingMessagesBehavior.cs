@@ -1,5 +1,6 @@
 ﻿using Application.Abstractions.Mediator;
 using Application.Abstractions.Persistence;
+
 using Infrastructure.Ef.EfCore;
 
 using Wolverine.EntityFrameworkCore;
@@ -8,7 +9,7 @@ namespace Infrastructure.Mediator.Wolverine.Behaviors;
 
 public sealed class FlushOutgoingMessagesBehavior<TCommand, TResult>(
     IUnitOfWork unitOfWork,
-    IDbContextOutbox<DefaultDbContext> outbox)
+    IDbContextOutbox<TemplateWriteDbContext> outbox)
     : IAfterRequestBehavior<TCommand, TResult>
     where TCommand : ICommand<TResult>
     where TResult : Result

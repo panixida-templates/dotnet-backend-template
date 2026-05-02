@@ -1,7 +1,7 @@
 using Application.Users.Create;
 
+using Infrastructure.Ef.DependencyInjection;
 using Infrastructure.Mediator.Wolverine.DependencyInjection;
-using Infrastructure.Persistence.Ef.DependencyInjection;
 
 using Logging.OpenSearch;
 
@@ -20,7 +20,7 @@ builder.WebHost.ConfigureKestrel(options =>
     options.Limits.MaxRequestBodySize = FilesConstants.FileRequestSizeLimit;
 });
 
-builder.Services.AddEfRepository(builder.Configuration);
+builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddHttp();
 builder.Services.AddWolverineMediator();
 builder.Host.UseWolverineMediator(builder.Configuration, typeof(CreateUserHandler).Assembly);
