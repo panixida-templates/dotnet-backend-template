@@ -30,6 +30,8 @@ public abstract class ReadDbContext<TDbContext>(
             typeof(TDbContext).Assembly,
             schemaName,
             ExcludeReadModelsFromMigrations);
+
+        modelBuilder.ConfigureAuditableReadDbModels();
     }
 
     private static string GetSchemaName()

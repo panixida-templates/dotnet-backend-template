@@ -2,7 +2,7 @@
 
 namespace Infrastructure.Ef.Features.Users.Read;
 
-internal sealed class UserReadDbModel : ReadDbModel<Guid>
+internal sealed class UserReadDbModel : AuditableReadDbModel<Guid>
 {
     public string Role { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
