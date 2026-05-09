@@ -3,21 +3,24 @@ using System;
 using Infrastructure.Ef.EfCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Infrastructure.Persistence.Ef.EfCore.Migrations
+namespace Infrastructure.Ef.EfCore.Migrations
 {
     [DbContext(typeof(TemplateWriteDbContext))]
-    partial class DefaultDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260507180216_2026-05-07_18-02-16_CreateSequence_Add_users_Table_Add_ix_users_email_Index_To_users_Table_Add_ix_users_phone_Index_To_users_Table")]
+    partial class _20260507_180216_CreateSequence_Add_users_Table_Add_ix_users_email_Index_To_users_Table_Add_ix_users_phone_Index_To_users_Table
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.2")
+                .HasAnnotation("ProductVersion", "10.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseHiLo(modelBuilder, "EntityFrameworkHiLoSequence");
@@ -25,13 +28,12 @@ namespace Infrastructure.Persistence.Ef.EfCore.Migrations
             modelBuilder.HasSequence("EntityFrameworkHiLoSequence")
                 .IncrementsBy(10);
 
-            modelBuilder.Entity("Infrastructure.Persistence.Ef.Features.Users.UserDbModel", b =>
+            modelBuilder.Entity("Domain.Users.User", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id")
-                        .HasDefaultValueSql("gen_random_uuid()");
+                        .HasColumnOrder(0);
 
                     b.Property<string>("Avatar")
                         .HasColumnType("text")
@@ -43,11 +45,13 @@ namespace Infrastructure.Persistence.Ef.EfCore.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
+                        .HasColumnName("created_at")
+                        .HasColumnOrder(1);
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("deleted_at");
+                        .HasColumnName("deleted_at")
+                        .HasColumnOrder(3);
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -71,10 +75,19 @@ namespace Infrastructure.Persistence.Ef.EfCore.Migrations
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
+                        .HasColumnName("updated_at")
+                        .HasColumnOrder(2);
 
                     b.HasKey("Id")
                         .HasName("pk_users");
+
+                    b.HasIndex("Email")
+                        .IsUnique()
+                        .HasDatabaseName("ix_users_email");
+
+                    b.HasIndex("Phone")
+                        .IsUnique()
+                        .HasDatabaseName("ix_users_phone");
 
                     b.ToTable("users", (string)null);
                 });

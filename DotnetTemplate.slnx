@@ -1,7 +1,16 @@
 <Solution>
   <Folder Name="/Solution Items/">
+    <File Path=".dockerignore" />
     <File Path=".editorconfig" />
+    <File Path=".gitattributes" />
     <File Path=".github/workflows/ci.yml" />
+    <File Path=".gitignore" />
+    <File Path="AGENTS.md" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="global.json" />
+    <File Path="LICENSE" />
+    <File Path="README.md" />
   </Folder>
   <Folder Name="/src/">
     <Project Path="src/Application/Application.csproj" />
@@ -12,4 +21,7 @@
     <Project Path="src/Presentation/Presentation.csproj" />
   </Folder>
   <Folder Name="/tests/" />
+  <Folder Name="/tools/">
+    <Project Path="tools/Ef.Migrator/Ef.Migrator.csproj" Id="4b7dbdbf-9f8a-4713-83c3-0a3fb439d659" />
+  </Folder>
 </Solution>

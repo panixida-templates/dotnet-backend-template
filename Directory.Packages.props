@@ -1,0 +1,31 @@
+<Project>
+    <PropertyGroup>
+        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+        <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageVersion Include="PANiXiDA.Core.Domain" Version="1.0.3" />
+        <PackageVersion Include="PANiXiDA.Core.ResultPattern" Version="1.0.2" />
+        <PackageVersion Include="PANiXiDA.Core.SpecificationPattern" Version="1.0.2" />
+        <PackageVersion Include="PANiXiDA.Core.Logging.OpenSearch" Version="1.0.0" />
+        <PackageVersion Include="PANiXiDA.Core.Ef.Migrator" Version="1.0.2" />
+
+        <PackageVersion Include="EFCore.NamingConventions" Version="10.0.1" />
+        <PackageVersion Include="Humanizer" Version="3.0.1" />
+        <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="10.0.5" />
+        <PackageVersion Include="Npgsql" Version="10.0.2" />
+        <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.1" />
+        <PackageVersion Include="System.Linq.Dynamic.Core" Version="1.7.1" />
+
+        <PackageVersion Include="WolverineFx" Version="5.21.0" />
+        <PackageVersion Include="WolverineFx.EntityFrameworkCore" Version="5.21.0" />
+        <PackageVersion Include="WolverineFx.Postgresql" Version="5.21.0" />
+
+        <PackageVersion Include="Asp.Versioning.Http" Version="10.0.0" />
+        <PackageVersion Include="Asp.Versioning.OpenApi" Version="10.0.0-preview.2" />
+        <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.5" />
+        <PackageVersion Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.1.5" />
+
+        <PackageVersion Include="Riok.Mapperly" Version="5.0.0-next.2" />
+    </ItemGroup>
+</Project>

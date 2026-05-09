@@ -1,27 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
-    <PropertyGroup>
-        <TargetFramework>net10.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-        <DisableTransitiveProjectReferences>true</DisableTransitiveProjectReferences>
-        <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
-        <CompileUsingReferenceAssemblies>false</CompileUsingReferenceAssemblies>
-    </PropertyGroup>
-
     <ItemGroup>
-        <PackageReference Include="EFCore.NamingConventions" Version="10.0.1" />
-        <PackageReference Include="Humanizer" Version="3.0.1" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.2" />
-        <PackageReference Include="Npgsql" Version="10.0.1" />
-        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0" />
-        <PackageReference Include="Riok.Mapperly" Version="5.0.0-next.2" />
-        <PackageReference Include="System.Linq.Dynamic.Core" Version="1.7.1" />
+        <PackageReference Include="EFCore.NamingConventions" />
+        <PackageReference Include="Humanizer" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" />
+        <PackageReference Include="Npgsql" />
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+        <PackageReference Include="Riok.Mapperly" />
+        <PackageReference Include="System.Linq.Dynamic.Core" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Application\Application.csproj" />
-      <ProjectReference Include="..\..\Domain\Domain.csproj" />
+        <ProjectReference Include="..\..\Application\Application.csproj" />
+        <ProjectReference Include="..\..\Domain\Domain.csproj" />
     </ItemGroup>
 
     <ItemGroup>

@@ -136,3 +136,8 @@ dotnet_diagnostic.IDE0005.severity = error
 
 [I{Query,Command,Request}.cs]
 dotnet_diagnostic.S2326.severity = none
+
+[**/Migrations/**.cs]
+generated_code = true
+dotnet_diagnostic.IDE0005.severity = none
+dotnet_diagnostic.IDE0161.severity = none

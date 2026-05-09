@@ -1,19 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
-        <TargetFramework>net10.0</TargetFramework>
-        <Nullable>enable</Nullable>
-        <ImplicitUsings>enable</ImplicitUsings>
         <UserSecretsId>684902a4-1094-4cdd-8ca2-86ab4769faf9</UserSecretsId>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
         <DockerfileContext>..\..\..\..</DockerfileContext>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="PANiXiDA.Core.Logging.OpenSearch" Version="1.0.0" />
+        <PackageReference Include="PANiXiDA.Core.Logging.OpenSearch" />
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\Application\Application.csproj" />
         <ProjectReference Include="..\Infrastructure\Infrastructure.Ef\Infrastructure.Ef.csproj" />
         <ProjectReference Include="..\Infrastructure\Infrastructure.Wolverine\Infrastructure.Wolverine.csproj" />
         <ProjectReference Include="..\Presentation\Presentation.csproj" />

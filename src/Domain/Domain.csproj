@@ -1,20 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
-    <PropertyGroup>
-        <TargetFramework>net10.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-    </PropertyGroup>
-
     <ItemGroup>
-        <PackageReference Include="PANiXiDA.Core.Domain" Version="1.0.3" />
-        <PackageReference Include="PANiXiDA.Core.ResultPattern" Version="1.0.2" />
-        <PackageReference Include="PANiXiDA.Core.SpecificationPattern" Version="1.0.2" />
+        <PackageReference Include="PANiXiDA.Core.Domain" />
+        <PackageReference Include="PANiXiDA.Core.ResultPattern" />
+        <PackageReference Include="PANiXiDA.Core.SpecificationPattern" />
     </ItemGroup>
 
     <ItemGroup>
         <Using Include="PANiXiDA.Core.ResultPattern" />
-        
+
         <Using Include="PANiXiDA.Core.Domain" />
         <Using Include="PANiXiDA.Core.Domain.AggregateRoots" />
         <Using Include="PANiXiDA.Core.Domain.DomainEvents" />
