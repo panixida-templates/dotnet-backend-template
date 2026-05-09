@@ -7,7 +7,7 @@
         <PackageReference Include="Asp.Versioning.Http" />
         <PackageReference Include="Asp.Versioning.OpenApi" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
-        <PackageReference Include="Riok.Mapperly" PrivateAssets="all" />
+        <PackageReference Include="Riok.Mapperly" />
         <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" />
     </ItemGroup>
 
