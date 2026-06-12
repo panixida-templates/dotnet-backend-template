@@ -14,12 +14,13 @@
     <File Path="README.md" />
   </Folder>
   <Folder Name="/src/">
-    <Project Path="src/Application/Application.csproj" />
-    <Project Path="src/Domain/Domain.csproj" />
-    <Project Path="src/Host/Host.csproj" />
-    <Project Path="src/Infrastructure/Infrastructure.Ef/Infrastructure.Ef.csproj" />
-    <Project Path="src/Infrastructure/Infrastructure.Wolverine/Infrastructure.Wolverine.csproj" />
-    <Project Path="src/Presentation/Presentation.csproj" />
+    <Project Path="src/Organization.Product.Host/Organization.Product.Host.csproj" />
+  </Folder>
+  <Folder Name="/src/Module/">
+    <Project Path="src/Module/Organization.Product.Module.Application/Organization.Product.Module.Application.csproj" />
+    <Project Path="src/Module/Organization.Product.Module.Domain/Organization.Product.Module.Domain.csproj" />
+    <Project Path="src/Module/Organization.Product.Module.Infrastructure/Organization.Product.Module.Infrastructure.csproj" />
+    <Project Path="src/Module/Organization.Product.Module.Presentation/Organization.Product.Module.Presentation.csproj" />
   </Folder>
   <Folder Name="/tests/" />
   <Folder Name="/tools/">
