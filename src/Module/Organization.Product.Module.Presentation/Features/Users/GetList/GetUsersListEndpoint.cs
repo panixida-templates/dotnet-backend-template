@@ -4,11 +4,6 @@ using Microsoft.AspNetCore.Routing;
 
 using Organization.Product.Module.Application.Users.GetList;
 
-using PANiXiDA.Core.Application.Messaging.Mediator;
-using PANiXiDA.Core.Application.Querying.Pagination;
-using PANiXiDA.Core.Application.Querying.Sorting;
-using PANiXiDA.Core.Presentation.Http.Helpers;
-
 namespace Organization.Product.Module.Presentation.Features.Users.GetList;
 
 internal static class GetUsersListEndpoint
@@ -36,6 +31,7 @@ internal static class GetUsersListEndpoint
             new GetUsersListQuery(filterParameters, paginationParameters, sortParameters),
             cancellationToken);
 
-        return result.ToHttpResult(item => TypedResults.Ok(GetUsersListMapper.ToResponse(item)));
+        return result.ToHttpResult(item 
+            => TypedResults.Ok(GetUsersListMapper.ToResponse(item)));
     }
 }

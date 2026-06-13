@@ -6,9 +6,7 @@ using Organization.Product.Module.Domain.Users;
 using Organization.Product.Module.Domain.Users.Enumerations;
 using Organization.Product.Module.Domain.Users.ValueObjects;
 
-using PANiXiDA.Core.Infrastructure.Persistence.Ef.Write;
-
-namespace Organization.Product.Module.Infrastructure.Features.Users.Write;
+namespace Organization.Product.Module.Infrastructure.Persistence.Features.Users.Write;
 
 internal sealed class UserConfiguration : AuditableEntityConfiguration<User>
 {

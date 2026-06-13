@@ -4,8 +4,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
-using PANiXiDA.Core.Presentation.Http.Endpoints;
-
 namespace Organization.Product.Module.Presentation.Features.Users;
 
 internal class UsersEndpoints : IEndpointGroup

@@ -2,9 +2,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
-using PANiXiDA.Core.Application.Messaging.Mediator;
-using PANiXiDA.Core.Presentation.Http.Helpers;
-
 namespace Organization.Product.Module.Presentation.Features.Users.Update;
 
 internal static class UpdateUserEndpoint

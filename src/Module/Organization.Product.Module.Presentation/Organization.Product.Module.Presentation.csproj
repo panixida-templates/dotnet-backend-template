@@ -14,5 +14,14 @@
 
     <ItemGroup>
         <Using Include="PANiXiDA.Core.ResultPattern" />
+
+        <Using Include="PANiXiDA.Core.Application.Messaging.Mediator" />
+        <Using Include="PANiXiDA.Core.Application.Querying.Filtering" />
+        <Using Include="PANiXiDA.Core.Application.Querying.Pagination" />
+        <Using Include="PANiXiDA.Core.Application.Querying.Sorting" />
+        
+        <Using Include="PANiXiDA.Core.Presentation.Http.DependencyInjection" />
+        <Using Include="PANiXiDA.Core.Presentation.Http.Endpoints" />
+        <Using Include="PANiXiDA.Core.Presentation.Http.Helpers" />
     </ItemGroup>
 </Project>

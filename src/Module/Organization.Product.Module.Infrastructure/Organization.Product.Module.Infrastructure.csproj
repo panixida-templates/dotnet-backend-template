@@ -16,5 +16,18 @@
         <Using Include="PANiXiDA.Core.Domain.AggregateRoots" />
         <Using Include="PANiXiDA.Core.Domain.DomainEvents" />
         <Using Include="PANiXiDA.Core.Domain.Entities" />
+
+        <Using Include="PANiXiDA.Core.Application.Persistence" />
+        <Using Include="PANiXiDA.Core.Application.Querying.Filtering" />
+        <Using Include="PANiXiDA.Core.Application.Querying.Pagination" />
+        <Using Include="PANiXiDA.Core.Application.Querying.Sorting" />
+
+        <Using Include="PANiXiDA.Core.Infrastructure.Messaging.Wolverine.DependencyInjection" />
+        <Using Include="PANiXiDA.Core.Infrastructure.Persistence.Ef.DependencyInjection" />
+        <Using Include="PANiXiDA.Core.Infrastructure.Persistence.Ef.Constants" />
+        <Using Include="PANiXiDA.Core.Infrastructure.Persistence.Ef.DbContexts" />
+        <Using Include="PANiXiDA.Core.Infrastructure.Persistence.Ef.Read" />
+        <Using Include="PANiXiDA.Core.Infrastructure.Persistence.Ef.Read.Models" />
+        <Using Include="PANiXiDA.Core.Infrastructure.Persistence.Ef.Write" />
     </ItemGroup>
 </Project>

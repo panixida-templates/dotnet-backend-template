@@ -1,7 +1,5 @@
 ﻿using Organization.Product.Module.Application.Users.GetList;
-using Organization.Product.Module.Infrastructure.Features.Users.Read;
-
-using PANiXiDA.Core.Infrastructure.Persistence.Ef.Read;
+using Organization.Product.Module.Infrastructure.Persistence.Features.Users.Read;
 
 using Riok.Mapperly.Abstractions;
 

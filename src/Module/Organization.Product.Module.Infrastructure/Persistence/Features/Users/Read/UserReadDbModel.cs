@@ -1,6 +1,4 @@
-﻿using PANiXiDA.Core.Infrastructure.Persistence.Ef.Read.Models;
-
-namespace Organization.Product.Module.Infrastructure.Features.Users.Read;
+﻿namespace Organization.Product.Module.Infrastructure.Persistence.Features.Users.Read;
 
 internal sealed class UserReadDbModel : AuditableReadDbModel<Guid>
 {

@@ -1,9 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
-using PANiXiDA.Core.Infrastructure.Persistence.Ef.DbContexts;
-
-namespace Organization.Product.Module.Infrastructure.EfCore;
+namespace Organization.Product.Module.Infrastructure.Persistence.Core;
 
 public sealed class TemplateWriteDbContext(
     DbContextOptions<TemplateWriteDbContext> options,

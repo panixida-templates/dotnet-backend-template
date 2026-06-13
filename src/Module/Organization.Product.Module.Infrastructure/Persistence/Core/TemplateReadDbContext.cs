@@ -1,8 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-using PANiXiDA.Core.Infrastructure.Persistence.Ef.DbContexts;
-
-namespace Organization.Product.Module.Infrastructure.EfCore;
+namespace Organization.Product.Module.Infrastructure.Persistence.Core;
 
 public sealed class TemplateReadDbContext(
     DbContextOptions<TemplateReadDbContext> options)

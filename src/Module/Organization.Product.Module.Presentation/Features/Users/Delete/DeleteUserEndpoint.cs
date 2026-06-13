@@ -4,9 +4,6 @@ using Microsoft.AspNetCore.Routing;
 
 using Organization.Product.Module.Application.Users.Delete;
 
-using PANiXiDA.Core.Application.Messaging.Mediator;
-using PANiXiDA.Core.Presentation.Http.Helpers;
-
 namespace Organization.Product.Module.Presentation.Features.Users.Delete;
 
 internal static class DeleteUserEndpoint

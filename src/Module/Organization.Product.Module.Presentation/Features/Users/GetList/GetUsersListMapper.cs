@@ -1,8 +1,6 @@
 ﻿using Organization.Product.Module.Application.Users;
 using Organization.Product.Module.Application.Users.GetList;
 
-using PANiXiDA.Core.Application.Querying.Pagination;
-
 using Riok.Mapperly.Abstractions;
 
 namespace Organization.Product.Module.Presentation.Features.Users.GetList;

@@ -24,6 +24,6 @@
   </Folder>
   <Folder Name="/tests/" />
   <Folder Name="/tools/">
-    <Project Path="tools/Ef.Migrator/Ef.Migrator.csproj" Id="4b7dbdbf-9f8a-4713-83c3-0a3fb439d659" />
+    <Project Path="tools/Organization.Product.Ef.Migrator/Organization.Product.Ef.Migrator.csproj" />
   </Folder>
 </Solution>

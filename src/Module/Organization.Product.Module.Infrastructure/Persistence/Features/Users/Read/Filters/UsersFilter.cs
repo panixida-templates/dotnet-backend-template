@@ -1,7 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+
 using Organization.Product.Module.Application.Users;
 
-namespace Organization.Product.Module.Infrastructure.Features.Users.Read.Filters;
+namespace Organization.Product.Module.Infrastructure.Persistence.Features.Users.Read.Filters;
 
 internal static class UsersFilter
 {

@@ -1,10 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
-using Organization.Product.Module.Infrastructure.EfCore;
-
-using PANiXiDA.Core.Ef.Migrator;
-using PANiXiDA.Core.Infrastructure.Persistence.Ef.DependencyInjection;
+using Organization.Product.Module.Infrastructure.Persistence.Core;
 
 await Host.CreateDefaultBuilder(args)
     .ConfigureAppConfiguration((ctx, cfg) =>
