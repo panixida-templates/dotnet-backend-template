@@ -4,6 +4,8 @@ using Organization.Product.Module.Presentation.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.AddObservability();
+
 builder.WebHost.ConfigureKestrel(options =>
 {
     options.Limits.MaxRequestBodySize = FilesConstants.FileRequestSizeLimit;

@@ -7,8 +7,15 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="PANiXiDA.Core.Observability" />
+    </ItemGroup>
+
+    <ItemGroup>
         <ProjectReference Include="..\Module\Organization.Product.Module.Infrastructure\Organization.Product.Module.Infrastructure.csproj" />
         <ProjectReference Include="..\Module\Organization.Product.Module.Presentation\Organization.Product.Module.Presentation.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+        <Using Include="PANiXiDA.Core.Observability" />
+    </ItemGroup>
 </Project>
