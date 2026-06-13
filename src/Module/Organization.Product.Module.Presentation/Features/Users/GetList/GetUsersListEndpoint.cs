@@ -6,16 +6,14 @@ using Organization.Product.Module.Application.Users.GetList;
 
 namespace Organization.Product.Module.Presentation.Features.Users.GetList;
 
-internal static class GetUsersListEndpoint
+internal class GetUsersListEndpoint : IEndpoint<UsersEndpoints>
 {
-    internal static RouteGroupBuilder MapGetUsersListEndpoint(this RouteGroupBuilder group)
+    public void Map(RouteGroupBuilder group)
     {
         group.MapGet("/", HandleAsync)
             .WithName("GetUserList")
             .WithSummary("Get paginated user list")
             .Produces<UserListItemResponse>(StatusCodes.Status200OK);
-
-        return group;
     }
 
     private static async Task<IResult> HandleAsync(

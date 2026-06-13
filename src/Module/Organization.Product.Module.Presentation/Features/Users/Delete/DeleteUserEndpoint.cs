@@ -6,20 +6,18 @@ using Organization.Product.Module.Application.Users.Delete;
 
 namespace Organization.Product.Module.Presentation.Features.Users.Delete;
 
-internal static class DeleteUserEndpoint
+internal class DeleteUserEndpoint : IEndpoint<UsersEndpoints>
 {
     internal const string Name = "DeleteUser";
     internal const string Summary = "Delete user";
 
-    internal static RouteGroupBuilder MapDeleteUserEndpoint(this RouteGroupBuilder group)
+    public void Map(RouteGroupBuilder group)
     {
         group.MapDelete($"/{UsersEndpoints.IdRoute}", HandleAsync)
             .WithName(Name)
             .WithSummary(Summary)
             .Produces(StatusCodes.Status204NoContent)
             .ProducesProblem(StatusCodes.Status404NotFound);
-
-        return group;
     }
 
     private static async Task<IResult> HandleAsync(

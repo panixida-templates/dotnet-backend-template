@@ -4,12 +4,12 @@ using Microsoft.AspNetCore.Routing;
 
 namespace Organization.Product.Module.Presentation.Features.Users.Update;
 
-internal static class UpdateUserEndpoint
+internal class UpdateUserEndpoint : IEndpoint<UsersEndpoints>
 {
     internal const string Name = "UpdateUser";
     internal const string Summary = "Update user";
 
-    internal static RouteGroupBuilder MapUpdateUserEndpoint(this RouteGroupBuilder group)
+    public void Map(RouteGroupBuilder group)
     {
         group.MapPut($"/{UsersEndpoints.IdRoute}", HandleAsync)
             .WithName(Name)
@@ -17,8 +17,6 @@ internal static class UpdateUserEndpoint
             .Produces(StatusCodes.Status204NoContent)
             .ProducesValidationProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status404NotFound);
-
-        return group;
     }
 
     private static async Task<IResult> HandleAsync(
