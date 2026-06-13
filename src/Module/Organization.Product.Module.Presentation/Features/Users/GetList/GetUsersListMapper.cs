@@ -1,4 +1,5 @@
-﻿using Organization.Product.Module.Application.Users.GetList;
+﻿using Organization.Product.Module.Application.Users;
+using Organization.Product.Module.Application.Users.GetList;
 
 using PANiXiDA.Core.Application.Querying.Pagination;
 

@@ -1,6 +1,4 @@
 ﻿using Organization.Product.Module.Application.Users.Abstractions;
-using PANiXiDA.Core.Application.Messaging.Mediator.Handlers;
-using PANiXiDA.Core.Application.Querying.Pagination;
 
 namespace Organization.Product.Module.Application.Users.GetList;
 

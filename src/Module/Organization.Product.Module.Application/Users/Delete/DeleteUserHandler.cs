@@ -1,7 +1,5 @@
-﻿using Organization.Product.Module.Application.Users.Abstractions;
-using Organization.Product.Module.Domain.Users;
-
-using PANiXiDA.Core.Application.Messaging.Mediator.Handlers;
+﻿using Organization.Product.Module.Domain.Users;
+using Organization.Product.Module.Domain.Users.Abstractions;
 
 namespace Organization.Product.Module.Application.Users.Delete;
 
@@ -12,19 +10,25 @@ public sealed class DeleteUserHandler(IUsersRepository usersRepository)
         DeleteUserCommand command,
         CancellationToken cancellationToken)
     {
-        var result = (await UserId.Create(command.Id)
-            .BindAsync(async userId =>
-            {
-                var user = await usersRepository.GetByIdAsync(
-                    userId,
-                    cancellationToken);
+        var userIdResult = UserId.Create(command.Id);
 
-                return user is null
-                    ? Result.Failure<User>(Error.NotFound($"User with id '{command.Id}' was not found."))
-                    : Result.Success(user);
-            }))
-            .Tap(usersRepository.Delete);
+        if (userIdResult.IsFailure)
+        {
+            return Result.Failure(userIdResult.Errors);
+        }
 
-        return result;
+        var user = await usersRepository.GetByIdAsync(
+            userIdResult.Value,
+            cancellationToken);
+
+        if (user is null)
+        {
+            return Result.Failure(
+                Error.NotFound($"User with id '{command.Id}' was not found."));
+        }
+
+        await usersRepository.DeleteAsync(user, cancellationToken);
+
+        return Result.Success();
     }
 }

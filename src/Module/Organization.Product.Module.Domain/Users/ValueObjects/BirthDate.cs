@@ -2,6 +2,8 @@
 
 public sealed class BirthDate : ValueObject
 {
+    private const int MinimumAge = 18;
+
     private BirthDate(DateOnly value)
     {
         Value = value;
@@ -17,10 +19,19 @@ public sealed class BirthDate : ValueObject
         {
             return Result.Failure<BirthDate>(
                 Error.Validation("Birth date cannot be in the future.")
-                .WithField(nameof(BirthDate)));
+                    .WithField(nameof(BirthDate)));
         }
 
-        return Result.Success(new BirthDate(value));
+        var birthDate = new BirthDate(value);
+
+        if (!birthDate.IsAtLeast(MinimumAge, today))
+        {
+            return Result.Failure<BirthDate>(
+                Error.Validation($"User must be at least {MinimumAge} years old.")
+                    .WithField(nameof(BirthDate)));
+        }
+
+        return Result.Success(birthDate);
     }
 
     public int GetAge(DateOnly onDate)
@@ -48,18 +59,6 @@ public sealed class BirthDate : ValueObject
     public bool IsAtLeast(int age, DateOnly onDate)
     {
         return GetAge(onDate) >= age;
-    }
-
-    public Result EnsureAtLeast(int age, DateOnly onDate)
-    {
-        if (!IsAtLeast(age, onDate))
-        {
-            return Result.Failure(
-                Error.Validation($"User must be at least {age} years old.")
-                .WithField(nameof(BirthDate)));
-        }
-
-        return Result.Success();
     }
 
     public override string ToString()

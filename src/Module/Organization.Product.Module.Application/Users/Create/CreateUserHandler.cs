@@ -1,14 +1,12 @@
-﻿using Organization.Product.Module.Application.Users.Abstractions;
-using Organization.Product.Module.Domain.Users;
-
-using PANiXiDA.Core.Application.Messaging.Mediator.Handlers;
+﻿using Organization.Product.Module.Domain.Users;
+using Organization.Product.Module.Domain.Users.Abstractions;
 
 namespace Organization.Product.Module.Application.Users.Create;
 
 public sealed class CreateUserHandler(IUsersRepository usersRepository)
     : ICommandHandler<CreateUserCommand, Result<Guid>>
 {
-    public Task<Result<Guid>> HandleAsync(
+    public async Task<Result<Guid>> HandleAsync(
         CreateUserCommand command,
         CancellationToken cancellationToken)
     {
@@ -22,11 +20,11 @@ public sealed class CreateUserHandler(IUsersRepository usersRepository)
 
         if (userResult.IsFailure)
         {
-            return Task.FromResult(Result.Failure<Guid>(userResult.Errors));
+            return Result.Failure<Guid>(userResult.Errors);
         }
 
-        usersRepository.Add(userResult.Value);
+        await usersRepository.AddAsync(userResult.Value, cancellationToken);
 
-        return Task.FromResult(Result.Success(userResult.Value.Id.Value));
+        return Result.Success(userResult.Value.Id.Value);
     }
 }

@@ -1,8 +1,5 @@
 ﻿using Organization.Product.Module.Application.Users.GetDetails;
 using Organization.Product.Module.Application.Users.GetList;
-using PANiXiDA.Core.Application.Persistence;
-using PANiXiDA.Core.Application.Querying.Pagination;
-using PANiXiDA.Core.Application.Querying.Sorting;
 
 namespace Organization.Product.Module.Application.Users.Abstractions;
 

@@ -1,6 +1,4 @@
-﻿using PANiXiDA.Core.Application.Messaging.Mediator.Contracts;
-
-namespace Organization.Product.Module.Application.Users.Update;
+﻿namespace Organization.Product.Module.Application.Users.Update;
 
 public sealed record UpdateUserCommand(
     Guid Id,

@@ -1,6 +1,4 @@
-﻿using PANiXiDA.Core.Application.Messaging.Mediator.Contracts;
-
-namespace Organization.Product.Module.Application.Users.Create;
+﻿namespace Organization.Product.Module.Application.Users.Create;
 
 public sealed record CreateUserCommand(
     string Role,

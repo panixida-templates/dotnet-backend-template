@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-
-using Organization.Product.Module.Application.Users.GetList;
+using Organization.Product.Module.Application.Users;
 
 namespace Organization.Product.Module.Infrastructure.Features.Users.Read.Filters;
 

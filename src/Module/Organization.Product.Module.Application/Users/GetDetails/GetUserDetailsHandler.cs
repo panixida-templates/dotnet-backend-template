@@ -1,7 +1,5 @@
 ﻿using Organization.Product.Module.Application.Users.Abstractions;
 
-using PANiXiDA.Core.Application.Messaging.Mediator.Handlers;
-
 namespace Organization.Product.Module.Application.Users.GetDetails;
 
 public sealed class GetUserDetailsHandler(
@@ -15,7 +13,8 @@ public sealed class GetUserDetailsHandler(
         var user = await usersReadRepository.GetByIdAsync(query.Id, cancellationToken);
         if (user is null)
         {
-            return Result.Failure<UserDetailsReadModel>(Error.NotFound($"User with id '{query.Id}' was not found."));
+            return Result.Failure<UserDetailsReadModel>(
+                Error.NotFound($"User with id '{query.Id}' was not found."));
         }
 
         return Result.Success(user);

@@ -1,5 +1,5 @@
 ﻿using Infrastructure.Ef.Features.Users.Read.Mappers;
-
+using Organization.Product.Module.Application.Users;
 using Organization.Product.Module.Application.Users.Abstractions;
 using Organization.Product.Module.Application.Users.GetDetails;
 using Organization.Product.Module.Application.Users.GetList;
