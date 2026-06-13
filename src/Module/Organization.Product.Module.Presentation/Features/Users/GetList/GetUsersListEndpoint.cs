@@ -13,7 +13,7 @@ internal class GetUsersListEndpoint : IEndpoint<UsersEndpoints>
         group.MapGet("/", HandleAsync)
             .WithName("GetUserList")
             .WithSummary("Get paginated user list")
-            .Produces<UserListItemResponse>(StatusCodes.Status200OK);
+            .Produces<PaginationResult<UserListItemResponse>>(StatusCodes.Status200OK);
     }
 
     private static async Task<IResult> HandleAsync(
@@ -29,7 +29,7 @@ internal class GetUsersListEndpoint : IEndpoint<UsersEndpoints>
             new GetUsersListQuery(filterParameters, paginationParameters, sortParameters),
             cancellationToken);
 
-        return result.ToHttpResult(item 
+        return result.ToHttpResult(item
             => TypedResults.Ok(GetUsersListMapper.ToResponse(item)));
     }
 }

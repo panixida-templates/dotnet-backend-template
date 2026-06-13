@@ -1,11 +1,10 @@
-﻿using Infrastructure.Ef.Features.Users.Read.Mappers;
-
-using Organization.Product.Module.Application.Users;
+﻿using Organization.Product.Module.Application.Users;
 using Organization.Product.Module.Application.Users.Abstractions;
 using Organization.Product.Module.Application.Users.GetDetails;
 using Organization.Product.Module.Application.Users.GetList;
 using Organization.Product.Module.Infrastructure.Persistence.Core;
 using Organization.Product.Module.Infrastructure.Persistence.Features.Users.Read.Filters;
+using Organization.Product.Module.Infrastructure.Persistence.Features.Users.Read.Mappers;
 
 namespace Organization.Product.Module.Infrastructure.Persistence.Features.Users.Read;
 
