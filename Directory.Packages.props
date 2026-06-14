@@ -4,6 +4,10 @@
         <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
     </PropertyGroup>
     <ItemGroup>
+        <PackageVersion Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.3.1" />
+        <PackageVersion Include="Microsoft.Testing.Extensions.TrxReport" Version="2.0.2" />
+        <PackageVersion Include="NSubstitute" Version="5.3.0" />
+        <PackageVersion Include="NSubstitute.Analyzers.CSharp" Version="1.0.17" />
         <PackageVersion Include="PANiXiDA.Core.Application" Version="1.0.3" />
         <PackageVersion Include="PANiXiDA.Core.Domain" Version="1.0.4" />
         <PackageVersion Include="PANiXiDA.Core.Infrastructure.Messaging.Wolverine" Version="1.0.3" />
@@ -14,5 +18,7 @@
         <PackageVersion Include="PANiXiDA.Core.SpecificationPattern" Version="1.0.2" />
         <PackageVersion Include="PANiXiDA.Core.Ef.Migrator" Version="1.0.2" />
         <PackageVersion Include="Riok.Mapperly" Version="5.0.0-next.2" />
+        <PackageVersion Include="Shouldly" Version="4.3.0" />
+        <PackageVersion Include="xunit.v3.mtp-v2" Version="3.2.2" />
     </ItemGroup>
 </Project>
