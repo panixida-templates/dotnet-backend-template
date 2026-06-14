@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
 
 using Organization.Product.Module.Application.Users.GetDetails;
 
@@ -8,14 +6,13 @@ namespace Organization.Product.Module.Presentation.Features.Users.GetDetails;
 
 internal class GetUserDetailsEndpoint : IEndpoint<UsersEndpoints>
 {
-    internal const string Name = "GetUserById";
-    internal const string Summary = "Get user by id";
+    public string Route { get; } = $"/{UsersEndpoints.IdRoute}";
+    public string Name { get; } = "GetUserById";
+    public string Summary { get; } = "Get user by id";
 
-    public void Map(RouteGroupBuilder group)
+    public void Map(EndpointMapBuilder builder)
     {
-        group.MapGet($"/{UsersEndpoints.IdRoute}", HandleAsync)
-            .WithName(Name)
-            .WithSummary(Summary)
+        builder.MapGet(HandleAsync)
             .Produces<UserDetailsResponse>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status404NotFound);
     }

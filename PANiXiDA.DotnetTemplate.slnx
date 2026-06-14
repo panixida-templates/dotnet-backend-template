@@ -22,7 +22,14 @@
     <Project Path="src/Module/Organization.Product.Module.Infrastructure/Organization.Product.Module.Infrastructure.csproj" />
     <Project Path="src/Module/Organization.Product.Module.Presentation/Organization.Product.Module.Presentation.csproj" />
   </Folder>
-  <Folder Name="/tests/" />
+  <Folder Name="/tests/Module/">
+    <Project Path="tests/Module/Organization.Product.Module.FunctionalTests/Organization.Product.Module.FunctionalTests.csproj" />
+    <Project Path="tests/Module/Organization.Product.Module.IntegrationTests/Organization.Product.Module.IntegrationTests.csproj" />
+    <Project Path="tests/Module/Organization.Product.Module.UnitTests/Organization.Product.Module.UnitTests.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Organization.Product.ArchitectureTests/Organization.Product.ArchitectureTests.csproj" />
+  </Folder>
   <Folder Name="/tools/">
     <Project Path="tools/Organization.Product.Ef.Migrator/Organization.Product.Ef.Migrator.csproj" />
   </Folder>

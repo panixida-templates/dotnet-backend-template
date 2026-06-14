@@ -1,19 +1,16 @@
-﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
 
 namespace Organization.Product.Module.Presentation.Features.Users.Update;
 
-internal class UpdateUserEndpoint : IEndpoint<UsersEndpoints>
+internal sealed class UpdateUserEndpoint : IEndpoint<UsersEndpoints>
 {
-    internal const string Name = "UpdateUser";
-    internal const string Summary = "Update user";
+    public string Route { get; } = $"/{UsersEndpoints.IdRoute}";
+    public string Name { get; } = "UpdateUser";
+    public string Summary { get; } = "Update user";
 
-    public void Map(RouteGroupBuilder group)
+    public void Map(EndpointMapBuilder builder)
     {
-        group.MapPut($"/{UsersEndpoints.IdRoute}", HandleAsync)
-            .WithName(Name)
-            .WithSummary(Summary)
+        builder.MapPut(HandleAsync)
             .Produces(StatusCodes.Status204NoContent)
             .ProducesValidationProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status404NotFound);

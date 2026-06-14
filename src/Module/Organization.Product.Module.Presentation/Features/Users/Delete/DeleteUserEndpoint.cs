@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
 
 using Organization.Product.Module.Application.Users.Delete;
 
@@ -8,14 +6,13 @@ namespace Organization.Product.Module.Presentation.Features.Users.Delete;
 
 internal class DeleteUserEndpoint : IEndpoint<UsersEndpoints>
 {
-    internal const string Name = "DeleteUser";
-    internal const string Summary = "Delete user";
+    public string Route { get; } = $"/{UsersEndpoints.IdRoute}";
+    public string Name { get; } = "DeleteUser";
+    public string Summary { get; } = "Delete user";
 
-    public void Map(RouteGroupBuilder group)
+    public void Map(EndpointMapBuilder builder)
     {
-        group.MapDelete($"/{UsersEndpoints.IdRoute}", HandleAsync)
-            .WithName(Name)
-            .WithSummary(Summary)
+        builder.MapDelete(HandleAsync)
             .Produces(StatusCodes.Status204NoContent)
             .ProducesProblem(StatusCodes.Status404NotFound);
     }

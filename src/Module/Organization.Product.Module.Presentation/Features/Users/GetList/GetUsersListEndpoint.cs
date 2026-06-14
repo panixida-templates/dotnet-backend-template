@@ -1,18 +1,18 @@
-﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
 
 using Organization.Product.Module.Application.Users.GetList;
 
 namespace Organization.Product.Module.Presentation.Features.Users.GetList;
 
-internal class GetUsersListEndpoint : IEndpoint<UsersEndpoints>
+internal sealed class GetUsersListEndpoint : IEndpoint<UsersEndpoints>
 {
-    public void Map(RouteGroupBuilder group)
+    public string Route { get; } = "/";
+    public string Name { get; } = "GetUserList";
+    public string Summary { get; } = "Get paginated user list";
+
+    public void Map(EndpointMapBuilder builder)
     {
-        group.MapGet("/", HandleAsync)
-            .WithName("GetUserList")
-            .WithSummary("Get paginated user list")
+        builder.MapGet(HandleAsync)
             .Produces<PaginationResult<UserListItemResponse>>(StatusCodes.Status200OK);
     }
 

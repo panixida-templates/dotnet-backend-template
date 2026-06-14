@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
 
 using Organization.Product.Module.Presentation.Features.Users.GetDetails;
 
@@ -8,14 +6,13 @@ namespace Organization.Product.Module.Presentation.Features.Users.Create;
 
 internal class CreateUserEndpoint : IEndpoint<UsersEndpoints>
 {
-    internal const string Name = "CreateUser";
-    internal const string Summary = "Create user";
+    public string Route { get; } = "/";
+    public string Name { get; } = "CreateUser";
+    public string Summary { get; } = "Create user";
 
-    public void Map(RouteGroupBuilder group)
+    public void Map(EndpointMapBuilder builder)
     {
-        group.MapPost("/", HandleAsync)
-            .WithName(Name)
-            .WithSummary(Summary)
+        builder.MapPost(HandleAsync)
             .Produces<CreateUserResponse>(StatusCodes.Status201Created)
             .ProducesValidationProblem(StatusCodes.Status400BadRequest);
     }
@@ -31,7 +28,7 @@ internal class CreateUserEndpoint : IEndpoint<UsersEndpoints>
         return result.ToHttpResult(createdId =>
             TypedResults.CreatedAtRoute(
                 CreateUserMapper.ToResponse(createdId),
-                GetUserDetailsEndpoint.Name,
+                new GetUserDetailsEndpoint().Name,
                 new { id = createdId }));
     }
 }

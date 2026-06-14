@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <IsPackable>false</IsPackable>
+        <IsTestProject>true</IsTestProject>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\..\src\Module\Organization.Product.Module.Application\Organization.Product.Module.Application.csproj" />
+        <ProjectReference Include="..\..\..\src\Module\Organization.Product.Module.Domain\Organization.Product.Module.Domain.csproj" />
+    </ItemGroup>
+</Project>
