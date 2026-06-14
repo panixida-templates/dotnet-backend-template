@@ -2,7 +2,7 @@
 
 namespace Organization.Product.Module.Presentation.Features.Users.Update;
 
-public sealed record UpdateUserRequest(
+internal sealed record UpdateUserRequest(
     [property: Required]
     [property: StringLength(50)]
     string Role,

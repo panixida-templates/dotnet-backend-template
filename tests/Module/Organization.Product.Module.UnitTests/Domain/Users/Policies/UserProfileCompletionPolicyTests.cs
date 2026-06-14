@@ -1,3 +1,4 @@
+using Organization.Product.Module.Domain.Users;
 using Organization.Product.Module.Domain.Users.Policies;
 
 namespace Organization.Product.Module.UnitTests.Domain.Users.Policies;
@@ -8,10 +9,13 @@ public sealed class UserProfileCompletionPolicyTests
     public void EnsureCompleted_Should_Return_Success_When_User_Is_Regular_And_Avatar_Is_Not_Provided()
     {
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
-        var user = UserTestFactory.CreateUser(
+        var user = User.Create(
             role: "User",
+            name: "John Doe",
+            email: "john.doe@example.com",
+            phone: "+12345678901",
             birthDate: today.AddYears(-20),
-            avatar: null);
+            avatar: null).Value;
 
         var result = UserProfileCompletionPolicy.EnsureCompleted(user, today);
 
@@ -22,10 +26,13 @@ public sealed class UserProfileCompletionPolicyTests
     public void EnsureCompleted_Should_Return_Failure_When_Privileged_User_Has_No_Avatar()
     {
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
-        var user = UserTestFactory.CreateUser(
+        var user = User.Create(
             role: "Admin",
+            name: "John Doe",
+            email: "john.doe@example.com",
+            phone: "+12345678901",
             birthDate: today.AddYears(-30),
-            avatar: null);
+            avatar: null).Value;
 
         var result = UserProfileCompletionPolicy.EnsureCompleted(user, today);
 
@@ -40,10 +47,13 @@ public sealed class UserProfileCompletionPolicyTests
     public void EnsureCompleted_Should_Return_Failure_When_Privileged_User_Is_Under_21()
     {
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
-        var user = UserTestFactory.CreateUser(
+        var user = User.Create(
             role: "Moderator",
+            name: "John Doe",
+            email: "john.doe@example.com",
+            phone: "+12345678901",
             birthDate: today.AddYears(-20),
-            avatar: "https://example.com/avatar.png");
+            avatar: "https://example.com/avatar.png").Value;
 
         var result = UserProfileCompletionPolicy.EnsureCompleted(user, today);
 
@@ -58,10 +68,13 @@ public sealed class UserProfileCompletionPolicyTests
     public void EnsureCompleted_Should_Return_Success_When_Privileged_User_Has_Avatar_And_Is_At_Least_21()
     {
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
-        var user = UserTestFactory.CreateUser(
+        var user = User.Create(
             role: "Admin",
+            name: "John Doe",
+            email: "john.doe@example.com",
+            phone: "+12345678901",
             birthDate: today.AddYears(-21),
-            avatar: "https://example.com/avatar.png");
+            avatar: "https://example.com/avatar.png").Value;
 
         var result = UserProfileCompletionPolicy.EnsureCompleted(user, today);
 

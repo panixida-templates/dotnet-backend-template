@@ -11,18 +11,18 @@ public sealed class GetUserDetailsHandlerTests
         var cancellationToken = CancellationToken.None;
         var id = Guid.NewGuid();
         var readModel = new UserDetailsReadModel(
-            id,
-            "John Doe",
-            "john@example.com",
-            "+12345678901",
-            new DateOnly(1990, 1, 1),
-            "https://example.com/avatar.png");
+            Id: id,
+            Name: "John Doe",
+            Email: "john@example.com",
+            Phone: "+12345678901",
+            BirthDate: new DateOnly(1990, 1, 1),
+            Avatar: "https://example.com/avatar.png");
         var usersReadRepository = Substitute.For<IUsersReadRepository>();
         usersReadRepository
             .GetByIdAsync(id, cancellationToken)
             .Returns(Task.FromResult<UserDetailsReadModel?>(readModel));
         var handler = new GetUserDetailsHandler(usersReadRepository);
-        var query = new GetUserDetailsQuery(id);
+        var query = new GetUserDetailsQuery(Id: id);
 
         var result = await handler.HandleAsync(query, cancellationToken);
 
@@ -46,7 +46,7 @@ public sealed class GetUserDetailsHandlerTests
             .GetByIdAsync(id, cancellationToken)
             .Returns(Task.FromResult<UserDetailsReadModel?>(null));
         var handler = new GetUserDetailsHandler(usersReadRepository);
-        var query = new GetUserDetailsQuery(id);
+        var query = new GetUserDetailsQuery(Id: id);
 
         var result = await handler.HandleAsync(query, cancellationToken);
 

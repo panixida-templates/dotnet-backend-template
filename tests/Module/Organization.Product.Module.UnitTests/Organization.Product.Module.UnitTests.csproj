@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>Exe</OutputType>
     </PropertyGroup>
@@ -15,6 +15,7 @@
     <ItemGroup>
         <ProjectReference Include="..\..\..\src\Module\Organization.Product.Module.Application\Organization.Product.Module.Application.csproj" />
         <ProjectReference Include="..\..\..\src\Module\Organization.Product.Module.Domain\Organization.Product.Module.Domain.csproj" />
+        <ProjectReference Include="..\..\Organization.Product.Testing\Organization.Product.Testing.csproj" />
     </ItemGroup>
 
     <ItemGroup>
@@ -22,15 +23,10 @@
         <Using Include="PANiXiDA.Core.Application.Querying.Pagination" />
         <Using Include="PANiXiDA.Core.Application.Querying.Sorting" />
 
-        <Using Include="Organization.Product.Module.UnitTests.Assertions" />
+        <Using Include="Organization.Product.Testing.Assertions" />
 
         <Using Include="NSubstitute" />
         <Using Include="Shouldly" />
         <Using Include="Xunit" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <Folder Include="Application\" />
-        <Folder Include="Domain\" />
     </ItemGroup>
 </Project>

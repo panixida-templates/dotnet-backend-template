@@ -6,8 +6,10 @@
     <ItemGroup>
         <PackageVersion Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.3.1" />
         <PackageVersion Include="Microsoft.Testing.Extensions.TrxReport" Version="2.0.2" />
+        <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.9" />
         <PackageVersion Include="NSubstitute" Version="5.3.0" />
         <PackageVersion Include="NSubstitute.Analyzers.CSharp" Version="1.0.17" />
+        <PackageVersion Include="Npgsql" Version="10.0.3" />
         <PackageVersion Include="PANiXiDA.Core.Application" Version="1.0.3" />
         <PackageVersion Include="PANiXiDA.Core.Domain" Version="1.0.4" />
         <PackageVersion Include="PANiXiDA.Core.Infrastructure.Messaging.Wolverine" Version="1.0.3" />

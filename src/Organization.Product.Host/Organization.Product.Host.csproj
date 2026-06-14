@@ -11,6 +11,8 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\Module\Organization.Product.Module.Application\Organization.Product.Module.Application.csproj" />
+        <ProjectReference Include="..\Module\Organization.Product.Module.Domain\Organization.Product.Module.Domain.csproj" />
         <ProjectReference Include="..\Module\Organization.Product.Module.Infrastructure\Organization.Product.Module.Infrastructure.csproj" />
         <ProjectReference Include="..\Module\Organization.Product.Module.Presentation\Organization.Product.Module.Presentation.csproj" />
     </ItemGroup>

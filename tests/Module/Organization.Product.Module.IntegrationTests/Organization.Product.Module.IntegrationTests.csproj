@@ -8,8 +8,6 @@
         <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" />
         <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" />
         <PackageReference Include="xunit.v3.mtp-v2" />
-        <PackageReference Include="Respawn" />
-        <PackageReference Include="Testcontainers.PostgreSql" />
     </ItemGroup>
 
     <ItemGroup>
@@ -17,6 +15,7 @@
         <ProjectReference Include="..\..\..\src\Module\Organization.Product.Module.Domain\Organization.Product.Module.Domain.csproj" />
         <ProjectReference Include="..\..\..\src\Module\Organization.Product.Module.Infrastructure\Organization.Product.Module.Infrastructure.csproj" />
         <ProjectReference Include="..\..\..\src\Module\Organization.Product.Module.Presentation\Organization.Product.Module.Presentation.csproj" />
+        <ProjectReference Include="..\..\Organization.Product.Testing\Organization.Product.Testing.csproj" />
     </ItemGroup>
 
     <ItemGroup>

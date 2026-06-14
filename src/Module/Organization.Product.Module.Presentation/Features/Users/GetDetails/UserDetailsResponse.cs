@@ -1,6 +1,6 @@
 ﻿namespace Organization.Product.Module.Presentation.Features.Users.GetDetails;
 
-public sealed record UserDetailsResponse(
+internal sealed record UserDetailsResponse(
     Guid Id,
     string Name,
     string Email,

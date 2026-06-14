@@ -1,7 +1,6 @@
 using Organization.Product.Module.Application.Users.Update;
 using Organization.Product.Module.Domain.Users;
 using Organization.Product.Module.Domain.Users.Abstractions;
-using Organization.Product.Module.UnitTests.Domain.Users;
 
 namespace Organization.Product.Module.UnitTests.Application.Users.Update;
 
@@ -52,24 +51,26 @@ public sealed class UpdateUserHandlerTests
     public async Task HandleAsync_Should_Return_Failure_And_Not_Update_When_Command_Is_Invalid()
     {
         var cancellationToken = CancellationToken.None;
-        var user = UserTestFactory.CreateUser(
+        var user = User.Create(
+            role: "User",
             name: "John Doe",
             email: "john@example.com",
             phone: "+12345678901",
-            birthDate: UserTestFactory.AdultBirthDate(30));
+            birthDate: DateOnly.FromDateTime(DateTime.UtcNow).AddYears(-30),
+            avatar: "https://example.com/avatar.png").Value;
         var usersRepository = Substitute.For<IUsersRepository>();
         usersRepository
             .GetByIdAsync(user.Id, cancellationToken)
             .Returns(Task.FromResult<User?>(user));
         var handler = new UpdateUserHandler(usersRepository);
         var command = new UpdateUserCommand(
-            user.Id.Value,
-            "",
-            "",
-            "invalid-email",
-            "123",
-            DateOnly.FromDateTime(DateTime.UtcNow).AddYears(-17),
-            new string('a', 2049));
+            Id: user.Id.Value,
+            Role: "",
+            Name: "",
+            Email: "invalid-email",
+            Phone: "123",
+            BirthDate: DateOnly.FromDateTime(DateTime.UtcNow).AddYears(-17),
+            Avatar: new string('a', 2049));
 
         var result = await handler.HandleAsync(command, cancellationToken);
 
@@ -86,7 +87,13 @@ public sealed class UpdateUserHandlerTests
     public async Task HandleAsync_Should_Update_User_When_Command_Is_Valid()
     {
         var cancellationToken = CancellationToken.None;
-        var user = UserTestFactory.CreateUser(email: "old@example.com");
+        var user = User.Create(
+            role: "User",
+            name: "John Doe",
+            email: "old@example.com",
+            phone: "+12345678901",
+            birthDate: DateOnly.FromDateTime(DateTime.UtcNow).AddYears(-30),
+            avatar: "https://example.com/avatar.png").Value;
         var usersRepository = Substitute.For<IUsersRepository>();
         usersRepository
             .GetByIdAsync(user.Id, cancellationToken)
@@ -95,15 +102,15 @@ public sealed class UpdateUserHandlerTests
             .UpdateAsync(user, cancellationToken)
             .Returns(Task.CompletedTask);
         var handler = new UpdateUserHandler(usersRepository);
-        var newBirthDate = UserTestFactory.AdultBirthDate(40);
+        var newBirthDate = DateOnly.FromDateTime(DateTime.UtcNow).AddYears(-40);
         var command = new UpdateUserCommand(
-            user.Id.Value,
-            "Moderator",
-            "Jane Doe",
-            "new@example.com",
-            "+19876543210",
-            newBirthDate,
-            null);
+            Id: user.Id.Value,
+            Role: "Moderator",
+            Name: "Jane Doe",
+            Email: "new@example.com",
+            Phone: "+19876543210",
+            BirthDate: newBirthDate,
+            Avatar: null);
 
         var result = await handler.HandleAsync(command, cancellationToken);
 
@@ -120,12 +127,12 @@ public sealed class UpdateUserHandlerTests
     private static UpdateUserCommand CreateCommand(Guid id)
     {
         return new UpdateUserCommand(
-            id,
-            "User",
-            "John Doe",
-            "john@example.com",
-            "+12345678901",
-            UserTestFactory.AdultBirthDate(),
-            null);
+            Id: id,
+            Role: "User",
+            Name: "John Doe",
+            Email: "john@example.com",
+            Phone: "+12345678901",
+            BirthDate: DateOnly.FromDateTime(DateTime.UtcNow).AddYears(-30),
+            Avatar: null);
     }
 }

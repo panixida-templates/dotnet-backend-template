@@ -1,6 +1,6 @@
-namespace Organization.Product.Module.UnitTests.Assertions;
+namespace Organization.Product.Testing.Assertions;
 
-internal static class ResultAssertions
+public static class ResultAssertions
 {
     public static Error ShouldHaveSingleError(
         this Result result,

@@ -13,6 +13,10 @@
     </ItemGroup>
 
     <ItemGroup>
+        <InternalsVisibleTo Include="Organization.Product.Module.FunctionalTests" />
+    </ItemGroup>
+
+    <ItemGroup>
         <Using Include="PANiXiDA.Core.ResultPattern" />
 
         <Using Include="PANiXiDA.Core.Application.Messaging.Mediator" />

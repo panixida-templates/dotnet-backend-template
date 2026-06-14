@@ -1,7 +1,6 @@
 using Organization.Product.Module.Application.Users.Create;
 using Organization.Product.Module.Domain.Users;
 using Organization.Product.Module.Domain.Users.Abstractions;
-using Organization.Product.Module.UnitTests.Domain.Users;
 
 namespace Organization.Product.Module.UnitTests.Application.Users.Create;
 
@@ -18,12 +17,12 @@ public sealed class CreateUserHandlerTests
             .Returns(Task.CompletedTask);
         var handler = new CreateUserHandler(usersRepository);
         var command = new CreateUserCommand(
-            "Admin",
-            "John Doe",
-            "john@example.com",
-            "+12345678901",
-            UserTestFactory.AdultBirthDate(),
-            "https://example.com/avatar.png");
+            Role: "Admin",
+            Name: "John Doe",
+            Email: "john@example.com",
+            Phone: "+12345678901",
+            BirthDate: DateOnly.FromDateTime(DateTime.UtcNow).AddYears(-30),
+            Avatar: "https://example.com/avatar.png");
 
         var result = await handler.HandleAsync(command, cancellationToken);
 
@@ -43,12 +42,12 @@ public sealed class CreateUserHandlerTests
         var usersRepository = Substitute.For<IUsersRepository>();
         var handler = new CreateUserHandler(usersRepository);
         var command = new CreateUserCommand(
-            "",
-            "",
-            "invalid-email",
-            "123",
-            DateOnly.FromDateTime(DateTime.UtcNow).AddYears(-17),
-            new string('a', 2049));
+            Role: "",
+            Name: "",
+            Email: "invalid-email",
+            Phone: "123",
+            BirthDate: DateOnly.FromDateTime(DateTime.UtcNow).AddYears(-17),
+            Avatar: new string('a', 2049));
 
         var result = await handler.HandleAsync(command, cancellationToken);
 

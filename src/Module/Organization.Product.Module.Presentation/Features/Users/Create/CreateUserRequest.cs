@@ -2,7 +2,7 @@
 
 namespace Organization.Product.Module.Presentation.Features.Users.Create;
 
-public sealed record CreateUserRequest(
+internal sealed record CreateUserRequest(
     [property: Required]
     [property: StringLength(50)]
     string Role,

@@ -2,8 +2,8 @@ using Npgsql;
 
 namespace Organization.Product.Module.IntegrationTests.Infrastructure.Persistence.Core;
 
-public sealed class TemplateWriteDbContextTests(InfrastructureTestFixture fixture)
-    : InfrastructureTestBase(fixture)
+public sealed class TemplateWriteDbContextTests(IntegrationTestFixture fixture)
+    : IntegrationTestBase(fixture)
 {
     [Fact(DisplayName = "MigrateAsync should create users table and indexes when migrations are applied")]
     public async Task MigrateAsync_Should_Create_Users_Table_And_Indexes_When_Migrations_Are_Applied()

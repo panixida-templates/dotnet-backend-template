@@ -29,6 +29,7 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Organization.Product.ArchitectureTests/Organization.Product.ArchitectureTests.csproj" />
+    <Project Path="tests/Organization.Product.Testing/Organization.Product.Testing.csproj" />
   </Folder>
   <Folder Name="/tools/">
     <Project Path="tools/Organization.Product.Ef.Migrator/Organization.Product.Ef.Migrator.csproj" />

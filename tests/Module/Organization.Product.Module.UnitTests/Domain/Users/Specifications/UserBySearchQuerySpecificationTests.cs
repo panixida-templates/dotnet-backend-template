@@ -1,3 +1,4 @@
+using Organization.Product.Module.Domain.Users;
 using Organization.Product.Module.Domain.Users.Specifications;
 
 namespace Organization.Product.Module.UnitTests.Domain.Users.Specifications;
@@ -12,10 +13,13 @@ public sealed class UserBySearchQuerySpecificationTests
         string searchQuery,
         bool expected)
     {
-        var user = UserTestFactory.CreateUser(
+        var user = User.Create(
+            role: "User",
             name: "John Doe",
             email: "john@example.com",
-            phone: "+12345678901");
+            phone: "+12345678901",
+            birthDate: DateOnly.FromDateTime(DateTime.UtcNow).AddYears(-30),
+            avatar: "https://example.com/avatar.png").Value;
         var specification = new UserBySearchQuerySpecification(searchQuery);
 
         specification.IsSatisfiedBy(user).ShouldBe(expected);

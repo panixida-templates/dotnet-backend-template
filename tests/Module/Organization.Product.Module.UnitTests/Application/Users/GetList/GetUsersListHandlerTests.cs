@@ -10,18 +10,18 @@ public sealed class GetUsersListHandlerTests
     public async Task HandleAsync_Should_Return_Paged_List_From_Repository_When_Query_Is_Valid()
     {
         var cancellationToken = CancellationToken.None;
-        var filterParameters = new UsersFilterParameters("Admin");
-        var paginationParameters = new PaginationParameters(2, 10);
-        var sortParameters = new SortParameters("Name", SortOrder.Descending);
+        var filterParameters = new UsersFilterParameters(Role: "Admin");
+        var paginationParameters = new PaginationParameters(PageNumber: 2, PageSize: 10);
+        var sortParameters = new SortParameters(Field: "Name", Order: SortOrder.Descending);
         var items = new[]
         {
             new UserListItemReadModel(
-                Guid.NewGuid(),
-                "John Doe",
-                "john@example.com",
-                "+12345678901",
-                new DateOnly(1990, 1, 1),
-                null)
+                Id: Guid.NewGuid(),
+                Name: "John Doe",
+                Email: "john@example.com",
+                Phone: "+12345678901",
+                BirthDate: new DateOnly(1990, 1, 1),
+                Avatar: null)
         };
         var pagedResult = PaginationResult<UserListItemReadModel>.Create(
             items,
@@ -37,7 +37,10 @@ public sealed class GetUsersListHandlerTests
                 cancellationToken)
             .Returns(Task.FromResult(pagedResult));
         var handler = new GetUsersListHandler(usersReadRepository);
-        var query = new GetUsersListQuery(filterParameters, paginationParameters, sortParameters);
+        var query = new GetUsersListQuery(
+            FilterParameters: filterParameters,
+            PaginationParameters: paginationParameters,
+            SortParameters: sortParameters);
 
         var result = await handler.HandleAsync(query, cancellationToken);
 

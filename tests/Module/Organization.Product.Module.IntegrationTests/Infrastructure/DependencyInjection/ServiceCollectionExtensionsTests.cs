@@ -6,8 +6,8 @@ using Organization.Product.Module.Infrastructure.Persistence.Core;
 
 namespace Organization.Product.Module.IntegrationTests.Infrastructure.DependencyInjection;
 
-public sealed class ServiceCollectionExtensionsTests(InfrastructureTestFixture fixture)
-    : InfrastructureTestBase(fixture)
+public sealed class ServiceCollectionExtensionsTests(IntegrationTestFixture fixture)
+    : IntegrationTestBase(fixture)
 {
     [Fact(DisplayName = "AddInfrastructure should resolve persistence services when configuration is valid")]
     public async Task AddInfrastructure_Should_Resolve_Persistence_Services_When_Configuration_Is_Valid()

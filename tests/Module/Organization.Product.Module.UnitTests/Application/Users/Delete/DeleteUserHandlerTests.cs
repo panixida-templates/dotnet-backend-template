@@ -1,7 +1,6 @@
 using Organization.Product.Module.Application.Users.Delete;
 using Organization.Product.Module.Domain.Users;
 using Organization.Product.Module.Domain.Users.Abstractions;
-using Organization.Product.Module.UnitTests.Domain.Users;
 
 namespace Organization.Product.Module.UnitTests.Application.Users.Delete;
 
@@ -12,7 +11,7 @@ public sealed class DeleteUserHandlerTests
     {
         var usersRepository = Substitute.For<IUsersRepository>();
         var handler = new DeleteUserHandler(usersRepository);
-        var command = new DeleteUserCommand(Guid.Empty);
+        var command = new DeleteUserCommand(Id: Guid.Empty);
 
         var result = await handler.HandleAsync(command, CancellationToken.None);
 
@@ -37,7 +36,7 @@ public sealed class DeleteUserHandlerTests
                 cancellationToken)
             .Returns(Task.FromResult<User?>(null));
         var handler = new DeleteUserHandler(usersRepository);
-        var command = new DeleteUserCommand(id);
+        var command = new DeleteUserCommand(Id: id);
 
         var result = await handler.HandleAsync(command, cancellationToken);
 
@@ -52,7 +51,13 @@ public sealed class DeleteUserHandlerTests
     public async Task HandleAsync_Should_Delete_User_When_User_Exists()
     {
         var cancellationToken = CancellationToken.None;
-        var user = UserTestFactory.CreateUser();
+        var user = User.Create(
+            role: "User",
+            name: "John Doe",
+            email: "john.doe@example.com",
+            phone: "+12345678901",
+            birthDate: DateOnly.FromDateTime(DateTime.UtcNow).AddYears(-30),
+            avatar: "https://example.com/avatar.png").Value;
         var usersRepository = Substitute.For<IUsersRepository>();
         usersRepository
             .GetByIdAsync(user.Id, cancellationToken)
@@ -61,7 +66,7 @@ public sealed class DeleteUserHandlerTests
             .DeleteAsync(user, cancellationToken)
             .Returns(Task.CompletedTask);
         var handler = new DeleteUserHandler(usersRepository);
-        var command = new DeleteUserCommand(user.Id.Value);
+        var command = new DeleteUserCommand(Id: user.Id.Value);
 
         var result = await handler.HandleAsync(command, cancellationToken);
 
