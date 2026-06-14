@@ -1,6 +1,5 @@
 using Organization.Product.Module.Application.Users.Abstractions;
 using Organization.Product.Module.Application.Users.GetDetails;
-using Organization.Product.Module.UnitTests.Domain;
 
 namespace Organization.Product.Module.UnitTests.Application.Users.GetDetails;
 

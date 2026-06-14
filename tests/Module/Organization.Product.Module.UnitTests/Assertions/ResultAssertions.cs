@@ -1,4 +1,4 @@
-namespace Organization.Product.Module.UnitTests.Domain;
+namespace Organization.Product.Module.UnitTests.Assertions;
 
 internal static class ResultAssertions
 {

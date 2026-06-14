@@ -22,6 +22,8 @@
         <Using Include="PANiXiDA.Core.Application.Querying.Pagination" />
         <Using Include="PANiXiDA.Core.Application.Querying.Sorting" />
 
+        <Using Include="Organization.Product.Module.UnitTests.Assertions" />
+
         <Using Include="NSubstitute" />
         <Using Include="Shouldly" />
         <Using Include="Xunit" />

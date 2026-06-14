@@ -1,7 +1,6 @@
 using Organization.Product.Module.Application.Users.Delete;
 using Organization.Product.Module.Domain.Users;
 using Organization.Product.Module.Domain.Users.Abstractions;
-using Organization.Product.Module.UnitTests.Domain;
 using Organization.Product.Module.UnitTests.Domain.Users;
 
 namespace Organization.Product.Module.UnitTests.Application.Users.Delete;
