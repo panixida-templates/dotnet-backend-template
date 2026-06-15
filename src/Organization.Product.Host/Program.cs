@@ -1,3 +1,5 @@
+using JasperFx;
+
 using Organization.Product.Host.Common;
 using Organization.Product.Module.Infrastructure.DependencyInjection;
 using Organization.Product.Module.Presentation.DependencyInjection;
@@ -20,4 +22,4 @@ var app = builder.Build();
 
 app.UsePresentation();
 
-await app.RunAsync();
+return await app.RunJasperFxCommands(args);

@@ -6,6 +6,8 @@ using Organization.Product.Module.Infrastructure.DependencyInjection;
 using Organization.Product.Module.Infrastructure.Persistence.Core;
 using Organization.Product.Testing.Databases;
 
+using Wolverine;
+
 namespace Organization.Product.Module.IntegrationTests;
 
 public sealed class IntegrationTestFixture : IAsyncLifetime
@@ -35,6 +37,7 @@ public sealed class IntegrationTestFixture : IAsyncLifetime
 
         var services = new ServiceCollection();
         services.AddInfrastructure(configuration);
+        services.RunWolverineInSoloMode();
 
         _serviceProvider = services.BuildServiceProvider(
             new ServiceProviderOptions
