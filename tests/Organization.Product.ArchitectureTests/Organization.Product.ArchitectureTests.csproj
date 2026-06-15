@@ -11,8 +11,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\Organization.Product.Host\Organization.Product.Host.csproj" />
-        <ProjectReference Include="..\..\src\Module\**\*.csproj" />
+        <ProjectReference Include="..\..\src\**\*.csproj" />
     </ItemGroup>
 
     <ItemGroup>

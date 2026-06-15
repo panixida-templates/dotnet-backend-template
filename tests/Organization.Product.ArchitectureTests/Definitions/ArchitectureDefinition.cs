@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using static ArchUnitNET.Fluent.ArchRuleDefinition;
 
 using ReflectionAssembly = System.Reflection.Assembly;
+using ReflectionAssemblyName = System.Reflection.AssemblyName;
 
 namespace Organization.Product.ArchitectureTests.Definitions;
 
@@ -130,7 +131,9 @@ internal static class ArchitectureDefinition
                 assemblyPath);
         }
 
-        return ReflectionAssembly.Load(assemblyPath);
+        var assemblyNameFromPath = ReflectionAssemblyName.GetAssemblyName(assemblyPath);
+
+        return ReflectionAssembly.Load(assemblyNameFromPath);
     }
 
     private static ModuleDiscoveryResult DiscoverModules(
