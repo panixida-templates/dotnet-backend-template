@@ -4,7 +4,7 @@ namespace Organization.Product.Module.Domain.Users.ValueObjects;
 
 public sealed class Email : ValueObject
 {
-    private const int MaxLength = 320;
+    public const int MaxLength = 320;
 
     private Email(string value)
     {

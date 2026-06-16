@@ -2,7 +2,7 @@
 
 public sealed class Avatar : ValueObject
 {
-    private const int MaxLength = 2048;
+    public const int MaxLength = 2048;
 
     private Avatar(string value)
     {

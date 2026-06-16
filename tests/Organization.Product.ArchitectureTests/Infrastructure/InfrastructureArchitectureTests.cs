@@ -4,25 +4,25 @@ namespace Organization.Product.ArchitectureTests.Infrastructure;
 
 public sealed class InfrastructureArchitectureTests
 {
-    [Fact(DisplayName = "Infrastructure repositories should be internal")]
-    public void InfrastructureRepositories_Should_Be_Internal()
+    [Fact(DisplayName = "Infrastructure repositories should be public")]
+    public void InfrastructureRepositories_Should_Be_Public()
     {
         Classes().That()
             .ResideInAssemblyMatching(ArchitectureDefinition.InfrastructureAssemblyNamePattern)
             .And().ResideInNamespaceMatching(ArchitectureDefinition.IncludeNamespaceSegment("Persistence.Features"))
             .And().HaveNameEndingWith("Repository")
-            .Should().BeInternal()
+            .Should().BePublic()
             .Check(ArchitectureDefinition.Architecture);
     }
 
-    [Fact(DisplayName = "Infrastructure read database models should be internal")]
-    public void InfrastructureReadDatabaseModels_Should_Be_Internal()
+    [Fact(DisplayName = "Infrastructure read database models should be public")]
+    public void InfrastructureReadDatabaseModels_Should_Be_Public()
     {
         Classes().That()
             .ResideInAssemblyMatching(ArchitectureDefinition.InfrastructureAssemblyNamePattern)
             .And().ResideInNamespaceMatching(ArchitectureDefinition.IncludeNamespaceSegment("Persistence.Features"))
             .And().HaveNameEndingWith("ReadDbModel")
-            .Should().BeInternal()
+            .Should().BePublic()
             .Check(ArchitectureDefinition.Architecture);
     }
 

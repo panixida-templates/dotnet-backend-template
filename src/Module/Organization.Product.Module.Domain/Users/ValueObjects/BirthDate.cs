@@ -2,7 +2,7 @@
 
 public sealed class BirthDate : ValueObject
 {
-    private const int MinimumAge = 18;
+    public const int MinimumAge = 18;
 
     private BirthDate(DateOnly value)
     {

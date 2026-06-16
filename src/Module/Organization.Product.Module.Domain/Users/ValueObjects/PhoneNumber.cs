@@ -4,6 +4,10 @@ namespace Organization.Product.Module.Domain.Users.ValueObjects;
 
 public sealed class PhoneNumber : ValueObject
 {
+    public const int MinDigitsCount = 8;
+    public const int MaxDigitsCount = 15;
+    public const int MaxLength = MaxDigitsCount + 1;
+
     private PhoneNumber(string value)
     {
         Value = value;
@@ -30,10 +34,10 @@ public sealed class PhoneNumber : ValueObject
         var normalizedValue = normalizeResult.Value;
         var digitsCount = CountDigits(normalizedValue);
 
-        if (digitsCount < 8 || digitsCount > 15)
+        if (digitsCount < MinDigitsCount || digitsCount > MaxDigitsCount)
         {
             return Result.Failure<PhoneNumber>(
-                Error.Validation("Phone number must contain from 8 to 15 digits.")
+                Error.Validation($"Phone number must contain from {MinDigitsCount} to {MaxDigitsCount} digits.")
                 .WithField(nameof(PhoneNumber)));
         }
 

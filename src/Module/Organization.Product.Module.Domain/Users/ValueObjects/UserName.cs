@@ -2,7 +2,7 @@
 
 public sealed class UserName : ValueObject
 {
-    private const int MaxLength = 200;
+    public const int MaxLength = 200;
 
     private UserName(string value)
     {

@@ -25,10 +25,12 @@ internal sealed class UserConfiguration : AuditableEntityConfiguration<User>
 
         builder.Property(item => item.Name)
             .HasConversion(UserNameConverter)
+            .HasMaxLength(UserName.MaxLength)
             .IsRequired();
 
         builder.Property(item => item.Email)
             .HasConversion(EmailConverter)
+            .HasMaxLength(Email.MaxLength)
             .IsRequired();
 
         builder.HasIndex(item => item.Email)
@@ -36,6 +38,7 @@ internal sealed class UserConfiguration : AuditableEntityConfiguration<User>
 
         builder.Property(item => item.Phone)
             .HasConversion(PhoneNumberConverter)
+            .HasMaxLength(PhoneNumber.MaxLength)
             .IsRequired();
 
         builder.HasIndex(item => item.Phone)
@@ -47,6 +50,7 @@ internal sealed class UserConfiguration : AuditableEntityConfiguration<User>
 
         builder.Property(item => item.Avatar)
             .HasConversion(AvatarConverter)
+            .HasMaxLength(Avatar.MaxLength)
             .IsRequired(false);
     }
 

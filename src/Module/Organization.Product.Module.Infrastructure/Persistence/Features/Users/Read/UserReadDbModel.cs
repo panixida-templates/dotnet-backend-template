@@ -1,6 +1,6 @@
 ﻿namespace Organization.Product.Module.Infrastructure.Persistence.Features.Users.Read;
 
-internal sealed class UserReadDbModel : AuditableReadDbModel<Guid>
+public sealed class UserReadDbModel : AuditableReadDbModel<Guid>
 {
     public string Role { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;

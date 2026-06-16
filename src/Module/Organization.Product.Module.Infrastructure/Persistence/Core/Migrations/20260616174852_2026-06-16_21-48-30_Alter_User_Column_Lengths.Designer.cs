@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Organization.Product.Module.Infrastructure.Persistence.Core;
@@ -11,9 +12,11 @@ using Organization.Product.Module.Infrastructure.Persistence.Core;
 namespace Organization.Product.Module.Infrastructure.Persistence.Core.Migrations
 {
     [DbContext(typeof(TemplateWriteDbContext))]
-    partial class TemplateWriteDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260616174852_2026-06-16_21-48-30_Alter_User_Column_Lengths")]
+    partial class _20260616_214830_Alter_User_Column_Lengths
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

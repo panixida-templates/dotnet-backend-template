@@ -1,4 +1,4 @@
-﻿using Organization.Product.Module.Application.Users;
+using Organization.Product.Module.Application.Users;
 using Organization.Product.Module.Application.Users.Abstractions;
 using Organization.Product.Module.Application.Users.GetDetails;
 using Organization.Product.Module.Application.Users.GetList;
@@ -8,7 +8,7 @@ using Organization.Product.Module.Infrastructure.Persistence.Features.Users.Read
 
 namespace Organization.Product.Module.Infrastructure.Persistence.Features.Users.Read;
 
-internal sealed class UsersReadRepository(TemplateReadDbContext dbContext) :
+public sealed class UsersReadRepository(TemplateReadDbContext dbContext) :
     EfReadRepository<TemplateReadDbContext, Guid, UserReadDbModel>(dbContext),
     IUsersReadRepository
 {
@@ -17,8 +17,8 @@ internal sealed class UsersReadRepository(TemplateReadDbContext dbContext) :
         CancellationToken cancellationToken)
     {
         return GetByIdAsync<UserDetailsReadModel, UserDetailsReadModelMapper>(
-           id,
-           cancellationToken);
+            id,
+            cancellationToken);
     }
 
     public Task<PaginationResult<UserListItemReadModel>> GetPagedListAsync(
