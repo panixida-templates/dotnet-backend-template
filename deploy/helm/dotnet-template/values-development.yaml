@@ -1,0 +1,10 @@
+env:
+  secretName: dotnet-template-api-env
+  values:
+    ASPNETCORE_ENVIRONMENT: Development
+    DOTNET_ENVIRONMENT: Development
+    OTEL_SERVICE_NAME: dotnet-template-api-development
+
+gateway:
+  host: api.dev.dotnet-template.panixida.ru
+  httpsSectionName: api-dev-dotnet-template-https

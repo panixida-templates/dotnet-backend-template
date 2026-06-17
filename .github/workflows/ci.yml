@@ -1,14 +1,34 @@
+name: CI
+
 on:
-    workflow_dispatch:
-      inputs:
-        publish_contracts:
-          description: "Publish contracts NuGet packages"
-          required: false
-          default: false
-          type: boolean
-    pull_request:  
-    push:
-        branches: [ main, development ]
+  workflow_dispatch:
+    inputs:
+      publish_contracts:
+        description: "Publish contracts NuGet packages"
+        required: false
+        default: false
+        type: boolean
+  pull_request:
+  push:
+    branches: [ main, development ]
+    paths-ignore:
+      - deploy/helm/dotnet-template/images-development.yaml
+      - deploy/helm/dotnet-template/images-production.yaml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dotnet-template-${{ github.ref_name }}
+  cancel-in-progress: false
+
+env:
+  HELM_VERSION: v4.2.1
+  HELM_CHART_PATH: deploy/helm/dotnet-template
+  API_SERVICE_FOLDER: Pl/Api/Pl.Api.Host
+  API_SERVICE_NAME: api
+  MIGRATOR_SERVICE_FOLDER: Dal/Ef/Dal.Ef.Migrator
+  MIGRATOR_SERVICE_NAME: ef-migrator
 
 jobs:
   format:
@@ -23,104 +43,234 @@ jobs:
       registry-user: ${{ secrets.REGISTRY_USER }}
       registry-token: ${{ secrets.REGISTRY_TOKEN }}
 
+  helm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install Helm
+        run: |
+          set -euo pipefail
+          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-4
+          chmod 700 get_helm.sh
+          DESIRED_VERSION="${HELM_VERSION}" ./get_helm.sh
+
+      - name: Lint Helm chart
+        run: |
+          set -euo pipefail
+          helm lint "${HELM_CHART_PATH}" \
+            -f "${HELM_CHART_PATH}/values-development.yaml" \
+            -f "${HELM_CHART_PATH}/images-development.yaml"
+          helm lint "${HELM_CHART_PATH}" \
+            -f "${HELM_CHART_PATH}/values-production.yaml" \
+            -f "${HELM_CHART_PATH}/images-production.yaml"
+
+      - name: Render Helm chart
+        run: |
+          set -euo pipefail
+          helm template dotnet-template-development "${HELM_CHART_PATH}" \
+            -f "${HELM_CHART_PATH}/values-development.yaml" \
+            -f "${HELM_CHART_PATH}/images-development.yaml" \
+            >/tmp/dotnet-template-development.yaml
+          helm template dotnet-template-production "${HELM_CHART_PATH}" \
+            -f "${HELM_CHART_PATH}/values-production.yaml" \
+            -f "${HELM_CHART_PATH}/images-production.yaml" \
+            >/tmp/dotnet-template-production.yaml
+
   resolve-env:
-    if: ${{ github.event_name != 'pull_request' }}
+    if: ${{ github.event_name != 'pull_request' && (github.ref_name == 'main' || github.ref_name == 'development') }}
     uses: PANiXiDA-Infrastructure/ci-cd/.github/workflows/resolve-environment.yml@main
 
+  resolve-images:
+    if: ${{ github.event_name != 'pull_request' && (github.ref_name == 'main' || github.ref_name == 'development') }}
+    runs-on: ubuntu-latest
+    outputs:
+      api_image: ${{ steps.images.outputs.api_image }}
+      api_repository: ${{ steps.images.outputs.api_repository }}
+      migrator_image: ${{ steps.images.outputs.migrator_image }}
+      migrator_repository: ${{ steps.images.outputs.migrator_repository }}
+      image_tag: ${{ steps.images.outputs.image_tag }}
+    steps:
+      - id: images
+        env:
+          REGISTRY_URL: ${{ vars.REGISTRY_URL }}
+          API_SERVICE_NAME: ${{ env.API_SERVICE_NAME }}
+          MIGRATOR_SERVICE_NAME: ${{ env.MIGRATOR_SERVICE_NAME }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${REGISTRY_URL:-}" ]; then
+            echo "::error::REGISTRY_URL variable is required"
+            exit 1
+          fi
+
+          repository="$(printf '%s' "${GITHUB_REPOSITORY}" | tr '[:upper:]' '[:lower:]')"
+          image_tag="${GITHUB_RUN_NUMBER}"
+          api_repository="${REGISTRY_URL}/${repository}/${API_SERVICE_NAME}"
+          migrator_repository="${REGISTRY_URL}/${repository}/${MIGRATOR_SERVICE_NAME}"
+
+          echo "api_image=${api_repository}:${image_tag}" >> "$GITHUB_OUTPUT"
+          echo "api_repository=${api_repository}" >> "$GITHUB_OUTPUT"
+          echo "migrator_image=${migrator_repository}:${image_tag}" >> "$GITHUB_OUTPUT"
+          echo "migrator_repository=${migrator_repository}" >> "$GITHUB_OUTPUT"
+          echo "image_tag=${image_tag}" >> "$GITHUB_OUTPUT"
+
   build-api:
-      if: ${{ github.event_name != 'pull_request' }}
-      needs: [ format, tests, resolve-env ]
-      uses: PANiXiDA-Infrastructure/ci-cd/.github/workflows/docker-build.yml@main
-      with:
-        service-folder: ${{ vars.API_SERVICE_FOLDER }}
-        image: ${{ vars.REGISTRY_URL }}/${{ github.repository }}/${{ vars.API_SERVICE_NAME }}:${{ github.run_number }}
-      secrets:
-        registry-user: ${{ secrets.REGISTRY_USER }}
-        registry-token: ${{ secrets.REGISTRY_TOKEN }}
+    if: ${{ github.event_name != 'pull_request' && (github.ref_name == 'main' || github.ref_name == 'development') }}
+    needs: [ format, tests, helm, resolve-env, resolve-images ]
+    uses: PANiXiDA-Infrastructure/ci-cd/.github/workflows/docker-build.yml@main
+    with:
+      service-folder: Pl/Api/Pl.Api.Host
+      image: ${{ needs.resolve-images.outputs.api_image }}
+    secrets:
+      registry-user: ${{ secrets.REGISTRY_USER }}
+      registry-token: ${{ secrets.REGISTRY_TOKEN }}
 
-  build-ui-admin:
-      if: ${{ github.event_name != 'pull_request' }}
-      needs: [ format, tests, resolve-env ]
-      uses: PANiXiDA-Infrastructure/ci-cd/.github/workflows/docker-build.yml@main
-      with:
-        service-folder: ${{ vars.UI_ADMIN_SERVICE_FOLDER }}
-        image: ${{ vars.REGISTRY_URL }}/${{ github.repository }}/${{ vars.UI_ADMIN_SERVICE_NAME }}:${{ github.run_number }}
-        environment: ${{ needs.resolve-env.outputs.environment_pascal  }}
-      secrets:
-        registry-user: ${{ secrets.REGISTRY_USER }}
-        registry-token: ${{ secrets.REGISTRY_TOKEN }}
+  build-migrator:
+    if: ${{ github.event_name != 'pull_request' && (github.ref_name == 'main' || github.ref_name == 'development') }}
+    needs: [ format, tests, helm, resolve-env, resolve-images ]
+    uses: PANiXiDA-Infrastructure/ci-cd/.github/workflows/docker-build.yml@main
+    with:
+      service-folder: Dal/Ef/Dal.Ef.Migrator
+      image: ${{ needs.resolve-images.outputs.migrator_image }}
+    secrets:
+      registry-user: ${{ secrets.REGISTRY_USER }}
+      registry-token: ${{ secrets.REGISTRY_TOKEN }}
 
-  update-database:
-      if: ${{ github.event_name != 'pull_request' }}
-      needs: [ build-api, build-ui-admin, resolve-env ]
-      runs-on: ubuntu-latest
-      environment: ${{ needs.resolve-env.outputs.environment }}
-      steps:
-        - uses: PANiXiDA-Infrastructure/ci-cd/.github/actions/dotnet-ef-migrator@main
-          with:
-            registry-user: ${{ secrets.REGISTRY_USER }}
-            registry-token: ${{ secrets.REGISTRY_TOKEN }}
-            env-file: ${{ secrets.BACKEND_ENV_FILE }}
-            project-folder: ${{ vars.PROJECT_FOLDER }}
-            migrator-folder: ${{ vars.MIGRATOR_FOLDER }}
-            migrator-project: ${{ vars.MIGRATOR_PROJECT }}
-            nuget-config: ${{ vars.NUGET_CONFIG }}
-            nuget-provider: ${{ vars.NUGET_PROVIDER }}
-
-  deploy-api:
-    if: ${{ github.event_name != 'pull_request' }}
-    needs: [ update-database, resolve-env ]
+  sync-kubernetes-secrets:
+    if: ${{ github.event_name != 'pull_request' && (github.ref_name == 'main' || github.ref_name == 'development') }}
+    needs: [ resolve-env ]
     runs-on: ubuntu-latest
     environment: ${{ needs.resolve-env.outputs.environment }}
+    env:
+      DEPLOY_ENVIRONMENT: ${{ needs.resolve-env.outputs.environment }}
+      BACKEND_ENV_FILE: ${{ secrets.BACKEND_ENV_FILE }}
+      KUBECONFIG_BASE64: ${{ secrets.KUBECONFIG_BASE64 }}
+      KUBECONFIG_RAW: ${{ secrets.KUBECONFIG }}
+      REGISTRY_URL: ${{ vars.REGISTRY_URL }}
+      REGISTRY_USER: ${{ secrets.REGISTRY_USER }}
+      REGISTRY_TOKEN: ${{ secrets.REGISTRY_TOKEN }}
     steps:
-      - uses: PANiXiDA-Infrastructure/ci-cd/.github/actions/ssh-docker-deploy@main
-        with:
-          server-user: ${{ vars.SERVER_USER }}
-          server-host: ${{ vars.SERVER_HOST }}
-          ssh-port: ${{ vars.SERVER_SSH_PORT }}
-          ssh-private-key: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
+      - name: Install kubectl
+        run: |
+          set -euo pipefail
+          kubectl_version="$(curl -fsSL https://dl.k8s.io/release/stable.txt)"
+          curl -fsSLo kubectl "https://dl.k8s.io/release/${kubectl_version}/bin/linux/amd64/kubectl"
+          sudo install -m 0755 kubectl /usr/local/bin/kubectl
 
-          service-folder: ${{ vars.PROJECT_FOLDER }}/${{ github.event.repository.name }}/${{ vars.API_SERVICE_NAME }}
+      - name: Write kubeconfig
+        run: |
+          set -euo pipefail
+          if [ -n "${KUBECONFIG_BASE64:-}" ]; then
+            printf '%s' "$KUBECONFIG_BASE64" | base64 -d > "$RUNNER_TEMP/kubeconfig"
+          elif [ -n "${KUBECONFIG_RAW:-}" ]; then
+            printf '%s\n' "$KUBECONFIG_RAW" > "$RUNNER_TEMP/kubeconfig"
+          else
+            echo "::error::KUBECONFIG_BASE64 or KUBECONFIG environment secret is required"
+            exit 1
+          fi
+          chmod 600 "$RUNNER_TEMP/kubeconfig"
+          echo "KUBECONFIG=$RUNNER_TEMP/kubeconfig" >> "$GITHUB_ENV"
 
-          container-name: ${{ github.event.repository.name }}-${{ vars.API_SERVICE_NAME }}-${{ vars.ENV_SUFFIX }}
-          image: ${{ vars.REGISTRY_URL }}/${{ github.repository }}/${{ vars.API_SERVICE_NAME }}:${{ github.run_number }}
+      - name: Sync Kubernetes secrets
+        run: |
+          set -euo pipefail
 
-          env-file: ${{ secrets.BACKEND_ENV_FILE }}
+          for name in BACKEND_ENV_FILE REGISTRY_URL REGISTRY_USER REGISTRY_TOKEN; do
+            if [ -z "${!name:-}" ]; then
+              echo "::error::${name} is required"
+              exit 1
+            fi
+          done
 
-          registry-url: ${{ vars.REGISTRY_URL }}
-          registry-user: ${{ secrets.REGISTRY_USER }}
-          registry-token: ${{ secrets.REGISTRY_TOKEN }}
+          namespace="dotnet-template-${DEPLOY_ENVIRONMENT}"
+          kubectl create namespace "$namespace" --dry-run=client -o yaml | kubectl apply -f -
 
-  deploy-ui-admin:
-    if: ${{ github.event_name != 'pull_request' }}
-    needs: [ update-database, resolve-env ]
+          umask 077
+          env_file="$RUNNER_TEMP/backend.env"
+          printf '%s\n' "$BACKEND_ENV_FILE" > "$env_file"
+
+          kubectl -n "$namespace" create secret generic dotnet-template-api-env \
+            --from-env-file="$env_file" \
+            --dry-run=client \
+            -o yaml | kubectl apply -f -
+          rm -f "$env_file"
+
+          registry_server="${REGISTRY_URL#https://}"
+          registry_server="${registry_server#http://}"
+          registry_server="${registry_server%/}"
+
+          kubectl -n "$namespace" create secret docker-registry dotnet-template-registry \
+            --docker-server="$registry_server" \
+            --docker-username="$REGISTRY_USER" \
+            --docker-password="$REGISTRY_TOKEN" \
+            --dry-run=client \
+            -o yaml | kubectl apply -f -
+
+          deployment="dotnet-template-${DEPLOY_ENVIRONMENT}"
+          if kubectl -n "$namespace" get deployment "$deployment" >/dev/null 2>&1; then
+            kubectl -n "$namespace" rollout restart "deployment/${deployment}"
+            kubectl -n "$namespace" rollout status "deployment/${deployment}" --timeout=5m || true
+          fi
+
+  update-gitops:
+    if: ${{ github.event_name != 'pull_request' && (github.ref_name == 'main' || github.ref_name == 'development') }}
+    needs: [ build-api, build-migrator, sync-kubernetes-secrets, resolve-env, resolve-images ]
     runs-on: ubuntu-latest
     environment: ${{ needs.resolve-env.outputs.environment }}
+    env:
+      DEPLOY_ENVIRONMENT: ${{ needs.resolve-env.outputs.environment }}
+      API_REPOSITORY: ${{ needs.resolve-images.outputs.api_repository }}
+      MIGRATOR_REPOSITORY: ${{ needs.resolve-images.outputs.migrator_repository }}
+      IMAGE_TAG: ${{ needs.resolve-images.outputs.image_tag }}
     steps:
-      - uses: PANiXiDA-Infrastructure/ci-cd/.github/actions/ssh-docker-deploy@main
+      - uses: actions/checkout@v6
         with:
-          server-user: ${{ vars.SERVER_USER }}
-          server-host: ${{ vars.SERVER_HOST }}
-          ssh-port: ${{ vars.SERVER_SSH_PORT }}
-          ssh-private-key: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
+          ref: ${{ github.ref_name }}
 
-          service-folder: ${{ vars.PROJECT_FOLDER }}/${{ github.event.repository.name }}/${{ vars.UI_ADMIN_SERVICE_NAME }}
+      - name: Update Helm image values
+        run: |
+          set -euo pipefail
 
-          container-name: ${{ github.event.repository.name }}-${{ vars.UI_ADMIN_SERVICE_NAME }}-${{ vars.ENV_SUFFIX }}
-          image: ${{ vars.REGISTRY_URL }}/${{ github.repository }}/${{ vars.UI_ADMIN_SERVICE_NAME }}:${{ github.run_number }}
+          values_file="${HELM_CHART_PATH}/images-${DEPLOY_ENVIRONMENT}.yaml"
+          if [ ! -f "$values_file" ]; then
+            echo "::error::Helm image values file was not found: ${values_file}"
+            exit 1
+          fi
 
-          env-file: ${{ secrets.FRONTEND_ENV_FILE }}
+          cat > "$values_file" <<EOF
+          image:
+            repository: ${API_REPOSITORY}
+            tag: "${IMAGE_TAG}"
 
-          registry-url: ${{ vars.REGISTRY_URL }}
-          registry-user: ${{ secrets.REGISTRY_USER }}
-          registry-token: ${{ secrets.REGISTRY_TOKEN }}
+          migrations:
+            image:
+              repository: ${MIGRATOR_REPOSITORY}
+              tag: "${IMAGE_TAG}"
+          EOF
+
+      - name: Commit GitOps values
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "${HELM_CHART_PATH}/images-${DEPLOY_ENVIRONMENT}.yaml"
+
+          if git diff --cached --quiet; then
+            echo "No GitOps image value changes to commit"
+            exit 0
+          fi
+
+          git commit -m "chore: update ${DEPLOY_ENVIRONMENT} image tags"
+          git push
 
   notify:
-    if: ${{ always() && github.event_name != 'pull_request' }}
-    needs: [ deploy-api, deploy-ui-admin ]
+    if: ${{ always() && github.event_name != 'pull_request' && (github.ref_name == 'main' || github.ref_name == 'development') }}
+    needs: [ update-gitops ]
     uses: PANiXiDA-Infrastructure/ci-cd/.github/workflows/notify-telegram.yml@main
     with:
-      event-name: ${{ github.event_name }}    
+      event-name: ${{ github.event_name }}
     secrets:
       telegram-bot-token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
       telegram-chat-id: ${{ vars.TELEGRAM_CHAT_ID }}
@@ -133,4 +283,3 @@ jobs:
       project_folder: ${{ vars.NUGET_PROJECT }}
     secrets:
       GH_PACKAGES_TOKEN: ${{ secrets.REGISTRY_TOKEN }}
-      
