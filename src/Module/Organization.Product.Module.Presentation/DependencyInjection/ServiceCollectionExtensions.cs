@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -11,12 +10,6 @@ public static class ServiceCollectionExtensions
         IConfiguration configuration)
     {
         serviceCollection.AddHttp(configuration.GetSection("ForwardedHeaders"));
-
-        serviceCollection.Configure<ForwardedHeadersOptions>(options =>
-        {
-            options.KnownIPNetworks.Clear();
-            options.KnownProxies.Clear();
-        });
 
         return serviceCollection;
     }
