@@ -184,6 +184,7 @@ jobs:
           done
 
           namespace="dotnet-template-${DEPLOY_ENVIRONMENT}"
+          kubectl create namespace "$namespace" --dry-run=client -o yaml | kubectl apply -f -
 
           umask 077
           env_file="$RUNNER_TEMP/backend.env"
