@@ -9,7 +9,7 @@ public static class ServiceCollectionExtensions
         this IServiceCollection serviceCollection,
         IConfiguration configuration)
     {
-        serviceCollection.AddHttp(configuration.GetSection("ForwardedHeaders"));
+        serviceCollection.AddHttp(configuration);
 
         return serviceCollection;
     }
