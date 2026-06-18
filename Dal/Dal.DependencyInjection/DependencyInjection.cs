@@ -4,6 +4,7 @@ using Dal.Ef.DependencyInjection;
 using Dal.MongoDb.DependencyInjection;
 using Dal.S3.DependencyInjection;
 
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
