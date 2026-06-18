@@ -27,10 +27,10 @@ jobs:
       chart-repository: PANiXiDA-Infrastructure/ci-cd
       chart-ref: main
       helm-chart-path: charts/application
-      values-path: deploy/helm/dotnet-template
-      common-values-file: values.yaml
-      development-release-name: dotnet-template-development
-      production-release-name: dotnet-template-production
+      values-path: ${{ vars.HELM_VALUES_PATH }}
+      common-values-file: ${{ vars.HELM_COMMON_VALUES_FILE }}
+      development-release-name: ${{ vars.HELM_DEVELOPMENT_RELEASE_NAME }}
+      production-release-name: ${{ vars.HELM_PRODUCTION_RELEASE_NAME }}
 
   build-api:
     if: ${{ github.event_name != 'pull_request' && (github.ref_name == 'main' || github.ref_name == 'development') }}
