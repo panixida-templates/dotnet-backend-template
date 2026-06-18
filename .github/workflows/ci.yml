@@ -22,10 +22,10 @@ jobs:
       registry-token: ${{ secrets.REGISTRY_TOKEN }}
 
   helm:
-    uses: PANiXiDA-Infrastructure/ci-cd/.github/workflows/helm-validation.yml@feature/shared-chart-helm-validation
+    uses: PANiXiDA-Infrastructure/ci-cd/.github/workflows/helm-validation.yml@main
     with:
       chart-repository: PANiXiDA-Infrastructure/ci-cd
-      chart-ref: feature/shared-chart-helm-validation
+      chart-ref: main
       helm-chart-path: charts/application
       values-path: deploy/helm/dotnet-template
       common-values-file: values.yaml
