@@ -31,28 +31,32 @@ jobs:
       development-release-name: ${{ vars.HELM_DEVELOPMENT_RELEASE_NAME }}
       production-release-name: ${{ vars.HELM_PRODUCTION_RELEASE_NAME }}
 
+  resolve-env:
+    if: ${{ github.event_name != 'pull_request' && (github.ref_name == 'main' || github.ref_name == 'development') }}
+    uses: PANiXiDA-Infrastructure/ci-cd/.github/workflows/resolve-environment.yml@main
+
   build-api:
     if: ${{ github.event_name != 'pull_request' && (github.ref_name == 'main' || github.ref_name == 'development') }}
-    needs: [ format, tests, helm ]
+    needs: [ format, tests, helm, resolve-env ]
     uses: PANiXiDA-Infrastructure/ci-cd/.github/workflows/docker-build.yml@main
     with:
       service-folder: ${{ vars.SERVICE_FOLDER }}
       image: |
         ${{ vars.REGISTRY_URL }}/${{ github.repository }}/${{ vars.SERVICE_NAME }}:${{ github.run_number }}
-        ${{ vars.REGISTRY_URL }}/${{ github.repository }}/${{ vars.SERVICE_NAME }}:${{ github.ref_name == 'main' && format('prod-{0}', github.run_number) || format('dev-{0}', github.run_number) }}
+        ${{ vars.REGISTRY_URL }}/${{ github.repository }}/${{ vars.SERVICE_NAME }}:${{ needs.resolve-env.outputs.environment == 'production' && format('prod-{0}', github.run_number) || format('dev-{0}', github.run_number) }}
     secrets:
       registry-user: ${{ secrets.REGISTRY_USER }}
       registry-token: ${{ secrets.REGISTRY_TOKEN }}
 
   build-migrator:
     if: ${{ github.event_name != 'pull_request' && (github.ref_name == 'main' || github.ref_name == 'development') }}
-    needs: [ format, tests, helm ]
+    needs: [ format, tests, helm, resolve-env ]
     uses: PANiXiDA-Infrastructure/ci-cd/.github/workflows/docker-build.yml@main
     with:
       service-folder: ${{ vars.MIGRATOR_FOLDER }}
       image: |
         ${{ vars.REGISTRY_URL }}/${{ github.repository }}/${{ vars.MIGRATOR_NAME }}:${{ github.run_number }}
-        ${{ vars.REGISTRY_URL }}/${{ github.repository }}/${{ vars.MIGRATOR_NAME }}:${{ github.ref_name == 'main' && format('prod-{0}', github.run_number) || format('dev-{0}', github.run_number) }}
+        ${{ vars.REGISTRY_URL }}/${{ github.repository }}/${{ vars.MIGRATOR_NAME }}:${{ needs.resolve-env.outputs.environment == 'production' && format('prod-{0}', github.run_number) || format('dev-{0}', github.run_number) }}
     secrets:
       registry-user: ${{ secrets.REGISTRY_USER }}
       registry-token: ${{ secrets.REGISTRY_TOKEN }}
