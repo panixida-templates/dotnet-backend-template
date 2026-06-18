@@ -22,9 +22,53 @@ jobs:
       registry-token: ${{ secrets.REGISTRY_TOKEN }}
 
   helm:
-    uses: PANiXiDA-Infrastructure/ci-cd/.github/workflows/helm-validation.yml@main
-    with:
-      helm-chart-path: deploy/helm/dotnet-template
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout service values
+        uses: actions/checkout@v6
+        with:
+          path: app
+
+      - name: Checkout shared charts
+        uses: actions/checkout@v6
+        with:
+          repository: PANiXiDA-Infrastructure/ci-cd
+          ref: main
+          path: ci-cd
+          persist-credentials: false
+
+      - name: Install Helm
+        run: |
+          set -euo pipefail
+          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-4
+          chmod 700 get_helm.sh
+          DESIRED_VERSION="v4.2.2" ./get_helm.sh
+
+      - name: Lint Helm chart
+        run: |
+          set -euo pipefail
+          helm lint ci-cd/charts/application \
+            -f app/deploy/helm/dotnet-template/values.yaml \
+            -f app/deploy/helm/dotnet-template/values-development.yaml \
+            -f app/deploy/helm/dotnet-template/images-development.yaml
+          helm lint ci-cd/charts/application \
+            -f app/deploy/helm/dotnet-template/values.yaml \
+            -f app/deploy/helm/dotnet-template/values-production.yaml \
+            -f app/deploy/helm/dotnet-template/images-production.yaml
+
+      - name: Render Helm chart
+        run: |
+          set -euo pipefail
+          helm template dotnet-template-development ci-cd/charts/application \
+            -f app/deploy/helm/dotnet-template/values.yaml \
+            -f app/deploy/helm/dotnet-template/values-development.yaml \
+            -f app/deploy/helm/dotnet-template/images-development.yaml \
+            >/tmp/dotnet-template-development.yaml
+          helm template dotnet-template-production ci-cd/charts/application \
+            -f app/deploy/helm/dotnet-template/values.yaml \
+            -f app/deploy/helm/dotnet-template/values-production.yaml \
+            -f app/deploy/helm/dotnet-template/images-production.yaml \
+            >/tmp/dotnet-template-production.yaml
 
   build-api:
     if: ${{ github.event_name != 'pull_request' && (github.ref_name == 'main' || github.ref_name == 'development') }}
