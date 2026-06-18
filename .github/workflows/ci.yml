@@ -33,10 +33,6 @@ jobs:
     with:
       helm-chart-path: deploy/helm/dotnet-template
 
-  resolve-env:
-    if: ${{ github.event_name != 'pull_request' && (github.ref_name == 'main' || github.ref_name == 'development') }}
-    uses: PANiXiDA-Infrastructure/ci-cd/.github/workflows/resolve-environment.yml@main
-
   resolve-images:
     if: ${{ github.event_name != 'pull_request' && (github.ref_name == 'main' || github.ref_name == 'development') }}
     runs-on: ubuntu-latest
@@ -71,7 +67,7 @@ jobs:
 
   build-api:
     if: ${{ github.event_name != 'pull_request' && (github.ref_name == 'main' || github.ref_name == 'development') }}
-    needs: [ format, tests, helm, resolve-env, resolve-images ]
+    needs: [ format, tests, helm, resolve-images ]
     uses: PANiXiDA-Infrastructure/ci-cd/.github/workflows/docker-build.yml@main
     with:
       service-folder: src/Organization.Product.Host
@@ -82,7 +78,7 @@ jobs:
 
   build-migrator:
     if: ${{ github.event_name != 'pull_request' && (github.ref_name == 'main' || github.ref_name == 'development') }}
-    needs: [ format, tests, helm, resolve-env, resolve-images ]
+    needs: [ format, tests, helm, resolve-images ]
     uses: PANiXiDA-Infrastructure/ci-cd/.github/workflows/docker-build.yml@main
     with:
       service-folder: tools/Organization.Product.Ef.Migrator
