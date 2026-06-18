@@ -43,7 +43,7 @@ jobs:
       service-folder: ${{ vars.SERVICE_FOLDER }}
       image: |
         ${{ vars.REGISTRY_URL }}/${{ github.repository }}/${{ vars.SERVICE_NAME }}:${{ github.run_number }}
-        ${{ vars.REGISTRY_URL }}/${{ github.repository }}/${{ vars.SERVICE_NAME }}:${{ needs.resolve-env.outputs.environment_suffix }}-${{ github.run_number }}
+        ${{ vars.REGISTRY_URL }}/${{ github.repository }}/${{ vars.SERVICE_NAME }}:${{ needs.resolve-env.outputs.environment }}-${{ github.run_number }}
     secrets:
       registry-user: ${{ secrets.REGISTRY_USER }}
       registry-token: ${{ secrets.REGISTRY_TOKEN }}
@@ -56,7 +56,7 @@ jobs:
       service-folder: ${{ vars.MIGRATOR_FOLDER }}
       image: |
         ${{ vars.REGISTRY_URL }}/${{ github.repository }}/${{ vars.MIGRATOR_NAME }}:${{ github.run_number }}
-        ${{ vars.REGISTRY_URL }}/${{ github.repository }}/${{ vars.MIGRATOR_NAME }}:${{ needs.resolve-env.outputs.environment_suffix }}-${{ github.run_number }}
+        ${{ vars.REGISTRY_URL }}/${{ github.repository }}/${{ vars.MIGRATOR_NAME }}:${{ needs.resolve-env.outputs.environment }}-${{ github.run_number }}
     secrets:
       registry-user: ${{ secrets.REGISTRY_USER }}
       registry-token: ${{ secrets.REGISTRY_TOKEN }}
