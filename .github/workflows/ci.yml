@@ -17,7 +17,6 @@ on:
 
 permissions:
   contents: read
-  id-token: write
 
 concurrency:
   group: dotnet-template-${{ github.ref_name }}
@@ -134,62 +133,9 @@ jobs:
       registry-user: ${{ secrets.REGISTRY_USER }}
       registry-token: ${{ secrets.REGISTRY_TOKEN }}
 
-  sync-registry-secret:
-    if: ${{ github.event_name != 'pull_request' && (github.ref_name == 'main' || github.ref_name == 'development') }}
-    needs: [ resolve-env ]
-    runs-on: ubuntu-latest
-    environment: ${{ needs.resolve-env.outputs.environment }}
-    env:
-      OPENBAO_ADDR: https://secrets.panixida.ru
-      OPENBAO_ROLE: dotnet-template-github-actions
-      OPENBAO_AUDIENCE: https://github.com/${{ github.repository }}
-      REGISTRY_URL: ${{ vars.REGISTRY_URL }}
-      REGISTRY_USER: ${{ secrets.REGISTRY_USER }}
-      REGISTRY_TOKEN: ${{ secrets.REGISTRY_TOKEN }}
-    steps:
-      - name: Sync registry credentials to OpenBao
-        run: |
-          set -euo pipefail
-
-          for name in OPENBAO_ADDR OPENBAO_ROLE OPENBAO_AUDIENCE REGISTRY_URL REGISTRY_USER REGISTRY_TOKEN; do
-            if [ -z "${!name:-}" ]; then
-              echo "::error::${name} is required"
-              exit 1
-            fi
-          done
-
-          encoded_audience="$(jq -rn --arg value "$OPENBAO_AUDIENCE" '$value|@uri')"
-          oidc_response="$(curl -fsS \
-            -H "Authorization: bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" \
-            "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=${encoded_audience}")"
-          jwt="$(jq -r '.value' <<<"$oidc_response")"
-          login_payload="$(jq -nc \
-            --arg role "$OPENBAO_ROLE" \
-            --arg jwt "$jwt" \
-            '{role: $role, jwt: $jwt}')"
-          openbao_token="$(curl -fsS \
-            -X POST \
-            -H "Content-Type: application/json" \
-            -d "$login_payload" \
-            "${OPENBAO_ADDR}/v1/auth/jwt/login" | jq -r '.auth.client_token')"
-
-          registry_payload="$(jq -nc \
-            --arg registry_url "$REGISTRY_URL" \
-            --arg registry_user "$REGISTRY_USER" \
-            --arg registry_token "$REGISTRY_TOKEN" \
-            '{data: {REGISTRY_URL: $registry_url, REGISTRY_USER: $registry_user, REGISTRY_TOKEN: $registry_token}}')"
-
-          curl -fsS \
-            -X PUT \
-            -H "Content-Type: application/json" \
-            -H "X-Vault-Token: ${openbao_token}" \
-            -d "$registry_payload" \
-            "${OPENBAO_ADDR}/v1/secret/data/applications/dotnet-template/registry" \
-            >/dev/null
-
   notify:
     if: ${{ always() && github.event_name != 'pull_request' && (github.ref_name == 'main' || github.ref_name == 'development') }}
-    needs: [ build-api, build-migrator, sync-registry-secret ]
+    needs: [ build-api, build-migrator ]
     uses: PANiXiDA-Infrastructure/ci-cd/.github/workflows/notify-telegram.yml@main
     with:
       event-name: ${{ github.event_name }}
