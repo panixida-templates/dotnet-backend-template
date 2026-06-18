@@ -16,7 +16,7 @@ on:
       - deploy/helm/dotnet-template/images-production.yaml
 
 permissions:
-  contents: write
+  contents: read
   id-token: write
 
 concurrency:
@@ -187,61 +187,9 @@ jobs:
             "${OPENBAO_ADDR}/v1/secret/data/applications/dotnet-template/registry" \
             >/dev/null
 
-  update-gitops-images:
-    if: ${{ github.event_name != 'pull_request' && (github.ref_name == 'main' || github.ref_name == 'development') }}
-    needs: [ build-api, build-migrator, sync-registry-secret, resolve-env, resolve-images ]
-    runs-on: ubuntu-latest
-    environment: ${{ needs.resolve-env.outputs.environment }}
-    env:
-      DEPLOY_ENVIRONMENT: ${{ needs.resolve-env.outputs.environment }}
-      API_REPOSITORY: ${{ needs.resolve-images.outputs.api_repository }}
-      MIGRATOR_REPOSITORY: ${{ needs.resolve-images.outputs.migrator_repository }}
-      IMAGE_TAG: ${{ needs.resolve-images.outputs.image_tag }}
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          ref: ${{ github.ref_name }}
-
-      - name: Update Helm image values
-        run: |
-          set -euo pipefail
-
-          values_file="${HELM_CHART_PATH}/images-${DEPLOY_ENVIRONMENT}.yaml"
-          if [ ! -f "$values_file" ]; then
-            echo "::error::Helm image values file was not found: ${values_file}"
-            exit 1
-          fi
-
-          cat > "$values_file" <<EOF
-          image:
-            repository: ${API_REPOSITORY}
-            tag: "${IMAGE_TAG}"
-
-          migrations:
-            image:
-              repository: ${MIGRATOR_REPOSITORY}
-              tag: "${IMAGE_TAG}"
-          EOF
-
-      - name: Commit GitOps image values
-        run: |
-          set -euo pipefail
-
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add "${HELM_CHART_PATH}/images-${DEPLOY_ENVIRONMENT}.yaml"
-
-          if git diff --cached --quiet; then
-            echo "No GitOps image value changes to commit"
-            exit 0
-          fi
-
-          git commit -m "chore: update ${DEPLOY_ENVIRONMENT} image tags [skip ci]"
-          git push
-
   notify:
     if: ${{ always() && github.event_name != 'pull_request' && (github.ref_name == 'main' || github.ref_name == 'development') }}
-    needs: [ update-gitops-images ]
+    needs: [ build-api, build-migrator, sync-registry-secret ]
     uses: PANiXiDA-Infrastructure/ci-cd/.github/workflows/notify-telegram.yml@main
     with:
       event-name: ${{ github.event_name }}
