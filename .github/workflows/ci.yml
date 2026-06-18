@@ -1,13 +1,6 @@
 name: CI
 
 on:
-  workflow_dispatch:
-    inputs:
-      publish_contracts:
-        description: "Publish contracts NuGet packages"
-        required: false
-        default: false
-        type: boolean
   pull_request:
   push:
     branches: [ main, development ]
@@ -97,11 +90,3 @@ jobs:
       telegram-bot-token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
       telegram-chat-id: ${{ vars.TELEGRAM_CHAT_ID }}
       github-token: ${{ secrets.REGISTRY_TOKEN }}
-
-  publish-contracts:
-    if: ${{ github.event_name == 'workflow_dispatch' && inputs.publish_contracts }}
-    uses: PANiXiDA-Infrastructure/ci-cd/.github/workflows/dotnet-publish-github-nuget.yml@main
-    with:
-      project_folder: ${{ vars.NUGET_PROJECT }}
-    secrets:
-      GH_PACKAGES_TOKEN: ${{ secrets.REGISTRY_TOKEN }}
