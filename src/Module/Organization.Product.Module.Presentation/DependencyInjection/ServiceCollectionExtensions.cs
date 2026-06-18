@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Organization.Product.Module.Presentation.DependencyInjection;
@@ -9,7 +9,7 @@ public static class ServiceCollectionExtensions
         this IServiceCollection serviceCollection,
         IConfiguration configuration)
     {
-        serviceCollection.AddHttp(configuration);
+        serviceCollection.AddHttp(configuration.GetSection("ForwardedHeaders"));
 
         return serviceCollection;
     }
