@@ -15,18 +15,9 @@ on:
       - deploy/helm/dotnet-template/images-development.yaml
       - deploy/helm/dotnet-template/images-production.yaml
 
-permissions:
-  contents: read
-
 concurrency:
   group: dotnet-template-${{ github.ref_name }}
   cancel-in-progress: false
-
-env:
-  HELM_VERSION: v4.2.2
-  HELM_CHART_PATH: deploy/helm/dotnet-template
-  API_SERVICE_NAME: api
-  MIGRATOR_SERVICE_NAME: ef-migrator
 
 jobs:
   format:
@@ -51,28 +42,28 @@ jobs:
           set -euo pipefail
           curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-4
           chmod 700 get_helm.sh
-          DESIRED_VERSION="${HELM_VERSION}" ./get_helm.sh
+          DESIRED_VERSION="v4.2.2" ./get_helm.sh
 
       - name: Lint Helm chart
         run: |
           set -euo pipefail
-          helm lint "${HELM_CHART_PATH}" \
-            -f "${HELM_CHART_PATH}/values-development.yaml" \
-            -f "${HELM_CHART_PATH}/images-development.yaml"
-          helm lint "${HELM_CHART_PATH}" \
-            -f "${HELM_CHART_PATH}/values-production.yaml" \
-            -f "${HELM_CHART_PATH}/images-production.yaml"
+          helm lint deploy/helm/dotnet-template \
+            -f deploy/helm/dotnet-template/values-development.yaml \
+            -f deploy/helm/dotnet-template/images-development.yaml
+          helm lint deploy/helm/dotnet-template \
+            -f deploy/helm/dotnet-template/values-production.yaml \
+            -f deploy/helm/dotnet-template/images-production.yaml
 
       - name: Render Helm chart
         run: |
           set -euo pipefail
-          helm template dotnet-template-development "${HELM_CHART_PATH}" \
-            -f "${HELM_CHART_PATH}/values-development.yaml" \
-            -f "${HELM_CHART_PATH}/images-development.yaml" \
+          helm template dotnet-template-development deploy/helm/dotnet-template \
+            -f deploy/helm/dotnet-template/values-development.yaml \
+            -f deploy/helm/dotnet-template/images-development.yaml \
             >/tmp/dotnet-template-development.yaml
-          helm template dotnet-template-production "${HELM_CHART_PATH}" \
-            -f "${HELM_CHART_PATH}/values-production.yaml" \
-            -f "${HELM_CHART_PATH}/images-production.yaml" \
+          helm template dotnet-template-production deploy/helm/dotnet-template \
+            -f deploy/helm/dotnet-template/values-production.yaml \
+            -f deploy/helm/dotnet-template/images-production.yaml \
             >/tmp/dotnet-template-production.yaml
 
   resolve-env:
@@ -102,8 +93,8 @@ jobs:
 
           repository="$(printf '%s' "${GITHUB_REPOSITORY}" | tr '[:upper:]' '[:lower:]')"
           image_tag="${GITHUB_RUN_NUMBER}"
-          api_repository="${REGISTRY_URL}/${repository}/${API_SERVICE_NAME}"
-          migrator_repository="${REGISTRY_URL}/${repository}/${MIGRATOR_SERVICE_NAME}"
+          api_repository="${REGISTRY_URL}/${repository}/api"
+          migrator_repository="${REGISTRY_URL}/${repository}/ef-migrator"
 
           echo "api_image=${api_repository}:${image_tag}" >> "$GITHUB_OUTPUT"
           echo "api_repository=${api_repository}" >> "$GITHUB_OUTPUT"
