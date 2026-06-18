@@ -1,8 +1,8 @@
 image:
   repository: ghcr.io/panixida-templates/dotnet-backend-template/api
-  tag: "160"
+  tag: "159"
 
 migrations:
   image:
     repository: ghcr.io/panixida-templates/dotnet-backend-template/ef-migrator
-    tag: "160"
+    tag: "159"
