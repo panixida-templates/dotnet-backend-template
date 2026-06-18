@@ -5,8 +5,7 @@ on:
   push:
     branches: [ main, development ]
     paths-ignore:
-      - deploy/helm/dotnet-template/images-development.yaml
-      - deploy/helm/dotnet-template/images-production.yaml
+      - deploy/helm/**/images-*.yaml
 
 jobs:
   format:
