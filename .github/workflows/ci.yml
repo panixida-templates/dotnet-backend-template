@@ -87,7 +87,7 @@ jobs:
     uses: PANiXiDA-Infrastructure/ci-cd/.github/workflows/docker-build.yml@main
     with:
       service-folder: ${{ vars.MIGRATOR_FOLDER }}
-      image: ${{ vars.REGISTRY_URL }}/${{ github.repository }}/ef-migrator:${{ github.run_number }}
+      image: ${{ vars.REGISTRY_URL }}/${{ github.repository }}/${{ vars.MIGRATOR_NAME }}:${{ github.run_number }}
     secrets:
       registry-user: ${{ secrets.REGISTRY_USER }}
       registry-token: ${{ secrets.REGISTRY_TOKEN }}
