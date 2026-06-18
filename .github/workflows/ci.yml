@@ -26,56 +26,24 @@ jobs:
     with:
       helm-chart-path: deploy/helm/dotnet-template
 
-  resolve-images:
-    if: ${{ github.event_name != 'pull_request' && (github.ref_name == 'main' || github.ref_name == 'development') }}
-    runs-on: ubuntu-latest
-    outputs:
-      api_image: ${{ steps.images.outputs.api_image }}
-      api_repository: ${{ steps.images.outputs.api_repository }}
-      migrator_image: ${{ steps.images.outputs.migrator_image }}
-      migrator_repository: ${{ steps.images.outputs.migrator_repository }}
-      image_tag: ${{ steps.images.outputs.image_tag }}
-    steps:
-      - id: images
-        env:
-          REGISTRY_URL: ${{ vars.REGISTRY_URL }}
-        run: |
-          set -euo pipefail
-
-          if [ -z "${REGISTRY_URL:-}" ]; then
-            echo "::error::REGISTRY_URL variable is required"
-            exit 1
-          fi
-
-          repository="$(printf '%s' "${GITHUB_REPOSITORY}" | tr '[:upper:]' '[:lower:]')"
-          image_tag="${GITHUB_RUN_NUMBER}"
-          api_repository="${REGISTRY_URL}/${repository}/api"
-          migrator_repository="${REGISTRY_URL}/${repository}/ef-migrator"
-
-          echo "api_image=${api_repository}:${image_tag}" >> "$GITHUB_OUTPUT"
-          echo "api_repository=${api_repository}" >> "$GITHUB_OUTPUT"
-          echo "migrator_image=${migrator_repository}:${image_tag}" >> "$GITHUB_OUTPUT"
-          echo "migrator_repository=${migrator_repository}" >> "$GITHUB_OUTPUT"
-          echo "image_tag=${image_tag}" >> "$GITHUB_OUTPUT"
-
   build-api:
     if: ${{ github.event_name != 'pull_request' && (github.ref_name == 'main' || github.ref_name == 'development') }}
-    needs: [ format, tests, helm, resolve-images ]
+    needs: [ format, tests, helm ]
     uses: PANiXiDA-Infrastructure/ci-cd/.github/workflows/docker-build.yml@main
     with:
-      service-folder: src/Organization.Product.Host
-      image: ${{ needs.resolve-images.outputs.api_image }}
+      service-folder: ${{ vars.SERVICE_FOLDER }}
+      image: ${{ vars.REGISTRY_URL }}/${{ github.repository }}/${{ vars.SERVICE_NAME }}:${{ github.run_number }}
     secrets:
       registry-user: ${{ secrets.REGISTRY_USER }}
       registry-token: ${{ secrets.REGISTRY_TOKEN }}
 
   build-migrator:
     if: ${{ github.event_name != 'pull_request' && (github.ref_name == 'main' || github.ref_name == 'development') }}
-    needs: [ format, tests, helm, resolve-images ]
+    needs: [ format, tests, helm ]
     uses: PANiXiDA-Infrastructure/ci-cd/.github/workflows/docker-build.yml@main
     with:
-      service-folder: tools/Organization.Product.Ef.Migrator
-      image: ${{ needs.resolve-images.outputs.migrator_image }}
+      service-folder: ${{ vars.MIGRATOR_FOLDER }}
+      image: ${{ vars.REGISTRY_URL }}/${{ github.repository }}/ef-migrator:${{ github.run_number }}
     secrets:
       registry-user: ${{ secrets.REGISTRY_USER }}
       registry-token: ${{ secrets.REGISTRY_TOKEN }}
