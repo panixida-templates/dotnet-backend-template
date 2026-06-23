@@ -5,3 +5,6 @@
 .vs/
 /UI/wwwroot/Uploads/
 .idea
+[Gg]enerated/
+.tmp/
+artifacts/

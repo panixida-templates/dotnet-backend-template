@@ -1,427 +1,206 @@
-# Конфигурация Code Generator
+# PANiXiDA .NET Backend Template
 
-Ниже приведён пример содержания файла `appsettings.json`, в котором задаются «джобы» для генерации кода, а также описание ключевых параметров.
+Reusable .NET backend service template for PANiXiDA-style modular services.
 
----
+The template produces a ready-to-build solution with:
 
-## Пример `appsettings.json`
+- ASP.NET Core host;
+- modular Domain/Application/Infrastructure/Presentation projects;
+- PostgreSQL persistence and EF migrator;
+- sample `Users` feature;
+- unit, integration, functional, and architecture tests;
+- Dockerfiles for API and migrator;
+- Helm values for development and production;
+- GitHub Actions CI/CD workflow;
+- OpenTelemetry-ready configuration.
 
-```json
-{
-  "jobs": [
-    {
-      "pathToModels": "../../../../../DAL/DAL.DbModels",
-      "pathToMigrator": "../../../../../DAL/DAL.Migrator/DAL.Migrator.csproj",
-      "models": ["User"],
-      "generatedFiles": [
-        "Entity",
-        "SearchParams",
-        "ConvertParams",
-        "DALFilter",
-        "DALConvert",
-        "IDAL",
-        "DAL",
-        "DALDependencyInjection",
-        "DefaultDbContext",
-        "IBL",
-        "BL",
-        "BLDependencyInjection",
-        "APIModel",
-        "APIController"
-      ],
+## Purpose
 
-      "templates": {
-        "Entity": "Templates/Domain/Entity.sbn",
-        "SearchParams": "Templates/Common/SearchParams.sbn",
-        "ConvertParams": "Templates/Common/ConvertParams.sbn",
-        "DALFilter": "Templates/DAL/DAL.Filter.sbn",
-        "DALConvert": "Templates/DAL/DAL.Convert.sbn",
-        "IDAL": "Templates/DAL/DAL.Interface.sbn",
-        "DAL": "Templates/DAL/DAL.Implementation.sbn",
-        "DALDependencyInjection": "Templates/DAL/DAL.DependencyInjection.sbn",
-        "DefaultDbContext": "Templates/DAL/DefaultDbContext.sbn",
-        "IBL": "Templates/BL/BL.Interface.sbn",
-        "BL": "Templates/BL/BL.Implementation.sbn",
-        "BLDependencyInjection": "Templates/BL/BL.DependencyInjection.sbn",
-        "APIModel": "Templates/API/API.Model.sbn",
-        "APIController": "Templates/API/API.Controller.sbn"
-      },
+Use this repository as the source for a `dotnet new` template package.
+It is intended to create new backend services consistently from the command line,
+Visual Studio, Rider, VS Code, or any IDE that can work with .NET SDK templates.
 
-      "outputDirectory": {
-        "Entity": "../../../../../Domain/Entities",
-        "SearchParams": "../../../../../Common/Common.SearchParams",
-        "ConvertParams": "../../../../../Common/Common.ConvertParams",
-        "DALFilter": "../../../../../DAL/DAL.Implementations/Filters",
-        "DALConvert": "../../../../../DAL/DAL.Implementations/Converts",
-        "IDAL": "../../../../../DAL/DAL.Interfaces",
-        "DAL": "../../../../../DAL/DAL.Implementations",
-        "DALDependencyInjection": "../../../../../DAL/DAL.DependencyInjection",
-        "DefaultDbContext": "../../../../../DAL/DAL.EF",
-        "IBL": "../../../../../BL/BL.Interfaces",
-        "BL": "../../../../../BL/BL.Implementations",
-        "BLDependencyInjection": "../../../../../BL/BL.DependencyInjection",
-        "APIModel": "../../../../../PL/Dev.Template.AspNetCore.API/Infrastructure/Models",
-        "APIController": "../../../../../PL/Dev.Template.AspNetCore.API/Controllers"
-      },
+The generated service is not supposed to keep every template artifact forever.
+After generation, follow `TEMPLATE_FIRST_USE.md` in the generated service or in
+this repository to remove sample code and fill project-specific documentation.
 
-      "overwriteExisting": false,
-      "deleteGenerated": false,
-      "deleteSourceModel": false,
-      "needMigrate": true
-    }
-  ]
-}
-````
+## Template Parameters
 
----
+| Parameter           | CLI option            | Default                       | Replaces                                      |
+| ------------------- | --------------------- | ----------------------------- | --------------------------------------------- |
+| Solution name       | `-n`, `--name`        | current directory name        | `PANiXiDA.DotnetTemplate`                     |
+| Organization        | `--organization`      | `Organization`                | `Organization` in namespaces and file names   |
+| Product             | `--product`           | `Product`                     | `Product` in namespaces and file names        |
+| Module              | `--module`            | `Module`                      | `.Module` namespace/project segment           |
+| Service slug        | `--service-slug`      | `dotnet-template`             | Helm names, database names, service names     |
+| Repository name     | `--repository-name`   | `dotnet-backend-template`     | container image repository path segment       |
+| Registry owner      | `--registry-owner`    | `panixida-templates`          | container image owner path segment            |
+| README service name | `--service-name`      | `<ServiceName>`               | README service title placeholder              |
 
-## Описание параметров
+Example:
 
-| Параметр               | Тип    | Описание                                                                                 |
-| ---------------------- | ------ | ---------------------------------------------------------------------------------------- |
-| **jobs**               | массив | Список заданий (джоб), каждое из которых генерирует код по указанной модели.             |
-| ├─ `pathToModels`      | строка | Путь к папке или проекту, где лежит модель (клаccы `.cs`), по которой будет генерация.   |
-| ├─ `pathToMigrator`    | строка | Путь к `.csproj` мигратора, с помощью которого будут накатываться миграции.			     |
-| ├─ `models`            | массив | Имя классов-моделей (без расширения), из которых строятся файлы.                          |
-| ├─ `generatedFiles`    | массив | Список типов файлов, которые нужно сгенерировать (ключи для шаблонов и выходных папок).  |
-| ├─ `templates`         | объект | Словарь: ключ — тип файла, значение — путь к шаблону (`.sbn` или иной шаблонный файл).   |
-| ├─ `outputDirectory`   | объект | Словарь: ключ — тип файла, значение — путь к папке, куда сохранять сгенерированный файл. |
-| ├─ `overwriteExisting` | булево | При `true` — существующие файлы перезаписываются; при `false` — пропускаются.            |
-| ├─ `deleteGenerated`   | булево | При `true` — перед запуском удаляются все ранее сгенерированные файлы (по этой джобе).   |
-| └─ `deleteSourceModel` | булево | При `true` — исходная модель удаляется после успешной генерации.                         |
-| └─ `needMigrate` 		 | булево | При `true` — происходит создание миграций и обновление базы данных.                      |
-
----
-
-## Пример структуры проекта
-
-```
-/ProjectRoot
-│
-├─ /DAL
-│   └─ /DAL.DbModels            ← здесь лежат модели (в config: pathToModels)
-│
-├─ /Templates
-│   ├─ /Domain
-│   │   └─ Entity.sbn
-│   ├─ /Common
-│   │   ├─ SearchParams.sbn
-│   │   └─ ConvertParams.sbn
-│   ├─ /DAL
-│   │   ├─ DAL.Filter.sbn
-│   │   ├─ DAL.Convert.sbn
-│   │   └─ … 
-│   └─ /API
-│       ├─ API.Model.sbn
-│       └─ API.Controller.sbn
-│
-├─ /Domain
-│   └─ /Entities              ← выход для «Entity»
-│
-├─ /Common
-│   ├─ /Common.SearchParams   ← выход для «SearchParams»
-│   └─ /Common.ConvertParams  ← выход для «ConvertParams»
-│
-├─ /DAL
-│   ├─ /DAL.Interfaces        ← выход для «IDAL»
-│   ├─ /DAL.Implementations   ← выход для «DAL»
-│   ├─ /DAL.Implementations/Filters    ← выход для «DALFilter»
-│   └─ /DAL.EF                ← выход для «DefaultDbContext»
-│
-├─ /BL
-│   ├─ /BL.Interfaces         ← выход для «IBL»
-│   └─ /BL.Implementations    ← выход для «BL»
-│
-└─ /PL/Dev.Template.AspNetCore.API
-    ├─ /Infrastructure/Models ← выход для «APIModel»
-    └─ /Controllers           ← выход для «APIController»
+```bash
+dotnet new panixida-backend \
+  -n Acme.Billing \
+  --organization Acme \
+  --product Billing \
+  --module Payments \
+  --service-slug billing \
+  --repository-name billing-service \
+  --registry-owner acme
 ```
 
----
+## Install From The Repository
 
-## Инструкция по использованию
+Install the template directly from a local checkout:
 
-1. **Добавьте нужные «джобы»** в секцию `"jobs"` вашего `appsettings.json`.
-2. **Укажите путь** к проекту или папке с моделями через `pathToModels` и имена моделей `models`.
-3. **Перечислите** в `generatedFiles` все типы файлов, которые хотите сгенерировать.
-4. **Настройте шаблоны**: в `templates` опишите, какой файл-шаблон использовать для каждого типа.
-5. **Задайте выходные папки** в `outputDirectory` для каждого типа файлов.
-6. **При необходимости** включите или отключите перезапись (`overwriteExisting`), удаление старых файлов (`deleteGenerated`) или удаление модели (`deleteSourceModel`).
-7. **Укажите путь** к мигратору через `pathToMigrator` и для активации автоматических миграций включите флаг `needMigrate`.
-
-Теперь при запуске генератора каждая «джоба» сгенерирует код по вашим настройкам и разместит его в нужных папках. Удачи в разработке!
-
-# Атрибуты для генерации фильтров и SearchParams
-
-Ниже приведён пример использования атрибутов в модели `Test`, а также описание того, как они влияют на генерацию кода.
-
----
-
-## 1. Пример модели с атрибутами
-
-```csharp
-using Common.Attributes;
-using Common.Enums;
-using DAL.DbModels.Core;
-
-namespace DAL.DbModels;
-
-public class Test : BaseDbModel<int>
-{
-    [Filter]
-    [SearchParam]
-    public string DefaultFilter { get; set; } = string.Empty;
-
-    [Filter(FilterType.AccurateComparison)]
-    [SearchParam]
-    public int AccurateComparisonFilter { get; set; }
-
-    [Filter(FilterType.InaccurateComparison)]
-    [SearchParam]
-    public int InaccurateComparisonFilter { get; set; }
-
-    [Filter(FilterType.InRange)]
-    [SearchParam(SearchParamType.Range)]
-    public DateTime InRangeFilter { get; set; }
-
-    [Filter(FilterType.OutRange)]
-    [SearchParam(SearchParamType.Range)]
-    public DateTime OutRangeFilter { get; set; }
-
-    [Filter(FilterType.GreaterThan)]
-    [SearchParam]
-    public decimal GreaterThanFilter { get; set; }
-
-    [Filter(FilterType.GreaterThanOrEqual)]
-    [SearchParam]
-    public decimal GreaterThanOrEqualFilter { get; set; }
-
-    [Filter(FilterType.LessThan)]
-    [SearchParam]
-    public decimal LessThanFilter { get; set; }
-
-    [Filter(FilterType.LessThanOrEqual)]
-    [SearchParam]
-    public decimal LessThanOrEqualFilter { get; set; }
-
-    [SearchParam("CustomName")]
-    [Filter("CustomName", FilterType.LessThan)]
-    public int NamedFilter { get; set; }
-
-    [SearchParam("StartTo", "EndTo")]
-    [Filter("StartTo", "EndTo", FilterType.InRange)]
-    public int RangeFilter { get; set; }
-
-    [SearchParam(SearchParamType.Range)]
-    public int RangeSearch { get; set; }
-
-    public List<string> Tags { get; set; } = [];
-
-    [Navigation]
-    public User? User { get; set; }
-
-    [Navigation]
-    public List<User> Users { get; set; } = [];
-}
-````
-
----
-
-## 2. Атрибут `[Navigation]`
-
-* Помечает свойства навигации (связанные сущности).
-* Обеспечивает корректную генерацию DTO и `ConvertParams` для связанных сущностей.
-
----
-
-## 3. Атрибут `[Filter]`
-
-* По умолчанию создаёт фильтр с точным сравнением (`AccurateComparison`).
-* Позволяет указать собственное имя фильтра и тип сравнения.
-
-```csharp
-[Filter]                            // Точное сравнение
-[Filter(FilterType.LessThan)]      // Меньше (<)
-[Filter("CustomName", FilterType.InRange)]  // В диапазоне, имя — CustomName
+```bash
+dotnet new install .
 ```
 
-### Типы фильтров (`Common.Enums.FilterType`)
+List installed templates:
 
-| Константа              | Описание                |
-| ---------------------- | ----------------------- |
-| `AccurateComparison`   | Точное сравнение        |
-| `InaccurateComparison` | Неточное сравнение      |
-| `InRange`              | В диапазоне             |
-| `OutRange`             | Вне диапазона           |
-| `GreaterThan`          | Больше (`>`)            |
-| `GreaterThanOrEqual`   | Больше или равно (`>=`) |
-| `LessThan`             | Меньше (`<`)            |
-| `LessThanOrEqual`      | Меньше или равно (`<=`) |
-
----
-
-## 4. Пример сгенерированного фильтра в DAL
-
-```csharp
-using Common.SearchParams;
-namespace DAL.Implementations.Filters;
-
-internal static class TestsFilter
-{
-    internal static IQueryable<DbModels.Test> Filter(
-        this IQueryable<DbModels.Test> dbObjects,
-        TestsSearchParams searchParams)
-    {
-        if (!string.IsNullOrEmpty(searchParams.DefaultFilter))
-            dbObjects = dbObjects.Where(item =>
-                item.DefaultFilter.ToLower() == searchParams.DefaultFilter
-                                                   .ToLower().Trim());
-
-        if (searchParams.AccurateComparisonFilter.HasValue)
-            dbObjects = dbObjects.Where(item =>
-                item.AccurateComparisonFilter == searchParams.AccurateComparisonFilter.Value);
-
-        // … другие проверки …
-
-        if (searchParams.InRangeFilterFrom.HasValue)
-            dbObjects = dbObjects.Where(item =>
-                item.InRangeFilter >= searchParams.InRangeFilterFrom.Value);
-
-        if (searchParams.InRangeFilterTo.HasValue)
-            dbObjects = dbObjects.Where(item =>
-                item.InRangeFilter <= searchParams.InRangeFilterTo.Value);
-
-        // Пример фильтра «вне диапазона»
-        if (searchParams.OutRangeFilterFrom.HasValue &&
-            searchParams.OutRangeFilterTo.HasValue)
-        {
-            dbObjects = dbObjects.Where(item =>
-                item.OutRangeFilter < searchParams.OutRangeFilterFrom.Value ||
-                item.OutRangeFilter > searchParams.OutRangeFilterTo.Value);
-        }
-
-        // … и так далее …
-
-        return dbObjects;
-    }
-}
+```bash
+dotnet new list panixida
 ```
 
----
+Create a service:
 
-## 5. Атрибут `[SearchParam]`
-
-* Создаёт свойства в классе параметров поиска.
-* По умолчанию — одиночное значение (`Value`), можно задать диапазон (`Range`).
-
-```csharp
-[SearchParam]                                  // Value
-[SearchParam(SearchParamType.Range)]           // Range (добавит свойства From/To)
-[SearchParam("StartTo", "EndTo")]              // Пользовательские имена
+```bash
+dotnet new panixida-backend \
+  -n Acme.Billing \
+  --organization Acme \
+  --product Billing \
+  --module Payments \
+  --service-slug billing \
+  --repository-name billing-service \
+  --registry-owner acme \
+  -o Acme.Billing
 ```
 
-### Пример класса SearchParams
+Uninstall the local template:
 
-```csharp
-using Common.SearchParams.Core;
-using Common.Enums;
-
-namespace Common.SearchParams;
-
-public sealed class TestsSearchParams : BaseSearchParams
-{
-    public string? DefaultFilter { get; set; }
-    public int? AccurateComparisonFilter { get; set; }
-    public int? InaccurateComparisonFilter { get; set; }
-
-    public DateTime? InRangeFilterFrom { get; set; }
-    public DateTime? InRangeFilterTo   { get; set; }
-
-    public DateTime? OutRangeFilterFrom { get; set; }
-    public DateTime? OutRangeFilterTo   { get; set; }
-
-    public decimal? GreaterThanFilter { get; set; }
-    public decimal? GreaterThanOrEqualFilter { get; set; }
-    public decimal? LessThanFilter   { get; set; }
-    public decimal? LessThanOrEqualFilter { get; set; }
-
-    public int? CustomName { get; set; }
-    public int? StartTo   { get; set; }
-    public int? EndTo     { get; set; }
-
-    public int? RangeSearchFrom { get; set; }
-    public int? RangeSearchTo   { get; set; }
-
-    public TestsSearchParams(string? searchQuery = null,
-                             int startIndex = 0,
-                             int? objectsCount = null)
-        : base(startIndex, objectsCount)
-    {
-        SearchQuery = searchQuery;
-    }
-}
+```bash
+dotnet new uninstall .
 ```
 
----
+## Pack And Publish As NuGet Template Package
 
+Build a local NuGet package:
 
-## Конфигурация мигратора
-
-`appsettings.json`:
-
-```json
-{
-  "EF": {
-    "ProjectPath": "../../../../DAL.EF"
-  },
-  "ApplyEntities": true,
-  "ApplyHistory": true,
-  "ConnectionStrings": {
-    "DefaultConnectionString": "Host=10.10.0.7;Port=5432;Database=devtemplate;Username=devtemplate;Password=U@a#wRPcY4uMTP"
-  }
-}
+```bash
+dotnet pack template/PANiXiDA.DotnetBackendTemplate.csproj --configuration Release
 ```
 
-* `"EF:ProjectPath"` — относительный путь (от папки, где запускается приложение-мигратор) до проекта с `DbContext` (например, `DAL.EF`).
-* `"ApplyEntities": true` — флаг, отвечающий за применение изменений в структуре сущностей.
-* `"ApplyHistory": true` — флаг, отвечающий за запись истории миграций (таблица `__EFMigrationsHistory`).
-* `"ConnectionStrings:DefaultConnectionString"` — строка подключения к вашей БД PostgreSQL.
+Install from the generated package:
 
----
+```bash
+dotnet new install bin/Release/PANiXiDA.Templates.DotnetBackend.*.nupkg
+```
 
-## Как работает мигратор (общая схема)
+Package versions are generated by Nerdbank.GitVersioning from `version.json`.
 
-1. **Загрузка конфигурации и создание сервисов.**
-   При запуске приложения-мигратор читает `appsettings.json`, получает строку подключения и путь к проекту с контекстом (`EF:ProjectPath`). Далее регистрирует `DbContext` (например, `DefaultDbContext`) с указанной строкой подключения и указывает сборку миграций (`MigrationsAssembly`).
+Publishing to NuGet.org is handled by `.github/workflows/publish-template.yml`
+after the `CI` workflow succeeds on `main`, or manually through
+`workflow_dispatch`. It uses
+`PANiXiDA-Infrastructure/ci-cd/.github/workflows/dotnet-publish-global-nuget.yml`.
+The repository must have:
 
-2. **Сравнение текущей модели и снапшота.**
-   В рантайме выполняется сравнение «живой» модели (`DefaultDbContext`) с тем снимком (Snapshot), который хранился в папке миграций проекта. Если в снимке (Snapshot) того же контекста нет сущностей (новых миграций) или модель совпадает со снапшотом, считается, что изменений нет.
+- `TEMPLATE_PROJECT` variable set to `template/PANiXiDA.DotnetBackendTemplate.csproj`;
+- `NUGET_API_KEY` secret with a NuGet.org API key.
 
-3. **Если изменений нет, просто обновляем базу.**
-   Когда разницы не обнаружено, вызывается стандартный `db.Database.MigrateAsync()`, который откатывает все недоиспользованные миграции (если они не применены) и примени­яет их к базе. То есть, в этом случае база просто «догоняет» уже сгенерированные миграции без создания новых.
+After publishing, developers can install the template by package id:
 
-4. **Если есть отличие — создаём миграцию и применяем её.**
-   Если при сравнении модели и снапшота находим «diff» (дополнительные операции: добавление/удаление колонок, таблиц и т. п.), происходит следующее:
+```bash
+dotnet new install PANiXiDA.Templates.DotnetBackend
+```
 
-   * Генерируется уникальное имя миграции на основе набора операций (например, `Add_Column_Name_To_User_Table` и т.д.).
-   * С помощью службы `IMigrationsScaffolder` создаётся новый скон­фигурированный класс миграции и подконтрольные файлы (класс миграции + её «snapshot»).
-   * Эти файлы сохраняются в папке `Migrations` указанного проекта (`EF:ProjectPath`).
+## Visual Studio And Other IDEs
 
-5. **Применение SQL-команд к БД.**
-   После того как миграция сгенерирована и сохранена, из полученного списка операций формируются чистые SQL-скрипты (через `IMigrationsSqlGenerator`). Затем эти скрипты по очереди выполняются на самой базе (через `db.Database.ExecuteSqlRawAsync()`), в рамках одной транзакции.
+This template uses the .NET SDK template engine, so the same package can be used
+from multiple IDEs.
 
-6. **Запись истории миграций.**
-   Если в конфигурации `"ApplyHistory": true`, то после применения основных изменений выполняется ещё один SQL-скрипт, который вставляет запись о только что выполненной миграции в системную таблицу `__EFMigrationsHistory`. Таким образом сохраняется, какой именно набор изменений (MigrationId + версия EF) уже применён.
+Typical Visual Studio flow:
 
-7. **Коммит транзакции и завершение.**
-   Если все команды успешно отработали, транзакция фиксируется, и мигратор завершает свою работу, возвращая `IHost`. Если же произошла ошибка на каком-то этапе, транзакция откатывается, а в логах можно увидеть подробную информацию об исключении.
+1. Install the template package with `dotnet new install`.
+2. Restart Visual Studio if the template list was already open.
+3. Open `Create a new project`.
+4. Search for `PANiXiDA` or `Backend Service`.
+5. Fill template parameters in the UI.
+6. Create the solution.
 
----
+Rider and VS Code can use the same template through terminal commands. IDEs that
+read .NET SDK templates may also show the configured parameters from
+`.template.config/template.json` and `.template.config/ide.host.json`.
 
-Таким образом, при каждом запуске мигратора:
+## Generated Service First Steps
 
-* Мы «понимаем», какие изменения появились в модели (`DefaultDbContext`) по сравнению с тем, что уже зафиксировано в папке миграций (Snapshot).
-* Если изменений нет, просто обновляем базу по существующим миграциям.
-* Если есть, автоматически создаём новый класс миграции, сохраняем его, а затем выполняем SQL-скрипты для добавления/удаления/изменения объектов БД и фиксируем запись в таблице истории.
+After creating a service from this template:
 
-В результате у вас всегда актуальный набор миграций в проекте и база данных, приведённая к нужному состоянию, без ручного вмешательства.
+1. Open the generated solution.
+2. Read `TEMPLATE_FIRST_USE.md`.
+3. Remove or replace the sample `Users` feature.
+4. Update appsettings, Helm values, CI/CD variables, README, and deployment names.
+5. Run restore, format, build, test, Docker build, and Helm validation.
+
+## Repository Layout
+
+| Path                                     | Purpose                                                  |
+| ---------------------------------------- | -------------------------------------------------------- |
+| `.template.config/template.json`         | Main `dotnet new` template definition.                   |
+| `.template.config/dotnetcli.host.json`   | CLI aliases for template parameters.                     |
+| `.template.config/ide.host.json`         | IDE metadata for Visual Studio-style template UI.        |
+| `.github/workflows/publish-template.yml` | Template-only NuGet.org publish workflow.                |
+| `template/`                              | NuGet template package project.                          |
+| `version.json`                           | NuGet package versioning configuration.                  |
+| `README.md`                              | Documentation for this template repository.              |
+| `README_TEMPLATE.md`                     | README generated as `README.md` in a new service.        |
+| `TEMPLATE_FIRST_USE.md`                  | First-use checklist for manual or generated service use. |
+| `src/`                                   | Template service source projects.                        |
+| `tests/`                                 | Template service tests.                                  |
+| `tools/`                                 | EF migrator project.                                     |
+| `deploy/helm/`                           | Helm deployment values.                                  |
+
+## Development
+
+Validate the template source solution:
+
+```bash
+dotnet restore PANiXiDA.DotnetTemplate.slnx
+dotnet format PANiXiDA.DotnetTemplate.slnx --verify-no-changes
+dotnet build PANiXiDA.DotnetTemplate.slnx --configuration Release
+dotnet test PANiXiDA.DotnetTemplate.slnx --configuration Release
+dotnet pack template/PANiXiDA.DotnetBackendTemplate.csproj --configuration Release
+```
+
+Validate template generation locally:
+
+```bash
+dotnet new uninstall . || true
+dotnet new install .
+dotnet new panixida-backend \
+  -n Acme.Billing \
+  --organization Acme \
+  --product Billing \
+  --module Payments \
+  --service-slug billing \
+  --repository-name billing-service \
+  --registry-owner acme \
+  -o .tmp/generated-service
+```
+
+Then inspect `.tmp/generated-service` and run:
+
+```bash
+dotnet restore .tmp/generated-service/Acme.Billing.slnx
+```
+
+Remove `.tmp/` after validation.
+
+## Sources
+
+The implementation follows the .NET template engine model documented by
+Microsoft and the `dotnet/templating` project:
+
+- [Custom templates for dotnet new](https://learn.microsoft.com/en-us/dotnet/core/tools/custom-templates)
+- [Reference for template.json](https://github.com/dotnet/templating/wiki/Reference-for-template.json)
