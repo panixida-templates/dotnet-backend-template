@@ -24,9 +24,10 @@ The generated service is not supposed to keep every template artifact forever.
 After generation, follow `TEMPLATE_FIRST_USE.md` in the generated service or in
 this repository to create the first real feature and fill project-specific documentation.
 
-This repository keeps a sample `Users` feature as a source example for template
-maintainers. It is excluded from `dotnet new` output and from the NuGet template
-package content.
+This repository keeps source examples for template maintainers under
+`RepositoryExamples` folders. They are excluded from `dotnet new` output and
+from the NuGet template package content. Marker and assembly files stay outside
+that folder convention so generated services keep empty but valid projects.
 
 ## Template Parameters
 
@@ -148,21 +149,21 @@ After creating a service from this template:
 
 ## Repository Layout
 
-| Path                                     | Purpose                                                  |
-| ---------------------------------------- | -------------------------------------------------------- |
-| `.template.config/template.json`         | Main `dotnet new` template definition.                   |
-| `.template.config/dotnetcli.host.json`   | CLI aliases for template parameters.                     |
-| `.template.config/ide.host.json`         | IDE metadata for Visual Studio-style template UI.        |
-| `template/`                              | NuGet template package project.                          |
-| `icon.png`                               | NuGet package icon.                                      |
-| `version.json`                           | NuGet package versioning configuration.                  |
-| `README.md`                              | Documentation for this template repository.              |
-| `README_TEMPLATE.md`                     | README generated as `README.md` in a new service.        |
-| `TEMPLATE_FIRST_USE.md`                  | First-use checklist for manual or generated service use. |
-| `src/`                                   | Template service source projects and repository examples. |
-| `tests/`                                 | Template service tests and repository example tests.      |
-| `tools/`                                 | EF migrator project.                                     |
-| `deploy/helm/`                           | Helm deployment values.                                  |
+| Path                                     | Purpose                                                       |
+| ---------------------------------------- | ------------------------------------------------------------- |
+| `.template.config/template.json`         | Main `dotnet new` template definition.                        |
+| `.template.config/dotnetcli.host.json`   | CLI aliases for template parameters.                          |
+| `.template.config/ide.host.json`         | IDE metadata for Visual Studio-style template UI.             |
+| `template/`                              | NuGet template package project.                               |
+| `icon.png`                               | NuGet package icon.                                           |
+| `version.json`                           | NuGet package versioning configuration.                       |
+| `README.md`                              | Documentation for this template repository.                   |
+| `README_TEMPLATE.md`                     | README generated as `README.md` in a new service.             |
+| `TEMPLATE_FIRST_USE.md`                  | First-use checklist for manual or generated service use.      |
+| `src/`                                   | Template service source projects and repository-only examples. |
+| `tests/`                                 | Template service tests and repository-only example tests.      |
+| `tools/`                                 | EF migrator project.                                          |
+| `deploy/helm/`                           | Helm deployment values.                                       |
 
 ## Development
 

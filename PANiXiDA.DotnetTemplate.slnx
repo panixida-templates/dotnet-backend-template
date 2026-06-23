@@ -23,10 +23,8 @@
     <Project Path="src/Module/Organization.Product.Module.Presentation/Organization.Product.Module.Presentation.csproj" />
   </Folder>
   <Folder Name="/tests/Module/">
-    <!--#if (false) -->
     <Project Path="tests/Module/Organization.Product.Module.FunctionalTests/Organization.Product.Module.FunctionalTests.csproj" />
     <Project Path="tests/Module/Organization.Product.Module.IntegrationTests/Organization.Product.Module.IntegrationTests.csproj" />
-    <!--#endif -->
     <Project Path="tests/Module/Organization.Product.Module.UnitTests/Organization.Product.Module.UnitTests.csproj" />
   </Folder>
   <Folder Name="/tests/">

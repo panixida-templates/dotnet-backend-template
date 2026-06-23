@@ -43,23 +43,7 @@
         "version.json",
         "README.md",
         "*.nupkg",
-        "src/Module/Organization.Product.Module.Domain/Users/**",
-        "src/Module/Organization.Product.Module.Application/Users/**",
-        "src/Module/Organization.Product.Module.Infrastructure/Persistence/Features/Users/**",
-        "src/Module/Organization.Product.Module.Infrastructure/Persistence/Core/Migrations/**",
-        "src/Module/Organization.Product.Module.Presentation/Features/Users/**",
-        "tests/Module/Organization.Product.Module.UnitTests/Application/Users/**",
-        "tests/Module/Organization.Product.Module.UnitTests/Domain/Users/**",
-        "tests/Module/Organization.Product.Module.IntegrationTests/**",
-        "tests/Module/Organization.Product.Module.FunctionalTests/**",
-        "tests/Module/Organization.Product.Module.IntegrationTests/Infrastructure/DependencyInjection/ServiceCollectionExtensionsTests.cs",
-        "tests/Module/Organization.Product.Module.IntegrationTests/Infrastructure/Persistence/Features/Users/**",
-        "tests/Module/Organization.Product.Module.IntegrationTests/Infrastructure/Persistence/Core/TemplateWriteDbContextTests.cs",
-        "tests/Module/Organization.Product.Module.FunctionalTests/Presentation/Users/**",
-        "tests/Organization.Product.ArchitectureTests/Application/ApplicationArchitectureTests.cs",
-        "tests/Organization.Product.ArchitectureTests/Domain/DomainArchitectureTests.cs",
-        "tests/Organization.Product.ArchitectureTests/Infrastructure/InfrastructureArchitectureTests.cs",
-        "tests/Organization.Product.ArchitectureTests/Presentation/PresentationArchitectureTests.cs"
+        "**/RepositoryExamples/**"
       ],
       "rename": {
         "README_TEMPLATE.md": "README.md"

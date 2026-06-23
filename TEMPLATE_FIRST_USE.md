@@ -43,19 +43,10 @@ template-only files from the final service repository:
 For manual usage, keep `README_TEMPLATE.md` only long enough to rename it to
 `README.md` for the service, then delete the `README_TEMPLATE.md` file.
 
-This repository also contains a sample `Users` feature for template maintainers.
-It is excluded when the service is generated through `dotnet new`. If the
-service is created by cloning or copying this repository manually, also remove:
-
-- `src/Module/Organization.Product.Module.Domain/Users`;
-- `src/Module/Organization.Product.Module.Application/Users`;
-- `src/Module/Organization.Product.Module.Infrastructure/Persistence/Features/Users`;
-- `src/Module/Organization.Product.Module.Infrastructure/Persistence/Core/Migrations`;
-- `src/Module/Organization.Product.Module.Presentation/Features/Users`;
-- `tests/Module/Organization.Product.Module.UnitTests/**/Users`;
-- `tests/Module/Organization.Product.Module.IntegrationTests/**/Users`;
-- `tests/Module/Organization.Product.Module.IntegrationTests/Infrastructure/Persistence/Core/TemplateWriteDbContextTests.cs`;
-- `tests/Module/Organization.Product.Module.FunctionalTests/**/Users`.
+This repository also contains repository-only examples for template maintainers.
+They live under `RepositoryExamples` folders and are excluded when the service is
+generated through `dotnet new`. If the service is created by cloning or copying
+this repository manually, remove every `RepositoryExamples` folder.
 
 ## 1. Choose Target Names
 
