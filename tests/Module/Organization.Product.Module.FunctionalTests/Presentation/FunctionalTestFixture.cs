@@ -37,13 +37,8 @@ public sealed class FunctionalTestFixture : IAsyncLifetime
 
     public async ValueTask DisposeAsync()
     {
-        Client?.Dispose();
-
-        if (_factory is not null)
-        {
-            await _factory.DisposeAsync();
-        }
-
+        Client.Dispose();
+        await _factory.DisposeAsync();
         await _database.DisposeAsync();
     }
 }

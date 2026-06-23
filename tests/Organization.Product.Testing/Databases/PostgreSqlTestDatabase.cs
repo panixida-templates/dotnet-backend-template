@@ -48,11 +48,6 @@ public sealed class PostgreSqlTestDatabase : IAsyncDisposable
         await using var connection = new NpgsqlConnection(PostgreSqlConnectionString);
         await connection.OpenAsync(cancellationToken);
 
-        if (!await HasResettableTablesAsync(connection, cancellationToken))
-        {
-            return;
-        }
-
         var respawner = await Respawner.CreateAsync(
             connection,
             new RespawnerOptions
@@ -65,25 +60,6 @@ public sealed class PostgreSqlTestDatabase : IAsyncDisposable
             });
 
         await respawner.ResetAsync(connection);
-    }
-
-    private static async Task<bool> HasResettableTablesAsync(
-        NpgsqlConnection connection,
-        CancellationToken cancellationToken)
-    {
-        await using var command = new NpgsqlCommand(
-            """
-            SELECT EXISTS (
-                SELECT 1
-                FROM information_schema.tables
-                WHERE table_schema = 'public'
-                  AND table_type = 'BASE TABLE'
-                  AND table_name <> '__EFMigrationsHistory'
-            );
-            """,
-            connection);
-
-        return (bool)(await command.ExecuteScalarAsync(cancellationToken))!;
     }
 
     public async ValueTask DisposeAsync()

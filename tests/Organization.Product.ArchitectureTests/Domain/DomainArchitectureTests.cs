@@ -11,7 +11,6 @@ public sealed class DomainArchitectureTests
             .ResideInAssemblyMatching(ArchitectureDefinition.DomainAssemblyNamePattern)
             .And().ResideInNamespaceMatching(ArchitectureDefinition.IncludeNamespaceSegment("ValueObjects"))
             .Should().BePublic()
-            .WithoutRequiringPositiveResults()
             .Check(ArchitectureDefinition.Architecture);
     }
 
@@ -22,7 +21,6 @@ public sealed class DomainArchitectureTests
             .ResideInAssemblyMatching(ArchitectureDefinition.DomainAssemblyNamePattern)
             .And().ResideInNamespaceMatching(ArchitectureDefinition.IncludeNamespaceSegment("Policies"))
             .Should().BePublic()
-            .WithoutRequiringPositiveResults()
             .Check(ArchitectureDefinition.Architecture);
     }
 
@@ -33,7 +31,6 @@ public sealed class DomainArchitectureTests
             .ResideInAssemblyMatching(ArchitectureDefinition.DomainAssemblyNamePattern)
             .And().ResideInNamespaceMatching(ArchitectureDefinition.IncludeNamespaceSegment("Specifications"))
             .Should().BePublic()
-            .WithoutRequiringPositiveResults()
             .Check(ArchitectureDefinition.Architecture);
     }
 }
