@@ -12,6 +12,7 @@ public sealed class PresentationArchitectureTests
             .And().ResideInNamespaceMatching(ArchitectureDefinition.IncludeNamespaceSegment("Features"))
             .And().HaveNameEndingWith("Endpoint")
             .Should().BeInternal()
+            .WithoutRequiringPositiveResults()
             .Check(ArchitectureDefinition.Architecture);
     }
 
@@ -23,6 +24,7 @@ public sealed class PresentationArchitectureTests
             .And().ResideInNamespaceMatching(ArchitectureDefinition.IncludeNamespaceSegment("Features"))
             .And().HaveNameEndingWith("Request")
             .Should().BeInternal()
+            .WithoutRequiringPositiveResults()
             .Check(ArchitectureDefinition.Architecture);
     }
 
@@ -34,6 +36,7 @@ public sealed class PresentationArchitectureTests
             .And().ResideInNamespaceMatching(ArchitectureDefinition.IncludeNamespaceSegment("Features"))
             .And().HaveNameEndingWith("Response")
             .Should().BeInternal()
+            .WithoutRequiringPositiveResults()
             .Check(ArchitectureDefinition.Architecture);
     }
 
@@ -45,6 +48,7 @@ public sealed class PresentationArchitectureTests
             .And().ResideInNamespaceMatching(ArchitectureDefinition.IncludeNamespaceSegment("Features"))
             .And().HaveNameEndingWith("Mapper")
             .Should().BeInternal()
+            .WithoutRequiringPositiveResults()
             .Check(ArchitectureDefinition.Architecture);
     }
 }

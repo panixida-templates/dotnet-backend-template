@@ -7,7 +7,7 @@ The template produces a ready-to-build solution with:
 - ASP.NET Core host;
 - modular Domain/Application/Infrastructure/Presentation projects;
 - PostgreSQL persistence and EF migrator;
-- sample `Users` feature;
+- empty module structure ready for the first real feature;
 - unit, integration, functional, and architecture tests;
 - Dockerfiles for API and migrator;
 - Helm values for development and production;
@@ -22,7 +22,7 @@ Visual Studio, Rider, VS Code, or any IDE that can work with .NET SDK templates.
 
 The generated service is not supposed to keep every template artifact forever.
 After generation, follow `TEMPLATE_FIRST_USE.md` in the generated service or in
-this repository to remove sample code and fill project-specific documentation.
+this repository to create the first real feature and fill project-specific documentation.
 
 ## Template Parameters
 
@@ -138,7 +138,7 @@ After creating a service from this template:
 
 1. Open the generated solution.
 2. Read `TEMPLATE_FIRST_USE.md`.
-3. Remove or replace the sample `Users` feature.
+3. Create the first real feature slice and initial EF migration when the model is ready.
 4. Update appsettings, Helm values, CI/CD variables, README, and deployment names.
 5. Run restore, format, build, test, Docker build, and Helm validation.
 
