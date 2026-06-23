@@ -1,0 +1,136 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "PANiXiDA",
+  "classifications": [
+    "Web",
+    "ASP.NET Core",
+    "Backend",
+    "API",
+    "Service",
+    "Helm",
+    "Docker"
+  ],
+  "identity": "PANiXiDA.Templates.DotnetBackend",
+  "groupIdentity": "PANiXiDA.Templates.DotnetBackend",
+  "name": "PANiXiDA .NET Backend Service",
+  "shortName": "panixida-backend",
+  "defaultName": "Organization.Product",
+  "description": "Modular .NET backend service with ASP.NET Core, PostgreSQL, tests, Docker, Helm, and GitHub Actions.",
+  "sourceName": "PANiXiDA.DotnetTemplate",
+  "preferNameDirectory": true,
+  "tags": {
+    "language": "C#",
+    "type": "solution"
+  },
+  "sources": [
+    {
+      "source": "./",
+      "target": "./",
+      "exclude": [
+        "**/[Bb]in/**",
+        "**/[Oo]bj/**",
+        ".git/**",
+        ".vs/**",
+        ".idea/**",
+        ".tmp/**",
+        "artifacts/**",
+        "template/**",
+        ".template.config/**",
+        ".github/workflows/publish-template.yml",
+        "version.json",
+        "README.md",
+        "*.nupkg"
+      ],
+      "rename": {
+        "README_TEMPLATE.md": "README.md"
+      }
+    }
+  ],
+  "symbols": {
+    "organization": {
+      "type": "parameter",
+      "dataType": "string",
+      "defaultValue": "Organization",
+      "replaces": "Organization",
+      "fileRename": "Organization",
+      "displayName": "Organization",
+      "description": "Root organization namespace segment."
+    },
+    "product": {
+      "type": "parameter",
+      "dataType": "string",
+      "defaultValue": "Product",
+      "replaces": "Product",
+      "fileRename": "Product",
+      "displayName": "Product",
+      "description": "Product namespace segment."
+    },
+    "module": {
+      "type": "parameter",
+      "dataType": "string",
+      "defaultValue": "Module",
+      "displayName": "Module",
+      "description": "Main module namespace segment used in project and assembly names."
+    },
+    "productModule": {
+      "type": "generated",
+      "generator": "join",
+      "replaces": "Product.Module",
+      "fileRename": "Product.Module",
+      "parameters": {
+        "symbols": [
+          {
+            "type": "ref",
+            "value": "product"
+          },
+          {
+            "type": "ref",
+            "value": "module"
+          }
+        ],
+        "separator": ".",
+        "removeEmptyValues": true
+      },
+      "description": "Internal replacement for the product and module namespace segment."
+    },
+    "serviceSlug": {
+      "type": "parameter",
+      "dataType": "string",
+      "defaultValue": "dotnet-template",
+      "replaces": "dotnet-template",
+      "fileRename": "dotnet-template",
+      "displayName": "Service slug",
+      "description": "Kebab-case service name used in Helm, image names, database names, and deployment configuration."
+    },
+    "repositoryName": {
+      "type": "parameter",
+      "dataType": "string",
+      "defaultValue": "dotnet-backend-template",
+      "replaces": "dotnet-backend-template",
+      "fileRename": "dotnet-backend-template",
+      "displayName": "Repository name",
+      "description": "Repository name segment used in container image paths."
+    },
+    "registryOwner": {
+      "type": "parameter",
+      "dataType": "string",
+      "defaultValue": "panixida-templates",
+      "replaces": "panixida-templates",
+      "displayName": "Registry owner",
+      "description": "Container registry owner or organization path segment."
+    },
+    "serviceName": {
+      "type": "parameter",
+      "dataType": "string",
+      "defaultValue": "<ServiceName>",
+      "replaces": "<ServiceName>",
+      "displayName": "README service name",
+      "description": "Human-readable service name used in the generated README."
+    }
+  },
+  "primaryOutputs": [
+    {
+      "path": "PANiXiDA.DotnetTemplate.slnx"
+    }
+  ]
+}
