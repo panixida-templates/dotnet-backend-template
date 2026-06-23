@@ -320,7 +320,7 @@ Describe endpoint groups exposed by the service.
 | `<Area2>` | `/api/v1/<area2>` | `v1`    | `<description>` |
 | `<Area3>` | `/api/v1/<area3>` | `v1`    | `<description>` |
 
-Replace these rows with the real endpoint groups exposed by the service.
+The template contains a sample `Users` feature. Replace it with real service features before production use.
 
 ### API documentation
 
@@ -1141,6 +1141,7 @@ Also review and rename template-specific values:
 - default PostgreSQL credentials;
 - default S3 bucket;
 - default gateway hosts;
+- sample `Users` feature;
 - unused MongoDB sections;
 - unused S3 sections;
 - unused gRPC sections;

@@ -4,7 +4,6 @@ Use this checklist to turn `dotnet-backend-template` into a real service.
 Run through it right after creating a repository from the template, before adding production features.
 
 In the final service, this file can be deleted or moved to `docs/` if the team wants to keep the checklist.
-Delete it after the first service setup PR if the checklist is no longer useful.
 
 ## 0. Prefer `dotnet new`
 
@@ -63,7 +62,8 @@ Do not do a partial rename. Replace all template names first, then start impleme
 
 If the service was generated through `dotnet new`, the basic replacements from
 `.template.config/template.json` have already been applied. Still run the checks
-below because service-specific values still must be reviewed manually.
+below because sample feature names and domain-specific values must be cleaned up
+manually.
 
 ## 2. Rename The Solution, Projects, And Folders
 
@@ -110,7 +110,7 @@ Replace `Organization.Product` with the final root namespace in:
 - `using Organization.Product...`;
 - `<Using Include="Organization.Product...">`;
 - `<InternalsVisibleTo Include="Organization.Product...">`;
-- migration snapshot and migration designer files after real migrations are generated;
+- migration snapshot and migration designer files, if they remain;
 - functional, integration, unit, and architecture tests.
 
 Keep the layer suffixes:
@@ -123,12 +123,23 @@ Keep the layer suffixes:
 
 Architecture tests discover modules by these suffixes. If you intentionally change them, update `tests/.../ArchitectureDefinition.cs`.
 
-## 4. Create The First Real Feature
+## 4. Remove Or Replace The Sample Users Feature
 
-The template starts without sample business features or pre-generated migrations.
-Create the first real feature slice only after final names and namespaces are set.
+The template contains a sample `Users` feature. Remove it or replace it with the first real service feature.
 
-Use this structure for a feature:
+If `Users` is not part of the final domain, remove:
+
+- `src/Module/Organization.Product.Module.Domain/Users`;
+- `src/Module/Organization.Product.Module.Application/Users`;
+- `src/Module/Organization.Product.Module.Infrastructure/Persistence/Features/Users`;
+- `src/Module/Organization.Product.Module.Presentation/Features/Users`;
+- `tests/Module/Organization.Product.Module.UnitTests/**/Users`;
+- `tests/Module/Organization.Product.Module.IntegrationTests/**/Users`;
+- `tests/Module/Organization.Product.Module.FunctionalTests/**/Users`;
+- user-specific constants such as `UsersApiConstants`;
+- old migrations from `src/Module/Organization.Product.Module.Infrastructure/Persistence/Core/Migrations`.
+
+Create real feature slices with the same structure:
 
 ```text
 src/Module/<Root>.<Module>.Domain/<Feature>/
@@ -140,22 +151,22 @@ tests/Module/<Root>.<Module>.IntegrationTests/...
 tests/Module/<Root>.<Module>.FunctionalTests/...
 ```
 
-For the first feature, add only the files the service actually needs:
+Check:
 
-- domain model, value objects, policies and specifications;
-- application commands, queries, handlers and validators;
-- infrastructure repositories, EF configurations, read models and mappers;
-- presentation endpoints, request/response contracts and mappers;
-- unit, integration and functional tests for the touched behavior.
+```bash
+rg "Users|User" src tests
+```
 
-Do not add placeholder entities, endpoints, repositories or tests that are not part of the real domain.
+Remaining matches should belong to the real service domain.
 
-## 5. Rename DbContext And Create Migrations
+## 5. Rename DbContext And Migrations
 
 Current template classes:
 
 - `TemplateWriteDbContext`;
-- `TemplateReadDbContext`.
+- `TemplateReadDbContext`;
+- `TemplateWriteDbContextModelSnapshot`;
+- migration files for the `users` table.
 
 Actions:
 
@@ -165,8 +176,8 @@ Actions:
    - `src/...Infrastructure/DependencyInjection/HostBuilderExtensions.cs`;
    - `tools/...Ef.Migrator/Program.cs`;
    - integration and functional test fixtures.
-3. Verify that no template migrations exist in `src/...Infrastructure/Persistence/Core/Migrations`.
-4. Generate the first migration only after the real EF model is added.
+3. Remove old migrations for the sample `Users` feature.
+4. Generate the first migration for the real model.
 5. Check `tools/...Ef.Migrator/appsettings.json`:
    - `Ef:ProjectPath`;
    - `Ef:MigrationsDirectory`;
@@ -365,12 +376,13 @@ Remove README sections that do not apply to the service:
 - gRPC;
 - code generation;
 - metrics/tracing;
-- migrator.
+- migrator;
+- sample `Users`.
 
 Check:
 
 ```bash
-rg "<ServiceName>|<OWNER>|<REPOSITORY>|<REPOSITORY_URL>|<SolutionName>|<LicenseName>|Organization\.Product|dotnet-template" README.md
+rg "<ServiceName>|<OWNER>|<REPOSITORY>|<REPOSITORY_URL>|<SolutionName>|<LicenseName>|Organization\.Product|dotnet-template|Users" README.md
 ```
 
 ## 11. Check Package Management And SDK
@@ -427,13 +439,11 @@ Check that template values are gone:
 rg "PANiXiDA\.DotnetTemplate|Organization\.Product|dotnet-template|dotnet-backend-template|panixida-templates|<ServiceName>|<OWNER>|<REPOSITORY>|<SolutionName>|<LicenseName>"
 ```
 
-Check that no accidental sample feature names remain:
+Check that the sample feature is gone:
 
 ```bash
 rg "Users|User" src tests
 ```
-
-There should be no matches unless the real service domain intentionally uses those words.
 
 Check diff format:
 
@@ -472,8 +482,8 @@ If the shared chart lives in another repository, use the same chart source that 
 2. Generate the service with `dotnet new` or remove template-only files after manual clone.
 3. Verify solution, projects, folders, and namespaces.
 4. Update `.slnx`, `.csproj`, and Dockerfiles where needed.
-5. Create the first real feature slice.
-6. Rename DbContext and generate the first real migration when the EF model is ready.
+5. Remove the sample `Users` feature.
+6. Rename DbContext and generate the first migration.
 7. Configure appsettings and deployment values.
 8. Update Helm values.
 9. Update GitHub Actions variables and protected values.
