@@ -1,0 +1,17 @@
+name: Publish Template
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: [ CI ]
+    branches: [ main ]
+    types: [ completed ]
+
+jobs:
+  publish:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    uses: PANiXiDA-Infrastructure/ci-cd/.github/workflows/dotnet-publish-global-nuget.yml@main
+    with:
+      project_folder: ${{ vars.TEMPLATE_PROJECT }}
+    secrets:
+      NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
