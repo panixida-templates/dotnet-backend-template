@@ -30,8 +30,9 @@ If the service is created by cloning or copying this repository manually, remove
 template-only files from the final service repository:
 
 - `.template.config/`;
-- `.github/workflows/publish-template.yml`;
+- template-only `publish-template` job from `.github/workflows/ci.yml`;
 - `template/`;
+- `icon.png`;
 - `version.json`, unless the service intentionally uses Nerdbank.GitVersioning;
 - template repository `README.md`;
 - `artifacts/`, if it was created by local build or package commands;

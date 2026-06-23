@@ -14,6 +14,7 @@
         <RepositoryType>git</RepositoryType>
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
         <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageIcon>icon.png</PackageIcon>
         <IncludeBuildOutput>false</IncludeBuildOutput>
         <IncludeContentInPack>true</IncludeContentInPack>
         <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
@@ -39,11 +40,13 @@
                     ../.tmp/**;
                     ../artifacts/**;
                     ../template/**;
+                    ../icon.png;
                     ../LICENSE;
                     ../*.nupkg"
                  PackagePath="content/%(RecursiveDir)%(Filename)%(Extension)" />
         <Content Include="../LICENSE" PackagePath="content/" />
         <None Include="../LICENSE" Pack="true" PackagePath="" />
         <None Include="../README.md" Pack="true" PackagePath="" />
+        <None Include="../icon.png" Pack="true" PackagePath="" />
     </ItemGroup>
 </Project>

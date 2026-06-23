@@ -36,7 +36,7 @@
         "artifacts/**",
         "template/**",
         ".template.config/**",
-        ".github/workflows/publish-template.yml",
+        "icon.png",
         "version.json",
         "README.md",
         "*.nupkg"
@@ -46,6 +46,47 @@
       }
     }
   ],
+  "specialCustomOperations": {
+    "**/*.yml": {
+      "operations": [
+        {
+          "type": "conditional",
+          "configuration": {
+            "if": [
+              "# #if"
+            ],
+            "else": [
+              "# #else"
+            ],
+            "actionableElse": [
+              "# ##else"
+            ],
+            "elseif": [
+              "# #elseif",
+              "# #elif"
+            ],
+            "endif": [
+              "# #endif"
+            ],
+            "actions": [
+              "yamlUncomment"
+            ],
+            "trim": true,
+            "wholeLine": true,
+            "evaluator": "C++2"
+          }
+        },
+        {
+          "type": "replacement",
+          "configuration": {
+            "original": "# ",
+            "replacement": "",
+            "id": "yamlUncomment"
+          }
+        }
+      ]
+    }
+  },
   "symbols": {
     "organization": {
       "type": "parameter",
