@@ -34,15 +34,28 @@
                  Exclude="
                     ../**/bin/**;
                     ../**/obj/**;
+                    ../**/*.csproj.user;
+                    ../**/[Gg]enerated/**;
                     ../.git/**;
                     ../.vs/**;
                     ../.idea/**;
                     ../.tmp/**;
+                    ../src/Organization.Product.Host/Internal/Generated/**;
                     ../artifacts/**;
                     ../template/**;
                     ../icon.png;
                     ../LICENSE;
-                    ../*.nupkg"
+                    ../*.nupkg;
+                    ../src/Module/Organization.Product.Module.Domain/Users/**;
+                    ../src/Module/Organization.Product.Module.Application/Users/**;
+                    ../src/Module/Organization.Product.Module.Infrastructure/Persistence/Features/Users/**;
+                    ../src/Module/Organization.Product.Module.Infrastructure/Persistence/Core/Migrations/**;
+                    ../src/Module/Organization.Product.Module.Presentation/Features/Users/**;
+                    ../tests/Module/Organization.Product.Module.UnitTests/Application/Users/**;
+                    ../tests/Module/Organization.Product.Module.UnitTests/Domain/Users/**;
+                    ../tests/Module/Organization.Product.Module.IntegrationTests/Infrastructure/Persistence/Features/Users/**;
+                    ../tests/Module/Organization.Product.Module.IntegrationTests/Infrastructure/Persistence/Core/TemplateWriteDbContextTests.cs;
+                    ../tests/Module/Organization.Product.Module.FunctionalTests/Presentation/Users/**"
                  PackagePath="content/%(RecursiveDir)%(Filename)%(Extension)" />
         <Content Include="../LICENSE" PackagePath="content/" />
         <None Include="../LICENSE" Pack="true" PackagePath="" />

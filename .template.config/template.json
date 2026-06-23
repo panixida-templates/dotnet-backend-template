@@ -29,9 +29,12 @@
       "exclude": [
         "**/[Bb]in/**",
         "**/[Oo]bj/**",
+        "**/*.csproj.user",
         ".git/**",
         ".vs/**",
         ".idea/**",
+        "**/[Gg]enerated/**",
+        "src/Organization.Product.Host/Internal/Generated/**",
         ".tmp/**",
         "artifacts/**",
         "template/**",
@@ -39,7 +42,17 @@
         "icon.png",
         "version.json",
         "README.md",
-        "*.nupkg"
+        "*.nupkg",
+        "src/Module/Organization.Product.Module.Domain/Users/**",
+        "src/Module/Organization.Product.Module.Application/Users/**",
+        "src/Module/Organization.Product.Module.Infrastructure/Persistence/Features/Users/**",
+        "src/Module/Organization.Product.Module.Infrastructure/Persistence/Core/Migrations/**",
+        "src/Module/Organization.Product.Module.Presentation/Features/Users/**",
+        "tests/Module/Organization.Product.Module.UnitTests/Application/Users/**",
+        "tests/Module/Organization.Product.Module.UnitTests/Domain/Users/**",
+        "tests/Module/Organization.Product.Module.IntegrationTests/Infrastructure/Persistence/Features/Users/**",
+        "tests/Module/Organization.Product.Module.IntegrationTests/Infrastructure/Persistence/Core/TemplateWriteDbContextTests.cs",
+        "tests/Module/Organization.Product.Module.FunctionalTests/Presentation/Users/**"
       ],
       "rename": {
         "README_TEMPLATE.md": "README.md"

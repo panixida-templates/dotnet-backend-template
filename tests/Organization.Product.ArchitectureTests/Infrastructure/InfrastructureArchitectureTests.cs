@@ -12,6 +12,7 @@ public sealed class InfrastructureArchitectureTests
             .And().ResideInNamespaceMatching(ArchitectureDefinition.IncludeNamespaceSegment("Persistence.Features"))
             .And().HaveNameEndingWith("Repository")
             .Should().BePublic()
+            .WithoutRequiringPositiveResults()
             .Check(ArchitectureDefinition.Architecture);
     }
 
@@ -23,6 +24,7 @@ public sealed class InfrastructureArchitectureTests
             .And().ResideInNamespaceMatching(ArchitectureDefinition.IncludeNamespaceSegment("Persistence.Features"))
             .And().HaveNameEndingWith("ReadDbModel")
             .Should().BePublic()
+            .WithoutRequiringPositiveResults()
             .Check(ArchitectureDefinition.Architecture);
     }
 
@@ -34,6 +36,7 @@ public sealed class InfrastructureArchitectureTests
             .And().ResideInNamespaceMatching(ArchitectureDefinition.IncludeNamespaceSegment("Persistence.Features"))
             .And().HaveNameEndingWith("Mapper")
             .Should().BeInternal()
+            .WithoutRequiringPositiveResults()
             .Check(ArchitectureDefinition.Architecture);
     }
 }
