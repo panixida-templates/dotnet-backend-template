@@ -48,9 +48,29 @@
         "**/RepositoryExamples/**"
       ],
       "rename": {
-        "README_TEMPLATE.md": "README.md",
-        "PANiXiDA.DotnetTemplate.Template.slnx": "PANiXiDA.DotnetTemplate.slnx"
+        "README_TEMPLATE.md": "README.md"
       }
+    },
+    {
+      "source": "template/content/",
+      "target": "./",
+      "modifiers": [
+        {
+          "condition": "(HostIdentifier == \"dotnetcli\" || HostIdentifier == \"dotnetcli-preview\")",
+          "exclude": [
+            "PANiXiDA.DotnetTemplate.VisualStudio.sln"
+          ],
+          "rename": {
+            "PANiXiDA.DotnetTemplate.Template.slnx": "PANiXiDA.DotnetTemplate.slnx"
+          }
+        },
+        {
+          "condition": "(HostIdentifier != \"dotnetcli\" && HostIdentifier != \"dotnetcli-preview\")",
+          "exclude": [
+            "PANiXiDA.DotnetTemplate.Template.slnx"
+          ]
+        }
+      ]
     }
   ],
   "specialCustomOperations": {
@@ -95,6 +115,10 @@
     }
   },
   "symbols": {
+    "HostIdentifier": {
+      "type": "bind",
+      "binding": "HostIdentifier"
+    },
     "organization": {
       "type": "parameter",
       "dataType": "string",
@@ -178,7 +202,12 @@
   },
   "primaryOutputs": [
     {
+      "condition": "(HostIdentifier == \"dotnetcli\" || HostIdentifier == \"dotnetcli-preview\")",
       "path": "PANiXiDA.DotnetTemplate.slnx"
+    },
+    {
+      "condition": "(HostIdentifier != \"dotnetcli\" && HostIdentifier != \"dotnetcli-preview\")",
+      "path": "PANiXiDA.DotnetTemplate.VisualStudio.sln"
     }
   ]
 }

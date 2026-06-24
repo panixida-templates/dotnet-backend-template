@@ -49,9 +49,9 @@
                     ../*.nupkg;
                     ../**/RepositoryExamples/**"
                  PackagePath="content/%(Link)" />
-        <Content Include="PANiXiDA.DotnetTemplate.Template.slnx"
+        <Content Include="content\**\*"
                  Pack="true"
-                 PackagePath="content/PANiXiDA.DotnetTemplate.Template.slnx" />
+                 PackagePath="content/template/content/%(RecursiveDir)%(Filename)%(Extension)" />
         <Content Include="../LICENSE" PackagePath="content/" />
         <None Include="../LICENSE" Pack="true" PackagePath="" />
         <None Include="../README.md" Pack="true" PackagePath="" />
