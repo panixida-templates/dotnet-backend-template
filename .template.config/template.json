@@ -48,16 +48,9 @@
         "**/RepositoryExamples/**"
       ],
       "rename": {
-        "README_TEMPLATE.md": "README.md"
-      },
-      "modifiers": [
-        {
-          "condition": "(HostIdentifier == \"dotnetcli\" || HostIdentifier == \"dotnetcli-preview\")",
-          "rename": {
-            "PANiXiDA.DotnetTemplate.Template.slnx": "PANiXiDA.DotnetTemplate.slnx"
-          }
-        }
-      ]
+        "README_TEMPLATE.md": "README.md",
+        "PANiXiDA.DotnetTemplate.Template.slnx": "PANiXiDA.DotnetTemplate.slnx"
+      }
     }
   ],
   "specialCustomOperations": {
@@ -102,10 +95,6 @@
     }
   },
   "symbols": {
-    "HostIdentifier": {
-      "type": "bind",
-      "binding": "HostIdentifier"
-    },
     "organization": {
       "type": "parameter",
       "dataType": "string",
@@ -189,7 +178,7 @@
   },
   "primaryOutputs": [
     {
-      "path": "PANiXiDA.DotnetTemplate.Template.slnx"
+      "path": "PANiXiDA.DotnetTemplate.slnx"
     }
   ]
 }
