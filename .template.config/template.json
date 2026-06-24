@@ -29,23 +29,68 @@
       "exclude": [
         "**/[Bb]in/**",
         "**/[Oo]bj/**",
+        "**/*.csproj.user",
         ".git/**",
         ".vs/**",
         ".idea/**",
+        "**/[Gg]enerated/**",
+        "src/Organization.Product.Host/Internal/Generated/**",
         ".tmp/**",
         "artifacts/**",
         "template/**",
         ".template.config/**",
-        ".github/workflows/publish-template.yml",
+        "icon.png",
         "version.json",
         "README.md",
-        "*.nupkg"
+        "*.nupkg",
+        "**/RepositoryExamples/**"
       ],
       "rename": {
         "README_TEMPLATE.md": "README.md"
       }
     }
   ],
+  "specialCustomOperations": {
+    "**/*.yml": {
+      "operations": [
+        {
+          "type": "conditional",
+          "configuration": {
+            "if": [
+              "# #if"
+            ],
+            "else": [
+              "# #else"
+            ],
+            "actionableElse": [
+              "# ##else"
+            ],
+            "elseif": [
+              "# #elseif",
+              "# #elif"
+            ],
+            "endif": [
+              "# #endif"
+            ],
+            "actions": [
+              "yamlUncomment"
+            ],
+            "trim": true,
+            "wholeLine": true,
+            "evaluator": "C++2"
+          }
+        },
+        {
+          "type": "replacement",
+          "configuration": {
+            "original": "# ",
+            "replacement": "",
+            "id": "yamlUncomment"
+          }
+        }
+      ]
+    }
+  },
   "symbols": {
     "organization": {
       "type": "parameter",
