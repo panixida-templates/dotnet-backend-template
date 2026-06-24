@@ -43,12 +43,21 @@
         "icon.png",
         "version.json",
         "README.md",
+        "PANiXiDA.DotnetTemplate.slnx",
         "*.nupkg",
         "**/RepositoryExamples/**"
       ],
       "rename": {
         "README_TEMPLATE.md": "README.md"
-      }
+      },
+      "modifiers": [
+        {
+          "condition": "(HostIdentifier == \"dotnetcli\" || HostIdentifier == \"dotnetcli-preview\")",
+          "rename": {
+            "PANiXiDA.DotnetTemplate.Template.slnx": "PANiXiDA.DotnetTemplate.slnx"
+          }
+        }
+      ]
     }
   ],
   "specialCustomOperations": {
@@ -93,6 +102,10 @@
     }
   },
   "symbols": {
+    "HostIdentifier": {
+      "type": "bind",
+      "binding": "HostIdentifier"
+    },
     "organization": {
       "type": "parameter",
       "dataType": "string",
@@ -176,7 +189,7 @@
   },
   "primaryOutputs": [
     {
-      "path": "PANiXiDA.DotnetTemplate.slnx"
+      "path": "PANiXiDA.DotnetTemplate.Template.slnx"
     }
   ]
 }
