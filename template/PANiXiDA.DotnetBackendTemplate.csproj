@@ -40,6 +40,7 @@
                     ../.vs/**;
                     ../.idea/**;
                     ../.tmp/**;
+                    ../PANiXiDA.DotnetTemplate.slnx;
                     ../src/Organization.Product.Host/Internal/Generated/**;
                     ../artifacts/**;
                     ../template/**;
@@ -47,7 +48,7 @@
                     ../LICENSE;
                     ../*.nupkg;
                     ../**/RepositoryExamples/**"
-                 PackagePath="content/%(RecursiveDir)%(Filename)%(Extension)" />
+                 PackagePath="content/%(Link)" />
         <Content Include="../LICENSE" PackagePath="content/" />
         <None Include="../LICENSE" Pack="true" PackagePath="" />
         <None Include="../README.md" Pack="true" PackagePath="" />
