@@ -14,11 +14,6 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddPostgreSqlEfRepository<
             TemplateWriteDbContext, TemplateReadDbContext>(configuration);
 
-        serviceCollection.AddWolverineMediator<TemplateWriteDbContext>();
-        serviceCollection.AddScoped<
-            IUnitOfWork,
-            EfUnitOfWork<TemplateWriteDbContext>>();
-
         return serviceCollection;
     }
 }

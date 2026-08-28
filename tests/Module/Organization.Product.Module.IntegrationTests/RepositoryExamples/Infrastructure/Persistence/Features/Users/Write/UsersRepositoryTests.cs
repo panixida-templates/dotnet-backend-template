@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Organization.Product.Module.Domain.Users;
 using Organization.Product.Module.Domain.Users.Abstractions;
 using Organization.Product.Module.Domain.Users.Enumerations;
+using Organization.Product.Module.Infrastructure.Persistence.Core;
 
 namespace Organization.Product.Module.IntegrationTests.Infrastructure.Persistence.Features.Users.Write;
 
@@ -57,7 +58,8 @@ public sealed class UsersRepositoryTests(IntegrationTestFixture fixture)
         await using (var scope = Fixture.CreateScope())
         {
             var repository = scope.ServiceProvider.GetRequiredService<IUsersRepository>();
-            var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+            var unitOfWork = scope.ServiceProvider.GetRequiredKeyedService<IUnitOfWork>(
+                typeof(TemplateWriteDbContext));
             var persistedUser = await repository.GetByIdAsync(user.Id, cancellationToken);
             persistedUser.ShouldNotBeNull();
 
@@ -105,7 +107,8 @@ public sealed class UsersRepositoryTests(IntegrationTestFixture fixture)
         await using (var scope = Fixture.CreateScope())
         {
             var repository = scope.ServiceProvider.GetRequiredService<IUsersRepository>();
-            var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+            var unitOfWork = scope.ServiceProvider.GetRequiredKeyedService<IUnitOfWork>(
+                typeof(TemplateWriteDbContext));
             var persistedUser = await repository.GetByIdAsync(user.Id, cancellationToken);
             persistedUser.ShouldNotBeNull();
 
@@ -143,7 +146,8 @@ public sealed class UsersRepositoryTests(IntegrationTestFixture fixture)
 
         await using var scope = Fixture.CreateScope();
         var repository = scope.ServiceProvider.GetRequiredService<IUsersRepository>();
-        var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+        var unitOfWork = scope.ServiceProvider.GetRequiredKeyedService<IUnitOfWork>(
+            typeof(TemplateWriteDbContext));
 
         var exception = await Should.ThrowAsync<DbUpdateException>(
             () => unitOfWork.ExecuteInTransactionAsync(
@@ -159,7 +163,8 @@ public sealed class UsersRepositoryTests(IntegrationTestFixture fixture)
     {
         await using var scope = Fixture.CreateScope();
         var repository = scope.ServiceProvider.GetRequiredService<IUsersRepository>();
-        var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+        var unitOfWork = scope.ServiceProvider.GetRequiredKeyedService<IUnitOfWork>(
+            typeof(TemplateWriteDbContext));
 
         await unitOfWork.ExecuteInTransactionAsync(
             ct => repository.AddAsync(user, ct),

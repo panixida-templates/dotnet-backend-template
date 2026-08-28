@@ -18,7 +18,8 @@ public sealed class ServiceCollectionExtensionsTests(IntegrationTestFixture fixt
         var readDbContext = scope.ServiceProvider.GetRequiredService<TemplateReadDbContext>();
         var usersRepository = scope.ServiceProvider.GetRequiredService<IUsersRepository>();
         var usersReadRepository = scope.ServiceProvider.GetRequiredService<IUsersReadRepository>();
-        var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+        var unitOfWork = scope.ServiceProvider.GetRequiredKeyedService<IUnitOfWork>(
+            typeof(TemplateWriteDbContext));
 
         writeDbContext.ShouldNotBeNull();
         readDbContext.ShouldNotBeNull();
