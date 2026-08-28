@@ -5,12 +5,21 @@ using Riok.Mapperly.Abstractions;
 
 namespace Organization.Product.Module.Presentation.Features.Users.GetList;
 
-[Mapper(IncludedConstructors = MemberVisibility.All)]
+[Mapper]
 internal static partial class GetUsersListMapper
 {
     internal static partial UsersFilterParameters ToFilterParameters(
         GetUsersListRequest request);
 
-    internal static partial PaginationResult<UserListItemResponse> ToResponse(
-        PaginationResult<UserListItemReadModel> pagedResult);
+    internal static PaginationResult<UserListItemResponse> ToResponse(
+        PaginationResult<UserListItemReadModel> pagedResult)
+    {
+        return PaginationResult<UserListItemResponse>.Create(
+            pagedResult.Items.Select(ToResponse),
+            pagedResult.PageNumber,
+            pagedResult.PageSize,
+            pagedResult.TotalCount);
+    }
+
+    private static partial UserListItemResponse ToResponse(UserListItemReadModel item);
 }
