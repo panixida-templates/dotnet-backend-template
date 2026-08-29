@@ -2,10 +2,10 @@ namespace Organization.Product.Module.Infrastructure.RepositoryExamples.Persiste
 
 public sealed class UserReadDbModel : AuditableReadDbModel<Guid>
 {
-    public string Role { get; set; } = string.Empty;
-    public string Name { get; set; } = string.Empty;
-    public string Email { get; set; } = string.Empty;
-    public string Phone { get; set; } = string.Empty;
+    public required string Role { get; set; }
+    public required string Name { get; set; }
+    public required string Email { get; set; }
+    public required string Phone { get; set; }
     public DateOnly BirthDate { get; set; }
     public string? Avatar { get; set; }
 }
