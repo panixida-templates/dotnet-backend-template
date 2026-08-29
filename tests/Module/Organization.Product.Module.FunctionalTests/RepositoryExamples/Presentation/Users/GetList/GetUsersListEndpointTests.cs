@@ -3,12 +3,13 @@ using System.Net.Http.Json;
 
 using Microsoft.AspNetCore.WebUtilities;
 
-using Organization.Product.Module.Presentation.Features.Users.Create;
-using Organization.Product.Module.Presentation.Features.Users.GetList;
+using Organization.Product.Module.FunctionalTests.Presentation;
+using Organization.Product.Module.Presentation.RepositoryExamples.Features.Users.Create;
+using Organization.Product.Module.Presentation.RepositoryExamples.Features.Users.GetList;
 
-using static Organization.Product.Module.FunctionalTests.Presentation.Users.UsersApiConstants;
+using static Organization.Product.Module.FunctionalTests.RepositoryExamples.Presentation.Users.UsersApiConstants;
 
-namespace Organization.Product.Module.FunctionalTests.Presentation.Users.GetList;
+namespace Organization.Product.Module.FunctionalTests.RepositoryExamples.Presentation.Users.GetList;
 
 public sealed class GetUsersListEndpointTests(FunctionalTestFixture fixture) : FunctionalTestBase(fixture)
 {

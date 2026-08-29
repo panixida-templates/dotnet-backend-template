@@ -1,8 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
-using Organization.Product.Module.Application.Users;
+using Organization.Product.Module.Application.RepositoryExamples.Users;
 
-namespace Organization.Product.Module.Infrastructure.Persistence.Features.Users.Read.Filters;
+namespace Organization.Product.Module.Infrastructure.RepositoryExamples.Persistence.Features.Users.Read.Filters;
 
 internal static class UsersFilter
 {

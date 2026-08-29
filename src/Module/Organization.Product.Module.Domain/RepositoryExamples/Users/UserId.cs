@@ -1,4 +1,4 @@
-﻿namespace Organization.Product.Module.Domain.Users;
+namespace Organization.Product.Module.Domain.RepositoryExamples.Users;
 
 public readonly record struct UserId : IStronglyTypedId
 {

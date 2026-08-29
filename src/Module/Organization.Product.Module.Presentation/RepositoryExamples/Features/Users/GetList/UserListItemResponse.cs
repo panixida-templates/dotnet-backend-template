@@ -1,4 +1,4 @@
-﻿namespace Organization.Product.Module.Presentation.Features.Users.GetList;
+namespace Organization.Product.Module.Presentation.RepositoryExamples.Features.Users.GetList;
 
 internal sealed record UserListItemResponse(
     Guid Id,

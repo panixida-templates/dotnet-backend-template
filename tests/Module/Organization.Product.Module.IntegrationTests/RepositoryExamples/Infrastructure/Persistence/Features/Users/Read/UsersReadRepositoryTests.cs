@@ -1,12 +1,12 @@
 using Microsoft.Extensions.DependencyInjection;
 
-using Organization.Product.Module.Application.Users;
-using Organization.Product.Module.Application.Users.Abstractions;
-using Organization.Product.Module.Domain.Users;
-using Organization.Product.Module.Domain.Users.Abstractions;
+using Organization.Product.Module.Application.RepositoryExamples.Users;
+using Organization.Product.Module.Application.RepositoryExamples.Users.Abstractions;
+using Organization.Product.Module.Domain.RepositoryExamples.Users;
+using Organization.Product.Module.Domain.RepositoryExamples.Users.Abstractions;
 using Organization.Product.Module.Infrastructure.Persistence.Core;
 
-namespace Organization.Product.Module.IntegrationTests.Infrastructure.Persistence.Features.Users.Read;
+namespace Organization.Product.Module.IntegrationTests.RepositoryExamples.Infrastructure.Persistence.Features.Users.Read;
 
 public sealed class UsersReadRepositoryTests(IntegrationTestFixture fixture)
     : IntegrationTestBase(fixture)

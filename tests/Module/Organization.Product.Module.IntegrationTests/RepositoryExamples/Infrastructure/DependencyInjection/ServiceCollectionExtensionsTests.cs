@@ -1,10 +1,10 @@
 using Microsoft.Extensions.DependencyInjection;
 
-using Organization.Product.Module.Application.Users.Abstractions;
-using Organization.Product.Module.Domain.Users.Abstractions;
+using Organization.Product.Module.Application.RepositoryExamples.Users.Abstractions;
+using Organization.Product.Module.Domain.RepositoryExamples.Users.Abstractions;
 using Organization.Product.Module.Infrastructure.Persistence.Core;
 
-namespace Organization.Product.Module.IntegrationTests.Infrastructure.DependencyInjection;
+namespace Organization.Product.Module.IntegrationTests.RepositoryExamples.Infrastructure.DependencyInjection;
 
 public sealed class ServiceCollectionExtensionsTests(IntegrationTestFixture fixture)
     : IntegrationTestBase(fixture)

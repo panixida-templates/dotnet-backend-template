@@ -1,6 +1,6 @@
 using static ArchUnitNET.Fluent.ArchRuleDefinition;
 
-namespace Organization.Product.ArchitectureTests.Presentation;
+namespace Organization.Product.ArchitectureTests.RepositoryExamples;
 
 public sealed class PresentationArchitectureTests
 {

@@ -1,7 +1,7 @@
-using Organization.Product.Module.Application.Users.Events;
-using Organization.Product.Module.Domain.Users.Events;
+using Organization.Product.Module.Application.RepositoryExamples.Users.Events;
+using Organization.Product.Module.Domain.RepositoryExamples.Users.Events;
 
-namespace Organization.Product.Module.UnitTests.Application.Users.Events;
+namespace Organization.Product.Module.UnitTests.RepositoryExamples.Application.Users.Events;
 
 public sealed class UserEmailChangedHandlerTests
 {

@@ -1,8 +1,8 @@
-using Organization.Product.Module.Domain.Users;
-using Organization.Product.Module.Domain.Users.Enumerations;
-using Organization.Product.Module.Domain.Users.ValueObjects;
+using Organization.Product.Module.Domain.RepositoryExamples.Users;
+using Organization.Product.Module.Domain.RepositoryExamples.Users.Enumerations;
+using Organization.Product.Module.Domain.RepositoryExamples.Users.ValueObjects;
 
-namespace Organization.Product.Module.Application.Users.Update;
+namespace Organization.Product.Module.Application.RepositoryExamples.Users.Update;
 
 public sealed class UpdateUserCommandValidator : AbstractValidator<UpdateUserCommand>
 {

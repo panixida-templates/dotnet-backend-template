@@ -1,8 +1,8 @@
-﻿using Organization.Product.Module.Application.Users.Create;
+using Organization.Product.Module.Application.RepositoryExamples.Users.Create;
 
 using Riok.Mapperly.Abstractions;
 
-namespace Organization.Product.Module.Presentation.Features.Users.Create;
+namespace Organization.Product.Module.Presentation.RepositoryExamples.Features.Users.Create;
 
 [Mapper]
 internal static partial class CreateUserMapper

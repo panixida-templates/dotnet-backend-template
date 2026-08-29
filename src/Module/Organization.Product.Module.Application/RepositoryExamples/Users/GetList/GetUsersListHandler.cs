@@ -1,6 +1,6 @@
-﻿using Organization.Product.Module.Application.Users.Abstractions;
+using Organization.Product.Module.Application.RepositoryExamples.Users.Abstractions;
 
-namespace Organization.Product.Module.Application.Users.GetList;
+namespace Organization.Product.Module.Application.RepositoryExamples.Users.GetList;
 
 public sealed class GetUsersListHandler(IUsersReadRepository usersQueryService)
     : IQueryHandler<GetUsersListQuery, Result<PaginationResult<UserListItemReadModel>>>

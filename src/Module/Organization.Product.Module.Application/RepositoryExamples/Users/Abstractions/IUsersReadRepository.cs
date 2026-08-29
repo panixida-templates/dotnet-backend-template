@@ -1,7 +1,7 @@
-﻿using Organization.Product.Module.Application.Users.GetDetails;
-using Organization.Product.Module.Application.Users.GetList;
+using Organization.Product.Module.Application.RepositoryExamples.Users.GetDetails;
+using Organization.Product.Module.Application.RepositoryExamples.Users.GetList;
 
-namespace Organization.Product.Module.Application.Users.Abstractions;
+namespace Organization.Product.Module.Application.RepositoryExamples.Users.Abstractions;
 
 public interface IUsersReadRepository : IReadRepository<Guid>
 {

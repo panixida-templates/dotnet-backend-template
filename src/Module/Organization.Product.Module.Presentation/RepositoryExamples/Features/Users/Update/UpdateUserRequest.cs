@@ -1,4 +1,4 @@
-namespace Organization.Product.Module.Presentation.Features.Users.Update;
+namespace Organization.Product.Module.Presentation.RepositoryExamples.Features.Users.Update;
 
 internal sealed record UpdateUserRequest(
     string Role,

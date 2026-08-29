@@ -1,6 +1,6 @@
-using Organization.Product.Module.Domain.Users;
+using Organization.Product.Module.Domain.RepositoryExamples.Users;
 
-namespace Organization.Product.Module.Application.Users.Delete;
+namespace Organization.Product.Module.Application.RepositoryExamples.Users.Delete;
 
 public sealed class DeleteUserCommandValidator : AbstractValidator<DeleteUserCommand>
 {

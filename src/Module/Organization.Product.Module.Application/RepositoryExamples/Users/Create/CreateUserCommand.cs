@@ -1,4 +1,4 @@
-﻿namespace Organization.Product.Module.Application.Users.Create;
+namespace Organization.Product.Module.Application.RepositoryExamples.Users.Create;
 
 public sealed record CreateUserCommand(
     string Role,

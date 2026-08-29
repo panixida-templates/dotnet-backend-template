@@ -1,6 +1,6 @@
-using Organization.Product.Module.Domain.Users.Enumerations;
+using Organization.Product.Module.Domain.RepositoryExamples.Users.Enumerations;
 
-namespace Organization.Product.Module.Domain.Users.Policies;
+namespace Organization.Product.Module.Domain.RepositoryExamples.Users.Policies;
 
 public static class UserRoleAssignmentPolicy
 {

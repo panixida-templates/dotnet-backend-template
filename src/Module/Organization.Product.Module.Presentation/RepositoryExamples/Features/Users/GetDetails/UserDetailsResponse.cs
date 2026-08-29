@@ -1,4 +1,4 @@
-﻿namespace Organization.Product.Module.Presentation.Features.Users.GetDetails;
+namespace Organization.Product.Module.Presentation.RepositoryExamples.Features.Users.GetDetails;
 
 internal sealed record UserDetailsResponse(
     Guid Id,

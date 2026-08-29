@@ -1,4 +1,4 @@
-﻿namespace Organization.Product.Module.Application.Users.Update;
+namespace Organization.Product.Module.Application.RepositoryExamples.Users.Update;
 
 public sealed record UpdateUserCommand(
     Guid Id,

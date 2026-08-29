@@ -1,6 +1,6 @@
-﻿using System.Linq.Expressions;
+using System.Linq.Expressions;
 
-namespace Organization.Product.Module.Domain.Users.Specifications;
+namespace Organization.Product.Module.Domain.RepositoryExamples.Users.Specifications;
 
 public sealed class UserBySearchQuerySpecification(string searchQuery) : Specification<User>
 {
