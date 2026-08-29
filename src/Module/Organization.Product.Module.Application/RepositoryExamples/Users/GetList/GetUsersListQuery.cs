@@ -1,4 +1,4 @@
-﻿namespace Organization.Product.Module.Application.Users.GetList;
+namespace Organization.Product.Module.Application.RepositoryExamples.Users.GetList;
 
 public sealed record GetUsersListQuery(
     UsersFilterParameters FilterParameters,

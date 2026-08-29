@@ -1,4 +1,4 @@
-﻿namespace Organization.Product.Module.Domain.Users.Enumerations;
+namespace Organization.Product.Module.Domain.RepositoryExamples.Users.Enumerations;
 
 public sealed class UserRole : Enumeration<UserRole>
 {

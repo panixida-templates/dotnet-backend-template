@@ -1,11 +1,12 @@
 using System.Net;
 using System.Net.Http.Json;
 
-using Organization.Product.Module.Presentation.Features.Users.Create;
+using Organization.Product.Module.FunctionalTests.Presentation;
+using Organization.Product.Module.Presentation.RepositoryExamples.Features.Users.Create;
 
-using static Organization.Product.Module.FunctionalTests.Presentation.Users.UsersApiConstants;
+using static Organization.Product.Module.FunctionalTests.RepositoryExamples.Presentation.Users.UsersApiConstants;
 
-namespace Organization.Product.Module.FunctionalTests.Presentation.Users.Delete;
+namespace Organization.Product.Module.FunctionalTests.RepositoryExamples.Presentation.Users.Delete;
 
 public sealed class DeleteUserEndpointTests(FunctionalTestFixture fixture) : FunctionalTestBase(fixture)
 {

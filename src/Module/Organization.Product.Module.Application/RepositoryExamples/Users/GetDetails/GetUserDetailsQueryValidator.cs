@@ -1,6 +1,6 @@
-using Organization.Product.Module.Domain.Users;
+using Organization.Product.Module.Domain.RepositoryExamples.Users;
 
-namespace Organization.Product.Module.Application.Users.GetDetails;
+namespace Organization.Product.Module.Application.RepositoryExamples.Users.GetDetails;
 
 public sealed class GetUserDetailsQueryValidator : AbstractValidator<GetUserDetailsQuery>
 {

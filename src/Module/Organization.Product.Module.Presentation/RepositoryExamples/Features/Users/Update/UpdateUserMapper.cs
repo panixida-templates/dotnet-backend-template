@@ -1,8 +1,8 @@
-﻿using Organization.Product.Module.Application.Users.Update;
+using Organization.Product.Module.Application.RepositoryExamples.Users.Update;
 
 using Riok.Mapperly.Abstractions;
 
-namespace Organization.Product.Module.Presentation.Features.Users.Update;
+namespace Organization.Product.Module.Presentation.RepositoryExamples.Features.Users.Update;
 
 [Mapper]
 internal static partial class UpdateUserMapper

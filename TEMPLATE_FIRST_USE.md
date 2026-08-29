@@ -264,13 +264,21 @@ Configure GitHub repository variables:
 - `MIGRATOR_FOLDER`, if the migrator remains;
 - `MIGRATOR_NAME`, if the migrator remains;
 - `REGISTRY_URL`;
+- `SONAR_PROJECT_KEY`;
 - `TELEGRAM_CHAT_ID`, if notifications are needed.
 
 Configure protected CI/CD values used by the workflow:
 
 - `REGISTRY_USER`;
 - `REGISTRY_TOKEN`;
+- `SONAR_TOKEN`;
 - `TELEGRAM_BOT_TOKEN`, if notifications are needed.
+
+Register the repository in `inventory/sonarqube/repositories.json` in
+`PANiXiDA-Infrastructure/core-platform`. After that change is merged, the
+`SonarQube Repositories Sync` workflow creates the SonarQube project and sets
+`SONAR_PROJECT_KEY` and `SONAR_TOKEN` in this repository. Both values are
+required because the SonarQube Quality Gate blocks image builds and publishing.
 
 If the service does not use the migrator, remove `build-migrator`, its dependencies, and migrator image updates.
 

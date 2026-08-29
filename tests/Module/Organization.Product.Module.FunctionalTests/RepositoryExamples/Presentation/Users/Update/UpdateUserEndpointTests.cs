@@ -1,13 +1,14 @@
 using System.Net;
 using System.Net.Http.Json;
 
-using Organization.Product.Module.Presentation.Features.Users.Create;
-using Organization.Product.Module.Presentation.Features.Users.GetDetails;
-using Organization.Product.Module.Presentation.Features.Users.Update;
+using Organization.Product.Module.FunctionalTests.Presentation;
+using Organization.Product.Module.Presentation.RepositoryExamples.Features.Users.Create;
+using Organization.Product.Module.Presentation.RepositoryExamples.Features.Users.GetDetails;
+using Organization.Product.Module.Presentation.RepositoryExamples.Features.Users.Update;
 
-using static Organization.Product.Module.FunctionalTests.Presentation.Users.UsersApiConstants;
+using static Organization.Product.Module.FunctionalTests.RepositoryExamples.Presentation.Users.UsersApiConstants;
 
-namespace Organization.Product.Module.FunctionalTests.Presentation.Users.Update;
+namespace Organization.Product.Module.FunctionalTests.RepositoryExamples.Presentation.Users.Update;
 
 public sealed class UpdateUserEndpointTests(FunctionalTestFixture fixture) : FunctionalTestBase(fixture)
 {

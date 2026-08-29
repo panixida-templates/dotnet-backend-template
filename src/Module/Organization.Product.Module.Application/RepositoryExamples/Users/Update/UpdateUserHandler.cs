@@ -1,7 +1,7 @@
-﻿using Organization.Product.Module.Domain.Users;
-using Organization.Product.Module.Domain.Users.Abstractions;
+using Organization.Product.Module.Domain.RepositoryExamples.Users;
+using Organization.Product.Module.Domain.RepositoryExamples.Users.Abstractions;
 
-namespace Organization.Product.Module.Application.Users.Update;
+namespace Organization.Product.Module.Application.RepositoryExamples.Users.Update;
 
 public sealed class UpdateUserHandler(IUsersRepository usersRepository)
     : ICommandHandler<UpdateUserCommand, Result>

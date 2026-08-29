@@ -1,8 +1,8 @@
-using Organization.Product.Module.Application.Users.Update;
-using Organization.Product.Module.Domain.Users;
-using Organization.Product.Module.Domain.Users.Abstractions;
+using Organization.Product.Module.Application.RepositoryExamples.Users.Update;
+using Organization.Product.Module.Domain.RepositoryExamples.Users;
+using Organization.Product.Module.Domain.RepositoryExamples.Users.Abstractions;
 
-namespace Organization.Product.Module.UnitTests.Application.Users.Update;
+namespace Organization.Product.Module.UnitTests.RepositoryExamples.Application.Users.Update;
 
 public sealed class UpdateUserHandlerTests
 {

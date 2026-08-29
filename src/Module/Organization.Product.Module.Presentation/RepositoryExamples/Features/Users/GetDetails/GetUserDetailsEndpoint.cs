@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Http;
 
-using Organization.Product.Module.Application.Users.GetDetails;
+using Organization.Product.Module.Application.RepositoryExamples.Users.GetDetails;
 
-namespace Organization.Product.Module.Presentation.Features.Users.GetDetails;
+namespace Organization.Product.Module.Presentation.RepositoryExamples.Features.Users.GetDetails;
 
 internal class GetUserDetailsEndpoint : IEndpoint<UsersEndpoints>
 {

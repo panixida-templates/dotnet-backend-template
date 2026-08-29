@@ -1,8 +1,8 @@
-﻿using Organization.Product.Module.Application.Users.GetDetails;
+using Organization.Product.Module.Application.RepositoryExamples.Users.GetDetails;
 
 using Riok.Mapperly.Abstractions;
 
-namespace Organization.Product.Module.Presentation.Features.Users.GetDetails;
+namespace Organization.Product.Module.Presentation.RepositoryExamples.Features.Users.GetDetails;
 
 [Mapper]
 internal static partial class UserDetailsMapper

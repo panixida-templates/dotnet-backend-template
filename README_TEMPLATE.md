@@ -943,6 +943,7 @@ The pipeline may include:
 
 - formatting validation;
 - automated tests;
+- SonarQube analysis and Quality Gate validation;
 - Helm validation;
 - environment resolution;
 - API Docker image build;
@@ -965,7 +966,23 @@ Fill only the variables actually used by the final service.
 | `MIGRATOR_FOLDER`               | EF migrator folder.                             |
 | `MIGRATOR_NAME`                 | EF migrator image name.                         |
 | `REGISTRY_URL`                  | Container registry URL.                         |
+| `SONAR_PROJECT_KEY`             | SonarQube project key.                          |
 | `TELEGRAM_CHAT_ID`              | Telegram chat id for notifications, if enabled. |
+
+### Required repository secrets
+
+| Secret               | Description                                      |
+| -------------------- | ------------------------------------------------ |
+| `REGISTRY_USER`      | Account used to access the package registry.     |
+| `REGISTRY_TOKEN`     | Token used to access the package registry.       |
+| `SONAR_TOKEN`        | Token used to submit analysis to SonarQube.      |
+| `TELEGRAM_BOT_TOKEN` | Telegram bot token, if notifications are enabled. |
+
+Register the repository in `inventory/sonarqube/repositories.json` in
+`PANiXiDA-Infrastructure/core-platform`. The `SonarQube Repositories Sync`
+workflow then creates the project and configures `SONAR_PROJECT_KEY` and
+`SONAR_TOKEN`. These values are required because the Quality Gate blocks image
+builds and publishing.
 
 ## Deployment
 

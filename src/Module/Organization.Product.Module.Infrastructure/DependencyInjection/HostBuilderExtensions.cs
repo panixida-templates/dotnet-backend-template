@@ -17,9 +17,11 @@ public static class HostBuilderExtensions
             ?? throw new InvalidOperationException(
                 $"Connection string '{EfConstants.PostgreSqlConnectionStringName}' was not found.");
 
-        hostBuilder.UseWolverineMediator<TemplateWriteDbContext>(
+        hostBuilder.UseWolverineMediator(
             messageStoreConnectionString,
-            ApplicationAssembly.Instance);
+            modules => modules.AddModule<TemplateWriteDbContext>(
+                ApplicationAssembly.Instance,
+                typeof(TemplateWriteDbContext).Assembly));
 
         return hostBuilder;
     }

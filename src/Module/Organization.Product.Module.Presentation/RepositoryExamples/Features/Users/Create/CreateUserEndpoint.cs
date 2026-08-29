@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Http;
 
-using Organization.Product.Module.Presentation.Features.Users.GetDetails;
+using Organization.Product.Module.Presentation.RepositoryExamples.Features.Users.GetDetails;
 
-namespace Organization.Product.Module.Presentation.Features.Users.Create;
+namespace Organization.Product.Module.Presentation.RepositoryExamples.Features.Users.Create;
 
 internal class CreateUserEndpoint : IEndpoint<UsersEndpoints>
 {

@@ -1,6 +1,6 @@
-using Organization.Product.Module.Domain.Users;
+using Organization.Product.Module.Domain.RepositoryExamples.Users;
 
-namespace Organization.Product.Module.UnitTests.Domain.Users;
+namespace Organization.Product.Module.UnitTests.RepositoryExamples.Domain.Users;
 
 public sealed class UserIdTests
 {

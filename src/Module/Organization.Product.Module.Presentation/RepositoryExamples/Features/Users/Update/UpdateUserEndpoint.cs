@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Http;
 
-namespace Organization.Product.Module.Presentation.Features.Users.Update;
+namespace Organization.Product.Module.Presentation.RepositoryExamples.Features.Users.Update;
 
 internal sealed class UpdateUserEndpoint : IEndpoint<UsersEndpoints>
 {

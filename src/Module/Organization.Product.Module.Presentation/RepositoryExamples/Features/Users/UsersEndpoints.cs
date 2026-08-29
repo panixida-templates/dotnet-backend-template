@@ -1,8 +1,8 @@
-﻿using Asp.Versioning;
+using Asp.Versioning;
 
 using Microsoft.AspNetCore.Routing;
 
-namespace Organization.Product.Module.Presentation.Features.Users;
+namespace Organization.Product.Module.Presentation.RepositoryExamples.Features.Users;
 
 internal sealed class UsersEndpoints : IEndpointGroup
 {

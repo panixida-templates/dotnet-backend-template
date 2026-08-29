@@ -1,8 +1,8 @@
-using Organization.Product.Module.Domain.Users;
-using Organization.Product.Module.Domain.Users.Enumerations;
-using Organization.Product.Module.Domain.Users.Events;
+using Organization.Product.Module.Domain.RepositoryExamples.Users;
+using Organization.Product.Module.Domain.RepositoryExamples.Users.Enumerations;
+using Organization.Product.Module.Domain.RepositoryExamples.Users.Events;
 
-namespace Organization.Product.Module.UnitTests.Domain.Users;
+namespace Organization.Product.Module.UnitTests.RepositoryExamples.Domain.Users;
 
 public sealed class UserTests
 {

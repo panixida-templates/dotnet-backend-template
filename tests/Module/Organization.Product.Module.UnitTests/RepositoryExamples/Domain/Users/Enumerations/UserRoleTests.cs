@@ -1,6 +1,6 @@
-using Organization.Product.Module.Domain.Users.Enumerations;
+using Organization.Product.Module.Domain.RepositoryExamples.Users.Enumerations;
 
-namespace Organization.Product.Module.UnitTests.Domain.Users.Enumerations;
+namespace Organization.Product.Module.UnitTests.RepositoryExamples.Domain.Users.Enumerations;
 
 public sealed class UserRoleTests
 {
