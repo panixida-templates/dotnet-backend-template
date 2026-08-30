@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Http;
 
-using Organization.Product.Module.Application.Users.Delete;
+using Organization.Product.Module.Application.RepositoryExamples.Users.Delete;
 
-namespace Organization.Product.Module.Presentation.Features.Users.Delete;
+namespace Organization.Product.Module.Presentation.RepositoryExamples.Features.Users.Delete;
 
 internal class DeleteUserEndpoint : IEndpoint<UsersEndpoints>
 {

@@ -1,11 +1,12 @@
 using Microsoft.Extensions.DependencyInjection;
 
-using Organization.Product.Module.Application.Users;
-using Organization.Product.Module.Application.Users.Abstractions;
-using Organization.Product.Module.Domain.Users;
-using Organization.Product.Module.Domain.Users.Abstractions;
+using Organization.Product.Module.Application.RepositoryExamples.Users;
+using Organization.Product.Module.Application.RepositoryExamples.Users.Abstractions;
+using Organization.Product.Module.Domain.RepositoryExamples.Users;
+using Organization.Product.Module.Domain.RepositoryExamples.Users.Abstractions;
+using Organization.Product.Module.Infrastructure.Persistence.Core;
 
-namespace Organization.Product.Module.IntegrationTests.Infrastructure.Persistence.Features.Users.Read;
+namespace Organization.Product.Module.IntegrationTests.RepositoryExamples.Infrastructure.Persistence.Features.Users.Read;
 
 public sealed class UsersReadRepositoryTests(IntegrationTestFixture fixture)
     : IntegrationTestBase(fixture)
@@ -142,7 +143,8 @@ public sealed class UsersReadRepositoryTests(IntegrationTestFixture fixture)
     {
         await using var scope = Fixture.CreateScope();
         var repository = scope.ServiceProvider.GetRequiredService<IUsersRepository>();
-        var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+        var unitOfWork = scope.ServiceProvider.GetRequiredKeyedService<IUnitOfWork>(
+            typeof(TemplateWriteDbContext));
 
         await unitOfWork.ExecuteInTransactionAsync(
             async ct =>

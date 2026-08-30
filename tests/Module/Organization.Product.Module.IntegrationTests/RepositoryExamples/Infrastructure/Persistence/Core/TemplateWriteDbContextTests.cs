@@ -1,6 +1,6 @@
 using Npgsql;
 
-namespace Organization.Product.Module.IntegrationTests.Infrastructure.Persistence.Core;
+namespace Organization.Product.Module.IntegrationTests.RepositoryExamples.Infrastructure.Persistence.Core;
 
 public sealed class TemplateWriteDbContextTests(IntegrationTestFixture fixture)
     : IntegrationTestBase(fixture)

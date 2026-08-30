@@ -1,12 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-using Organization.Product.Module.Domain.Users;
-using Organization.Product.Module.Domain.Users.Enumerations;
-using Organization.Product.Module.Domain.Users.ValueObjects;
+using Organization.Product.Module.Domain.RepositoryExamples.Users;
+using Organization.Product.Module.Domain.RepositoryExamples.Users.Enumerations;
+using Organization.Product.Module.Domain.RepositoryExamples.Users.ValueObjects;
 
-namespace Organization.Product.Module.Infrastructure.Persistence.Features.Users.Write;
+namespace Organization.Product.Module.Infrastructure.RepositoryExamples.Persistence.Features.Users.Write;
 
 internal sealed class UserConfiguration : AuditableEntityConfiguration<User>
 {

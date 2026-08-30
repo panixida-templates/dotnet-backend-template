@@ -1,8 +1,8 @@
-﻿using Organization.Product.Module.Domain.Users.Enumerations;
-using Organization.Product.Module.Domain.Users.Events;
-using Organization.Product.Module.Domain.Users.ValueObjects;
+using Organization.Product.Module.Domain.RepositoryExamples.Users.Enumerations;
+using Organization.Product.Module.Domain.RepositoryExamples.Users.Events;
+using Organization.Product.Module.Domain.RepositoryExamples.Users.ValueObjects;
 
-namespace Organization.Product.Module.Domain.Users;
+namespace Organization.Product.Module.Domain.RepositoryExamples.Users;
 
 public sealed class User : AggregateRoot<UserId>
 {

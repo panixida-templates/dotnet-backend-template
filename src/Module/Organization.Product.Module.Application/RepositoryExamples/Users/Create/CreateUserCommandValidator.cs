@@ -1,7 +1,7 @@
-using Organization.Product.Module.Domain.Users.Enumerations;
-using Organization.Product.Module.Domain.Users.ValueObjects;
+using Organization.Product.Module.Domain.RepositoryExamples.Users.Enumerations;
+using Organization.Product.Module.Domain.RepositoryExamples.Users.ValueObjects;
 
-namespace Organization.Product.Module.Application.Users.Create;
+namespace Organization.Product.Module.Application.RepositoryExamples.Users.Create;
 
 public sealed class CreateUserCommandValidator : AbstractValidator<CreateUserCommand>
 {

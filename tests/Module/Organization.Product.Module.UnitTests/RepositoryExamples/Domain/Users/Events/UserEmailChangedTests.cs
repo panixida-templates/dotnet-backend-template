@@ -1,6 +1,6 @@
-using Organization.Product.Module.Domain.Users.Events;
+using Organization.Product.Module.Domain.RepositoryExamples.Users.Events;
 
-namespace Organization.Product.Module.UnitTests.Domain.Users.Events;
+namespace Organization.Product.Module.UnitTests.RepositoryExamples.Domain.Users.Events;
 
 public sealed class UserEmailChangedTests
 {

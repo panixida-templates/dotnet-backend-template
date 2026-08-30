@@ -1,8 +1,8 @@
-using Organization.Product.Module.Domain.Users;
-using Organization.Product.Module.Domain.Users.Enumerations;
-using Organization.Product.Module.Domain.Users.Policies;
+using Organization.Product.Module.Domain.RepositoryExamples.Users;
+using Organization.Product.Module.Domain.RepositoryExamples.Users.Enumerations;
+using Organization.Product.Module.Domain.RepositoryExamples.Users.Policies;
 
-namespace Organization.Product.Module.UnitTests.Domain.Users.Policies;
+namespace Organization.Product.Module.UnitTests.RepositoryExamples.Domain.Users.Policies;
 
 public sealed class UserRoleAssignmentPolicyTests
 {

@@ -1,4 +1,4 @@
-﻿namespace Organization.Product.Module.Application.Users.GetDetails;
+namespace Organization.Product.Module.Application.RepositoryExamples.Users.GetDetails;
 
 public sealed record UserDetailsReadModel(
     Guid Id,

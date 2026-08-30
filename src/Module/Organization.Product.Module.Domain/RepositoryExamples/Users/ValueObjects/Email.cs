@@ -1,6 +1,6 @@
-﻿using System.Net.Mail;
+using System.Net.Mail;
 
-namespace Organization.Product.Module.Domain.Users.ValueObjects;
+namespace Organization.Product.Module.Domain.RepositoryExamples.Users.ValueObjects;
 
 public sealed class Email : ValueObject
 {

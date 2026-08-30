@@ -1,6 +1,6 @@
-using Organization.Product.Module.Domain.Users.ValueObjects;
+using Organization.Product.Module.Domain.RepositoryExamples.Users.ValueObjects;
 
-namespace Organization.Product.Module.UnitTests.Domain.Users.ValueObjects;
+namespace Organization.Product.Module.UnitTests.RepositoryExamples.Domain.Users.ValueObjects;
 
 public sealed class AvatarTests
 {

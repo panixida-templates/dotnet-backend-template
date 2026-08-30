@@ -1,6 +1,6 @@
-﻿using System.Text;
+using System.Text;
 
-namespace Organization.Product.Module.Domain.Users.ValueObjects;
+namespace Organization.Product.Module.Domain.RepositoryExamples.Users.ValueObjects;
 
 public sealed class PhoneNumber : ValueObject
 {

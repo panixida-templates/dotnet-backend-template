@@ -1,7 +1,7 @@
-using Organization.Product.Module.Application.Users.Abstractions;
-using Organization.Product.Module.Application.Users.GetDetails;
+using Organization.Product.Module.Application.RepositoryExamples.Users.Abstractions;
+using Organization.Product.Module.Application.RepositoryExamples.Users.GetDetails;
 
-namespace Organization.Product.Module.UnitTests.Application.Users.GetDetails;
+namespace Organization.Product.Module.UnitTests.RepositoryExamples.Application.Users.GetDetails;
 
 public sealed class GetUserDetailsHandlerTests
 {

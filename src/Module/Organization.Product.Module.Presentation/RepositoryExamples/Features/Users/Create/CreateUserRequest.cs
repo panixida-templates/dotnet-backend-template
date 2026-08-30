@@ -1,4 +1,4 @@
-namespace Organization.Product.Module.Presentation.Features.Users.Create;
+namespace Organization.Product.Module.Presentation.RepositoryExamples.Features.Users.Create;
 
 internal sealed record CreateUserRequest(
     string Role,

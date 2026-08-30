@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Http;
 
-using Organization.Product.Module.Application.Users.GetList;
+using Organization.Product.Module.Application.RepositoryExamples.Users.GetList;
 
-namespace Organization.Product.Module.Presentation.Features.Users.GetList;
+namespace Organization.Product.Module.Presentation.RepositoryExamples.Features.Users.GetList;
 
 internal sealed class GetUsersListEndpoint : IEndpoint<UsersEndpoints>
 {

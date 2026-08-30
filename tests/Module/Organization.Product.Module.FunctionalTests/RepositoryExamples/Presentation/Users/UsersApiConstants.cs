@@ -1,4 +1,4 @@
-namespace Organization.Product.Module.FunctionalTests.Presentation.Users;
+namespace Organization.Product.Module.FunctionalTests.RepositoryExamples.Presentation.Users;
 
 internal static class UsersApiConstants
 {

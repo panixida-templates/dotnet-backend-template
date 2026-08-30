@@ -1,7 +1,7 @@
-﻿using Organization.Product.Module.Domain.Users;
-using Organization.Product.Module.Domain.Users.Abstractions;
+using Organization.Product.Module.Domain.RepositoryExamples.Users;
+using Organization.Product.Module.Domain.RepositoryExamples.Users.Abstractions;
 
-namespace Organization.Product.Module.Application.Users.Create;
+namespace Organization.Product.Module.Application.RepositoryExamples.Users.Create;
 
 public sealed class CreateUserHandler(IUsersRepository usersRepository)
     : ICommandHandler<CreateUserCommand, Result<Guid>>

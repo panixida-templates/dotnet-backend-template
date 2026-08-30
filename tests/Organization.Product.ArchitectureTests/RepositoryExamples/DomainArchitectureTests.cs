@@ -1,6 +1,6 @@
 using static ArchUnitNET.Fluent.ArchRuleDefinition;
 
-namespace Organization.Product.ArchitectureTests.Domain;
+namespace Organization.Product.ArchitectureTests.RepositoryExamples;
 
 public sealed class DomainArchitectureTests
 {

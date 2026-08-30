@@ -1,8 +1,8 @@
-using Organization.Product.Module.Application.Users;
-using Organization.Product.Module.Application.Users.Abstractions;
-using Organization.Product.Module.Application.Users.GetList;
+using Organization.Product.Module.Application.RepositoryExamples.Users;
+using Organization.Product.Module.Application.RepositoryExamples.Users.Abstractions;
+using Organization.Product.Module.Application.RepositoryExamples.Users.GetList;
 
-namespace Organization.Product.Module.UnitTests.Application.Users.GetList;
+namespace Organization.Product.Module.UnitTests.RepositoryExamples.Application.Users.GetList;
 
 public sealed class GetUsersListHandlerTests
 {
