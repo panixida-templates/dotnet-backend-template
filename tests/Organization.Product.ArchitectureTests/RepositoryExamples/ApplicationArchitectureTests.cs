@@ -11,7 +11,7 @@ public sealed class ApplicationArchitectureTests
             .ResideInAssemblyMatching(ArchitectureDefinition.ApplicationAssemblyNamePattern)
             .And().HaveNameEndingWith("Handler")
             .Should().BePublic()
-            .Check(ArchitectureDefinition.Architecture);
+            .Check(ArchitectureDefinition.s_architecture);
     }
 
     [Fact(DisplayName = "Application commands should be public")]
@@ -21,7 +21,7 @@ public sealed class ApplicationArchitectureTests
             .ResideInAssemblyMatching(ArchitectureDefinition.ApplicationAssemblyNamePattern)
             .And().HaveNameEndingWith("Command")
             .Should().BePublic()
-            .Check(ArchitectureDefinition.Architecture);
+            .Check(ArchitectureDefinition.s_architecture);
     }
 
     [Fact(DisplayName = "Application queries should be public")]
@@ -31,7 +31,7 @@ public sealed class ApplicationArchitectureTests
             .ResideInAssemblyMatching(ArchitectureDefinition.ApplicationAssemblyNamePattern)
             .And().HaveNameEndingWith("Query")
             .Should().BePublic()
-            .Check(ArchitectureDefinition.Architecture);
+            .Check(ArchitectureDefinition.s_architecture);
     }
 
     [Fact(DisplayName = "Application read models should be public")]
@@ -41,6 +41,6 @@ public sealed class ApplicationArchitectureTests
             .ResideInAssemblyMatching(ArchitectureDefinition.ApplicationAssemblyNamePattern)
             .And().HaveNameEndingWith("ReadModel")
             .Should().BePublic()
-            .Check(ArchitectureDefinition.Architecture);
+            .Check(ArchitectureDefinition.s_architecture);
     }
 }

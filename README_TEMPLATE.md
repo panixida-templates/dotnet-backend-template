@@ -66,13 +66,15 @@ PostgreSQL / S3 / Messaging / External Services
 ### Main projects
 
 - `src/Organization.Product.Host` — ASP.NET Core host, composition root, runtime configuration, Docker image entry point.
-- `src/Module/Organization.Product.Module.Domain` — domain model, aggregate roots, entities, value objects, domain events, policies and specifications.
-- `src/Module/Organization.Product.Module.Application` — use cases, commands, queries, handlers, validators, application abstractions.
-- `src/Module/Organization.Product.Module.Infrastructure` — persistence, EF Core integration, messaging, external infrastructure adapters.
-- `src/Module/Organization.Product.Module.Presentation` — HTTP endpoints, request/response models, mappers and presentation dependency injection.
-- `tests/Module/Organization.Product.Module.UnitTests` — isolated unit tests.
-- `tests/Module/Organization.Product.Module.IntegrationTests` — integration tests for module behavior and infrastructure.
-- `tests/Module/Organization.Product.Module.FunctionalTests` — API/host-level functional tests.
+- `src/Organization.Product.Common` — shared application code.
+- `src/Modules/Module/Organization.Product.Module.Contracts` — public module contracts.
+- `src/Modules/Module/Organization.Product.Module.Domain` — domain model, aggregate roots, entities, value objects, domain events, policies and specifications.
+- `src/Modules/Module/Organization.Product.Module.Application` — use cases, commands, queries, handlers, validators, application abstractions.
+- `src/Modules/Module/Organization.Product.Module.Infrastructure` — persistence, EF Core integration, messaging, external infrastructure adapters.
+- `src/Modules/Module/Organization.Product.Module.Presentation` — HTTP endpoints, request/response models, mappers and presentation dependency injection.
+- `tests/Modules/Module/Organization.Product.Module.UnitTests` — isolated unit tests.
+- `tests/Modules/Module/Organization.Product.Module.IntegrationTests` — integration tests for module behavior and infrastructure.
+- `tests/Modules/Module/Organization.Product.Module.FunctionalTests` — API/host-level functional tests.
 - `tests/Organization.Product.ArchitectureTests` — architecture and dependency rules.
 - `tests/Organization.Product.Testing` — shared testing helpers, factories, assertions and infrastructure.
 - `tools/Organization.Product.Ef.Migrator` — EF migration generation/application tool.
@@ -230,6 +232,7 @@ Configuration is read from:
 | `S3:BucketName`                                | if S3 is used               | Bucket name.                                            |
 | `S3:BasePrefix`                                | if S3 is used               | Prefix for objects created by this service.             |
 | `S3:DefaultPresignTtl`                         | if S3 is used               | Default presigned URL lifetime.                         |
+| `HttpModules:Organization.Product.Module.Presentation` | yes | OpenAPI name and title for the module. |
 | `ScalarConfiguration:Title`                    | if API docs are enabled     | API reference title.                                    |
 | `OTEL_SERVICE_NAME`                            | if observability is enabled | OpenTelemetry service name.                             |
 | `OTEL_EXPORTER_OTLP_ENDPOINT`                  | if observability is enabled | OTLP collector endpoint.                                |
@@ -409,7 +412,7 @@ Application layer contains use cases and orchestration logic.
 Suggested feature structure:
 
 ```text
-src/Module/Organization.Product.Module.Application/
+src/Modules/Module/Organization.Product.Module.Application/
 └── <Feature>/
     ├── Abstractions/
     ├── Create/
@@ -450,7 +453,7 @@ Possible responsibilities:
 Suggested structure:
 
 ```text
-src/Module/Organization.Product.Module.Infrastructure/
+src/Modules/Module/Organization.Product.Module.Infrastructure/
 ├── DependencyInjection/
 └── Persistence/
     ├── Core/
@@ -508,7 +511,7 @@ Example:
 ```json
 {
   "Ef": {
-    "ProjectPath": "../../../../../src/Module/Organization.Product.Module.Infrastructure",
+    "ProjectPath": "../../../../../src/Modules/Module/Organization.Product.Module.Infrastructure",
     "MigrationsDirectory": "Persistence/Core/Migrations"
   },
   "GenerateMigrations": true,
@@ -586,13 +589,15 @@ Remove this section if the final service does not use runtime/tooling code gener
 │   │   ├── Program.ExposeForTests.cs
 │   │   ├── appsettings.Development.json
 │   │   └── appsettings.json
-│   └── Module/
+│   ├── Organization.Product.Common/
+│   └── Modules/Module/
 │       ├── Organization.Product.Module.Application/
+│       ├── Organization.Product.Module.Contracts/
 │       ├── Organization.Product.Module.Domain/
 │       ├── Organization.Product.Module.Infrastructure/
 │       └── Organization.Product.Module.Presentation/
 ├── tests/
-│   ├── Module/
+│   ├── Modules/Module/
 │   │   ├── Organization.Product.Module.FunctionalTests/
 │   │   ├── Organization.Product.Module.IntegrationTests/
 │   │   └── Organization.Product.Module.UnitTests/
@@ -655,14 +660,14 @@ dotnet format PANiXiDA.DotnetTemplate.slnx
 ### Test
 
 ```bash
-dotnet test PANiXiDA.DotnetTemplate.slnx --configuration Release
+dotnet test --solution PANiXiDA.DotnetTemplate.slnx --configuration Release
 ```
 
 ### Run unit tests
 
 ```bash
 dotnet test \
-  tests/Module/Organization.Product.Module.UnitTests/Organization.Product.Module.UnitTests.csproj \
+  --project tests/Modules/Module/Organization.Product.Module.UnitTests/Organization.Product.Module.UnitTests.csproj \
   --configuration Release
 ```
 
@@ -670,7 +675,7 @@ dotnet test \
 
 ```bash
 dotnet test \
-  tests/Module/Organization.Product.Module.IntegrationTests/Organization.Product.Module.IntegrationTests.csproj \
+  --project tests/Modules/Module/Organization.Product.Module.IntegrationTests/Organization.Product.Module.IntegrationTests.csproj \
   --configuration Release
 ```
 
@@ -678,7 +683,7 @@ dotnet test \
 
 ```bash
 dotnet test \
-  tests/Module/Organization.Product.Module.FunctionalTests/Organization.Product.Module.FunctionalTests.csproj \
+  --project tests/Modules/Module/Organization.Product.Module.FunctionalTests/Organization.Product.Module.FunctionalTests.csproj \
   --configuration Release
 ```
 
@@ -686,7 +691,7 @@ dotnet test \
 
 ```bash
 dotnet test \
-  tests/Organization.Product.ArchitectureTests/Organization.Product.ArchitectureTests.csproj \
+  --project tests/Organization.Product.ArchitectureTests/Organization.Product.ArchitectureTests.csproj \
   --configuration Release
 ```
 
@@ -711,7 +716,7 @@ dotnet run \
 dotnet restore PANiXiDA.DotnetTemplate.slnx
 dotnet format PANiXiDA.DotnetTemplate.slnx
 dotnet build PANiXiDA.DotnetTemplate.slnx --configuration Release
-dotnet test PANiXiDA.DotnetTemplate.slnx --configuration Release
+dotnet test --solution PANiXiDA.DotnetTemplate.slnx --configuration Release
 ```
 
 ## Testing
@@ -1034,7 +1039,7 @@ dotnet build PANiXiDA.DotnetTemplate.slnx --configuration Release
 dotnet format PANiXiDA.DotnetTemplate.slnx
 
 # Test
-dotnet test PANiXiDA.DotnetTemplate.slnx --configuration Release
+dotnet test --solution PANiXiDA.DotnetTemplate.slnx --configuration Release
 
 # Run API
 dotnet run --project src/Organization.Product.Host/Organization.Product.Host.csproj
@@ -1231,7 +1236,7 @@ Run:
 dotnet restore PANiXiDA.DotnetTemplate.slnx
 dotnet format PANiXiDA.DotnetTemplate.slnx
 dotnet build PANiXiDA.DotnetTemplate.slnx --configuration Release
-dotnet test PANiXiDA.DotnetTemplate.slnx --configuration Release
+dotnet test --solution PANiXiDA.DotnetTemplate.slnx --configuration Release
 ```
 
 ## License

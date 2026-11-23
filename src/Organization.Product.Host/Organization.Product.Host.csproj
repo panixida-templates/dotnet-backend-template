@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
         <UserSecretsId>684902a4-1094-4cdd-8ca2-86ab4769faf9</UserSecretsId>
@@ -8,13 +8,14 @@
 
     <ItemGroup>
         <PackageReference Include="PANiXiDA.Core.Observability" />
+        <PackageReference Include="PANiXiDA.Core.Presentation.Scalar" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Module\Organization.Product.Module.Application\Organization.Product.Module.Application.csproj" />
-        <ProjectReference Include="..\Module\Organization.Product.Module.Domain\Organization.Product.Module.Domain.csproj" />
-        <ProjectReference Include="..\Module\Organization.Product.Module.Infrastructure\Organization.Product.Module.Infrastructure.csproj" />
-        <ProjectReference Include="..\Module\Organization.Product.Module.Presentation\Organization.Product.Module.Presentation.csproj" />
+        <ProjectReference Include="../Modules/Module/Organization.Product.Module.Application\Organization.Product.Module.Application.csproj" />
+        <ProjectReference Include="../Modules/Module/Organization.Product.Module.Domain\Organization.Product.Module.Domain.csproj" />
+        <ProjectReference Include="../Modules/Module/Organization.Product.Module.Infrastructure\Organization.Product.Module.Infrastructure.csproj" />
+        <ProjectReference Include="../Modules/Module/Organization.Product.Module.Presentation\Organization.Product.Module.Presentation.csproj" />
     </ItemGroup>
 
     <ItemGroup>

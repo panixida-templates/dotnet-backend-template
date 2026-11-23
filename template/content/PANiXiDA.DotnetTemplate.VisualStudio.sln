@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
@@ -23,25 +23,25 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{827E0CD3-B72
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Organization.Product.Host", "src\Organization.Product.Host\Organization.Product.Host.csproj", "{3BFAEA51-8A9B-473C-A689-ACAE6DC5AE7E}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Module", "Module", "{510D342B-19DB-D665-C227-CF21083D95D6}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Modules", "Modules", "{510D342B-19DB-D665-C227-CF21083D95D6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Organization.Product.Module.Application", "src\Module\Organization.Product.Module.Application\Organization.Product.Module.Application.csproj", "{AA96863E-9346-49F3-AD16-F4A6DEE10032}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Organization.Product.Module.Application", "src/Modules/Module/Organization.Product.Module.Application\Organization.Product.Module.Application.csproj", "{AA96863E-9346-49F3-AD16-F4A6DEE10032}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Organization.Product.Module.Domain", "src\Module\Organization.Product.Module.Domain\Organization.Product.Module.Domain.csproj", "{779A15FB-EA76-480A-A76A-BCEE6703BD9E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Organization.Product.Module.Domain", "src/Modules/Module/Organization.Product.Module.Domain\Organization.Product.Module.Domain.csproj", "{779A15FB-EA76-480A-A76A-BCEE6703BD9E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Organization.Product.Module.Infrastructure", "src\Module\Organization.Product.Module.Infrastructure\Organization.Product.Module.Infrastructure.csproj", "{7443FAA0-0CBB-4B8D-B521-02188CF37FB6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Organization.Product.Module.Infrastructure", "src/Modules/Module/Organization.Product.Module.Infrastructure\Organization.Product.Module.Infrastructure.csproj", "{7443FAA0-0CBB-4B8D-B521-02188CF37FB6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Organization.Product.Module.Presentation", "src\Module\Organization.Product.Module.Presentation\Organization.Product.Module.Presentation.csproj", "{4ABA534C-4A87-4B1C-850E-A0EC45ECDB4E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Organization.Product.Module.Presentation", "src/Modules/Module/Organization.Product.Module.Presentation\Organization.Product.Module.Presentation.csproj", "{4ABA534C-4A87-4B1C-850E-A0EC45ECDB4E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0AB3BF05-4346-4AA6-1389-037BE0695223}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Module", "Module", "{F93D004A-87CD-C9ED-684C-C78CC8DBD63B}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Modules", "Modules", "{F93D004A-87CD-C9ED-684C-C78CC8DBD63B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Organization.Product.Module.FunctionalTests", "tests\Module\Organization.Product.Module.FunctionalTests\Organization.Product.Module.FunctionalTests.csproj", "{046561FD-5914-4FAC-A648-17581FF4027E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Organization.Product.Module.FunctionalTests", "tests/Modules/Module/Organization.Product.Module.FunctionalTests\Organization.Product.Module.FunctionalTests.csproj", "{046561FD-5914-4FAC-A648-17581FF4027E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Organization.Product.Module.IntegrationTests", "tests\Module\Organization.Product.Module.IntegrationTests\Organization.Product.Module.IntegrationTests.csproj", "{1E6CE178-A0E3-4A18-BA25-6684C412952C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Organization.Product.Module.IntegrationTests", "tests/Modules/Module/Organization.Product.Module.IntegrationTests\Organization.Product.Module.IntegrationTests.csproj", "{1E6CE178-A0E3-4A18-BA25-6684C412952C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Organization.Product.Module.UnitTests", "tests\Module\Organization.Product.Module.UnitTests\Organization.Product.Module.UnitTests.csproj", "{A692EA07-400D-4C72-9D0C-6ADED4CFE403}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Organization.Product.Module.UnitTests", "tests/Modules/Module/Organization.Product.Module.UnitTests\Organization.Product.Module.UnitTests.csproj", "{A692EA07-400D-4C72-9D0C-6ADED4CFE403}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Organization.Product.ArchitectureTests", "tests\Organization.Product.ArchitectureTests\Organization.Product.ArchitectureTests.csproj", "{16808228-B626-4366-96CE-EAA69FD5ACA5}"
 EndProject
@@ -50,6 +50,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{07C2787E-EAC7-C090-1BA3-A61EC2A24D84}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Organization.Product.Ef.Migrator", "tools\Organization.Product.Ef.Migrator\Organization.Product.Ef.Migrator.csproj", "{6DFF012A-8B0B-4E06-823E-A07BBCF5AFFB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Organization.Product.Common", "src\Organization.Product.Common\Organization.Product.Common.csproj", "{1178E3DD-0D95-4AF6-9DE5-4548D027FB40}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Organization.Product.Module.Contracts", "src/Modules/Module/Organization.Product.Module.Contracts\Organization.Product.Module.Contracts.csproj", "{4B8BA111-09DA-4299-95E1-F4C7B544C015}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -193,6 +197,30 @@ Global
 		{6DFF012A-8B0B-4E06-823E-A07BBCF5AFFB}.Release|x64.Build.0 = Release|Any CPU
 		{6DFF012A-8B0B-4E06-823E-A07BBCF5AFFB}.Release|x86.ActiveCfg = Release|Any CPU
 		{6DFF012A-8B0B-4E06-823E-A07BBCF5AFFB}.Release|x86.Build.0 = Release|Any CPU
+		{1178E3DD-0D95-4AF6-9DE5-4548D027FB40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1178E3DD-0D95-4AF6-9DE5-4548D027FB40}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1178E3DD-0D95-4AF6-9DE5-4548D027FB40}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{1178E3DD-0D95-4AF6-9DE5-4548D027FB40}.Debug|x64.Build.0 = Debug|Any CPU
+		{1178E3DD-0D95-4AF6-9DE5-4548D027FB40}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1178E3DD-0D95-4AF6-9DE5-4548D027FB40}.Debug|x86.Build.0 = Debug|Any CPU
+		{1178E3DD-0D95-4AF6-9DE5-4548D027FB40}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1178E3DD-0D95-4AF6-9DE5-4548D027FB40}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1178E3DD-0D95-4AF6-9DE5-4548D027FB40}.Release|x64.ActiveCfg = Release|Any CPU
+		{1178E3DD-0D95-4AF6-9DE5-4548D027FB40}.Release|x64.Build.0 = Release|Any CPU
+		{1178E3DD-0D95-4AF6-9DE5-4548D027FB40}.Release|x86.ActiveCfg = Release|Any CPU
+		{1178E3DD-0D95-4AF6-9DE5-4548D027FB40}.Release|x86.Build.0 = Release|Any CPU
+		{4B8BA111-09DA-4299-95E1-F4C7B544C015}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4B8BA111-09DA-4299-95E1-F4C7B544C015}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B8BA111-09DA-4299-95E1-F4C7B544C015}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{4B8BA111-09DA-4299-95E1-F4C7B544C015}.Debug|x64.Build.0 = Debug|Any CPU
+		{4B8BA111-09DA-4299-95E1-F4C7B544C015}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4B8BA111-09DA-4299-95E1-F4C7B544C015}.Debug|x86.Build.0 = Debug|Any CPU
+		{4B8BA111-09DA-4299-95E1-F4C7B544C015}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4B8BA111-09DA-4299-95E1-F4C7B544C015}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4B8BA111-09DA-4299-95E1-F4C7B544C015}.Release|x64.ActiveCfg = Release|Any CPU
+		{4B8BA111-09DA-4299-95E1-F4C7B544C015}.Release|x64.Build.0 = Release|Any CPU
+		{4B8BA111-09DA-4299-95E1-F4C7B544C015}.Release|x86.ActiveCfg = Release|Any CPU
+		{4B8BA111-09DA-4299-95E1-F4C7B544C015}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -211,5 +239,7 @@ Global
 		{16808228-B626-4366-96CE-EAA69FD5ACA5} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
 		{81BD7AB1-AEA9-473A-BCDC-6522866C5E85} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
 		{6DFF012A-8B0B-4E06-823E-A07BBCF5AFFB} = {07C2787E-EAC7-C090-1BA3-A61EC2A24D84}
+		{1178E3DD-0D95-4AF6-9DE5-4548D027FB40} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
+		{4B8BA111-09DA-4299-95E1-F4C7B544C015} = {510D342B-19DB-D665-C227-CF21083D95D6}
 	EndGlobalSection
 EndGlobal

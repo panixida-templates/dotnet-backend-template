@@ -11,7 +11,7 @@ public sealed class DomainArchitectureTests
             .ResideInAssemblyMatching(ArchitectureDefinition.DomainAssemblyNamePattern)
             .And().ResideInNamespaceMatching(ArchitectureDefinition.IncludeNamespaceSegment("ValueObjects"))
             .Should().BePublic()
-            .Check(ArchitectureDefinition.Architecture);
+            .Check(ArchitectureDefinition.s_architecture);
     }
 
     [Fact(DisplayName = "Domain policies should be public")]
@@ -21,7 +21,7 @@ public sealed class DomainArchitectureTests
             .ResideInAssemblyMatching(ArchitectureDefinition.DomainAssemblyNamePattern)
             .And().ResideInNamespaceMatching(ArchitectureDefinition.IncludeNamespaceSegment("Policies"))
             .Should().BePublic()
-            .Check(ArchitectureDefinition.Architecture);
+            .Check(ArchitectureDefinition.s_architecture);
     }
 
     [Fact(DisplayName = "Domain specifications should be public")]
@@ -31,6 +31,6 @@ public sealed class DomainArchitectureTests
             .ResideInAssemblyMatching(ArchitectureDefinition.DomainAssemblyNamePattern)
             .And().ResideInNamespaceMatching(ArchitectureDefinition.IncludeNamespaceSegment("Specifications"))
             .Should().BePublic()
-            .Check(ArchitectureDefinition.Architecture);
+            .Check(ArchitectureDefinition.s_architecture);
     }
 }

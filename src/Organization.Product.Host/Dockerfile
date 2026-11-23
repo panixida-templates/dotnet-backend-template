@@ -17,10 +17,10 @@ COPY ["Directory.Packages.props", "."]
 COPY ["Directory.Build.props", "."]
 COPY ["Directory.Build.targets", "."]
 COPY ["src/Organization.Product.Host/Organization.Product.Host.csproj", "src/Organization.Product.Host/"]
-COPY ["src/Module/Organization.Product.Module.Application/Organization.Product.Module.Application.csproj", "src/Module/Organization.Product.Module.Application/"]
-COPY ["src/Module/Organization.Product.Module.Domain/Organization.Product.Module.Domain.csproj", "src/Module/Organization.Product.Module.Domain/"]
-COPY ["src/Module/Organization.Product.Module.Infrastructure/Organization.Product.Module.Infrastructure.csproj", "src/Module/Organization.Product.Module.Infrastructure/"]
-COPY ["src/Module/Organization.Product.Module.Presentation/Organization.Product.Module.Presentation.csproj", "src/Module/Organization.Product.Module.Presentation/"]
+COPY ["src/Modules/Module/Organization.Product.Module.Application/Organization.Product.Module.Application.csproj", "src/Modules/Module/Organization.Product.Module.Application/"]
+COPY ["src/Modules/Module/Organization.Product.Module.Domain/Organization.Product.Module.Domain.csproj", "src/Modules/Module/Organization.Product.Module.Domain/"]
+COPY ["src/Modules/Module/Organization.Product.Module.Infrastructure/Organization.Product.Module.Infrastructure.csproj", "src/Modules/Module/Organization.Product.Module.Infrastructure/"]
+COPY ["src/Modules/Module/Organization.Product.Module.Presentation/Organization.Product.Module.Presentation.csproj", "src/Modules/Module/Organization.Product.Module.Presentation/"]
 RUN dotnet restore "./src/Organization.Product.Host/Organization.Product.Host.csproj"
 COPY . .
 WORKDIR "/src/src/Organization.Product.Host"

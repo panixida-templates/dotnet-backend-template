@@ -76,15 +76,17 @@ Current template names:
 
 - `PANiXiDA.DotnetTemplate.slnx`;
 - `src/Organization.Product.Host`;
-- `src/Module/Organization.Product.Module.Domain`;
-- `src/Module/Organization.Product.Module.Application`;
-- `src/Module/Organization.Product.Module.Infrastructure`;
-- `src/Module/Organization.Product.Module.Presentation`;
+- `src/Organization.Product.Common`;
+- `src/Modules/Module/Organization.Product.Module.Contracts`;
+- `src/Modules/Module/Organization.Product.Module.Domain`;
+- `src/Modules/Module/Organization.Product.Module.Application`;
+- `src/Modules/Module/Organization.Product.Module.Infrastructure`;
+- `src/Modules/Module/Organization.Product.Module.Presentation`;
 - `tests/Organization.Product.ArchitectureTests`;
 - `tests/Organization.Product.Testing`;
-- `tests/Module/Organization.Product.Module.UnitTests`;
-- `tests/Module/Organization.Product.Module.IntegrationTests`;
-- `tests/Module/Organization.Product.Module.FunctionalTests`;
+- `tests/Modules/Module/Organization.Product.Module.UnitTests`;
+- `tests/Modules/Module/Organization.Product.Module.IntegrationTests`;
+- `tests/Modules/Module/Organization.Product.Module.FunctionalTests`;
 - `tools/Organization.Product.Ef.Migrator`;
 - `deploy/helm/dotnet-template`.
 
@@ -120,6 +122,8 @@ Replace `Organization.Product` with the final root namespace in:
 
 Keep the layer suffixes:
 
+- `src/Organization.Product.Common`;
+- `src/Modules/Module/Organization.Product.Module.Contracts`;
 - `.Domain`;
 - `.Application`;
 - `.Infrastructure`;
@@ -136,13 +140,13 @@ Create the first real feature slice only after final names and namespaces are se
 Use this structure for a feature:
 
 ```text
-src/Module/<Root>.<Module>.Domain/<Feature>/
-src/Module/<Root>.<Module>.Application/<Feature>/
-src/Module/<Root>.<Module>.Infrastructure/Persistence/Features/<Feature>/
-src/Module/<Root>.<Module>.Presentation/Features/<Feature>/
-tests/Module/<Root>.<Module>.UnitTests/...
-tests/Module/<Root>.<Module>.IntegrationTests/...
-tests/Module/<Root>.<Module>.FunctionalTests/...
+src/Modules/<Module>/<Root>.<Module>.Domain/<Feature>/
+src/Modules/<Module>/<Root>.<Module>.Application/<Feature>/
+src/Modules/<Module>/<Root>.<Module>.Infrastructure/Persistence/Features/<Feature>/
+src/Modules/<Module>/<Root>.<Module>.Presentation/Features/<Feature>/
+tests/Modules/<Module>/<Root>.<Module>.UnitTests/...
+tests/Modules/<Module>/<Root>.<Module>.IntegrationTests/...
+tests/Modules/<Module>/<Root>.<Module>.FunctionalTests/...
 ```
 
 For the first feature, add only the files the service actually needs:
@@ -159,8 +163,8 @@ Do not add placeholder entities, endpoints, repositories or tests that are not p
 
 Current template classes:
 
-- `TemplateWriteDbContext`;
-- `TemplateReadDbContext`.
+- `ModuleWriteDbContext`;
+- `ModuleReadDbContext`.
 
 Actions:
 
@@ -461,7 +465,7 @@ Check .NET:
 dotnet restore <SolutionName>.slnx
 dotnet format <SolutionName>.slnx --verify-no-changes
 dotnet build <SolutionName>.slnx --configuration Release
-dotnet test <SolutionName>.slnx --configuration Release
+dotnet test --solution <SolutionName>.slnx --configuration Release
 ```
 
 Check Docker:

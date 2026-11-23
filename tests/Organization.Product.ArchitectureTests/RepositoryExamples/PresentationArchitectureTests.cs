@@ -12,7 +12,7 @@ public sealed class PresentationArchitectureTests
             .And().ResideInNamespaceMatching(ArchitectureDefinition.IncludeNamespaceSegment("Features"))
             .And().HaveNameEndingWith("Endpoint")
             .Should().BeInternal()
-            .Check(ArchitectureDefinition.Architecture);
+            .Check(ArchitectureDefinition.s_architecture);
     }
 
     [Fact(DisplayName = "Presentation request contracts should be internal")]
@@ -23,7 +23,7 @@ public sealed class PresentationArchitectureTests
             .And().ResideInNamespaceMatching(ArchitectureDefinition.IncludeNamespaceSegment("Features"))
             .And().HaveNameEndingWith("Request")
             .Should().BeInternal()
-            .Check(ArchitectureDefinition.Architecture);
+            .Check(ArchitectureDefinition.s_architecture);
     }
 
     [Fact(DisplayName = "Presentation response contracts should be internal")]
@@ -34,7 +34,7 @@ public sealed class PresentationArchitectureTests
             .And().ResideInNamespaceMatching(ArchitectureDefinition.IncludeNamespaceSegment("Features"))
             .And().HaveNameEndingWith("Response")
             .Should().BeInternal()
-            .Check(ArchitectureDefinition.Architecture);
+            .Check(ArchitectureDefinition.s_architecture);
     }
 
     [Fact(DisplayName = "Presentation mappers should be internal")]
@@ -45,6 +45,6 @@ public sealed class PresentationArchitectureTests
             .And().ResideInNamespaceMatching(ArchitectureDefinition.IncludeNamespaceSegment("Features"))
             .And().HaveNameEndingWith("Mapper")
             .Should().BeInternal()
-            .Check(ArchitectureDefinition.Architecture);
+            .Check(ArchitectureDefinition.s_architecture);
     }
 }

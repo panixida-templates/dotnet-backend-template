@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
 using Organization.Product.Module.Infrastructure.Persistence.Core;
@@ -12,8 +12,8 @@ using var host = Host.CreateDefaultBuilder(args)
         .ConfigureServices((ctx, services) =>
         {
             services.AddPostgreSqlEfRepository<
-                TemplateWriteDbContext, TemplateReadDbContext>(ctx.Configuration);
+                ModuleWriteDbContext, ModuleReadDbContext>(ctx.Configuration);
         })
     .Build();
 
-await host.RunMigrationsAsync<TemplateWriteDbContext>();
+await host.RunMigrationsAsync<ModuleWriteDbContext>();
