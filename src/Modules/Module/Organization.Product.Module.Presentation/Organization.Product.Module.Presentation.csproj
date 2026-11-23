@@ -5,7 +5,6 @@
 
     <ItemGroup>
         <PackageReference Include="PANiXiDA.Core.Presentation.Http" />
-        <PackageReference Include="PANiXiDA.Core.Presentation.SignalR" />
         <PackageReference Include="Riok.Mapperly" />
     </ItemGroup>
 

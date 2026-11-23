@@ -8,7 +8,7 @@ using PANiXiDA.Core.Application.Messaging.Mediator.Handlers;
 using PANiXiDA.Core.Application.Querying;
 using PANiXiDA.Core.Application.Querying.Cursor;
 using PANiXiDA.Core.Application.Querying.Pagination;
-using PANiXiDA.Core.Application.Storage.Models;
+using PANiXiDA.Core.Application.Querying.Sorting;
 using PANiXiDA.Core.Domain.AggregateRoots;
 using PANiXiDA.Core.ResultPattern;
 
@@ -138,17 +138,17 @@ public sealed class ReadModelConventionTests
     }
 
     [Theory(DisplayName = "Query result check should validate payload origin when result type is examined")]
-    [InlineData(typeof(PresignedDownloadUrl), true)]
-    [InlineData(typeof(PresignedUploadUrl), true)]
-    [InlineData(typeof(FileMetadata), true)]
-    [InlineData(typeof(Result<PresignedDownloadUrl>), true)]
-    [InlineData(typeof(Task<Result<PresignedDownloadUrl>>), true)]
-    [InlineData(typeof(ValueTask<FileMetadata>), true)]
-    [InlineData(typeof(PresignedDownloadUrl[]), true)]
-    [InlineData(typeof(IReadOnlyList<PresignedDownloadUrl>), true)]
-    [InlineData(typeof(PaginationResult<PresignedDownloadUrl>), true)]
-    [InlineData(typeof(CursorPaginationResult<FileMetadata>), true)]
-    [InlineData(typeof(IQuery<Result<PresignedDownloadUrl>>), true)]
+    [InlineData(typeof(PaginationParameters), true)]
+    [InlineData(typeof(SortingParameters), true)]
+    [InlineData(typeof(CursorPaginationParameters), true)]
+    [InlineData(typeof(Result<PaginationParameters>), true)]
+    [InlineData(typeof(Task<Result<PaginationParameters>>), true)]
+    [InlineData(typeof(ValueTask<CursorPaginationParameters>), true)]
+    [InlineData(typeof(PaginationParameters[]), true)]
+    [InlineData(typeof(IReadOnlyList<PaginationParameters>), true)]
+    [InlineData(typeof(PaginationResult<PaginationParameters>), true)]
+    [InlineData(typeof(CursorPaginationResult<CursorPaginationParameters>), true)]
+    [InlineData(typeof(IQuery<Result<PaginationParameters>>), true)]
     [InlineData(typeof(IAggregateRoot), false)]
     [InlineData(typeof(Result<IAggregateRoot>), false)]
     [InlineData(typeof(PaginationResult<IAggregateRoot>), false)]
@@ -167,9 +167,9 @@ public sealed class ReadModelConventionTests
     }
 
     [Theory(DisplayName = "Read model result check should preserve repository rules when core models are examined")]
-    [InlineData(typeof(PresignedDownloadUrl))]
-    [InlineData(typeof(Result<PresignedDownloadUrl>))]
-    [InlineData(typeof(PaginationResult<FileMetadata>))]
+    [InlineData(typeof(PaginationParameters))]
+    [InlineData(typeof(Result<PaginationParameters>))]
+    [InlineData(typeof(PaginationResult<CursorPaginationParameters>))]
     public void IsReadModelResult_Should_PreserveRepositoryRules_When_CoreModelsAreExamined(Type type)
     {
         var result = ReadSideConvention.IsReadModelResult(type);

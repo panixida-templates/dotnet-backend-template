@@ -60,7 +60,7 @@ Module.Domain
 Module.Infrastructure
         │
         ▼
-PostgreSQL / S3 / Messaging / External Services
+PostgreSQL / Messaging / External Services
 ```
 
 ### Main projects
@@ -104,7 +104,6 @@ Domain ───────────► no application/infrastructure/presen
 - .NET SDK 10.0.401 or later in the 10.0 line
 - Docker
 - PostgreSQL
-- S3-compatible storage, if file storage is used
 - MongoDB, if the final service actually uses it
 - Kubernetes and Helm, if deploying through Helm
 - Access to required NuGet feeds, if private packages are used
@@ -155,17 +154,6 @@ docker run --name <service-name>-postgres \
   -e POSTGRES_PASSWORD=<password> \
   -p 5432:5432 \
   -d postgres:latest
-```
-
-MinIO / S3-compatible storage, only if the service uses S3:
-
-```bash
-docker run --name <service-name>-minio \
-  -e MINIO_ROOT_USER=<access-key> \
-  -e MINIO_ROOT_PASSWORD=<password> \
-  -p 9000:9000 \
-  -p 9001:9001 \
-  -d minio/minio server /data --console-address ":9001"
 ```
 
 MongoDB, only if the service uses MongoDB:
@@ -224,14 +212,6 @@ Configuration is read from:
 | `Kestrel:Endpoints:Grpc:Protocols`             | if gRPC is used             | gRPC protocol configuration.                            |
 | `ConnectionStrings:PostgreSqlConnectionString` | yes                         | PostgreSQL connection string.                           |
 | `ConnectionStrings:MongoDbConnectionString`    | if MongoDB is used          | MongoDB connection string.                              |
-| `AWS:ServiceURL`                               | if S3 is used               | S3-compatible service URL.                              |
-| `AWS:AuthenticationRegion`                     | if S3 is used               | S3 region.                                              |
-| `AWS:ForcePathStyle`                           | if S3 is used               | Path-style addressing flag for S3-compatible providers. |
-| `S3Storage:AccessKey`                          | if S3 is used               | S3 access key.                                          |
-| `S3Storage:SecretKey`                          | if S3 is used               | S3 access password.                                     |
-| `S3Storage:BucketName`                         | if S3 is used               | Bucket name.                                            |
-| `S3Storage:KeyPrefix`                          | if S3 is used               | Prefix for objects created by this service.             |
-| `S3Storage:PresignedUrlLifetime`               | if S3 is used               | Default presigned URL lifetime.                         |
 | `HttpModules:Organization.Product.Module.Presentation` | yes | OpenAPI name and title for the module. |
 | `ScalarConfiguration:Title`                    | if API docs are enabled     | API reference title.                                    |
 | `OTEL_SERVICE_NAME`                            | if observability is enabled | OpenTelemetry service name.                             |
@@ -248,15 +228,6 @@ DOTNET_ENVIRONMENT=Development
 
 ConnectionStrings__PostgreSqlConnectionString=Host=localhost;Port=5432;Database=<database>;Username=<username>;Password=<password>
 ConnectionStrings__MongoDbConnectionString=mongodb://localhost:27017/<database>
-
-AWS__ServiceURL=http://localhost:9000
-AWS__AuthenticationRegion=us-east-1
-AWS__ForcePathStyle=true
-S3Storage__AccessKey=<access-key>
-S3Storage__SecretKey=<password>
-S3Storage__BucketName=<bucket-name>
-S3Storage__KeyPrefix=development
-S3Storage__PresignedUrlLifetime=00:15:00
 
 ScalarConfiguration__Title=<ServiceName> API Reference
 
@@ -292,16 +263,6 @@ OTEL_EXPORTER_OTLP_PROTOCOL=grpc
   "ConnectionStrings": {
     "PostgreSqlConnectionString": "Host=localhost;Port=5432;Database=<database>;Username=<username>;Password=<password>",
     "MongoDbConnectionString": "mongodb://localhost:27017/<database>"
-  },
-  "AWS": {
-    "ServiceURL": "http://localhost:9000",
-    "AuthenticationRegion": "us-east-1",
-    "ForcePathStyle": true
-  },
-  "S3Storage": {
-    "BucketName": "<bucket-name>",
-    "KeyPrefix": "development",
-    "PresignedUrlLifetime": "00:15:00"
   },
   "ScalarConfiguration": {
     "Title": "<ServiceName> API Reference"
@@ -447,7 +408,6 @@ Possible responsibilities:
 - database mappings;
 - external service clients;
 - message bus integration;
-- file storage;
 - infrastructure dependency injection.
 
 Suggested structure:
@@ -531,25 +491,6 @@ Configuration keys:
 | `GenerateMigrations`                           | Enables migration generation.                                            |
 | `ApplyMigrations`                              | Enables applying migrations to the database.                             |
 | `ConnectionStrings:PostgreSqlConnectionString` | PostgreSQL connection string used by the migrator.                       |
-
-## SignalR
-
-Add an `IHubEndpoint` implementation to `Organization.Product.Module.Presentation`, then set `SignalR__Enabled=true`. SignalR uses in-memory connection management by default. For a Redis backplane, set `SignalR__Redis__ChannelPrefix` and `ConnectionStrings__Redis`.
-
-## File Storage
-
-The host registers `IFileStorage` when `S3Storage` is configured. For AWS S3, set `AWS:Region`. For an S3-compatible service, configure `AWS:ServiceURL` and `AWS:AuthenticationRegion`. Supply both credentials through secret configuration or omit both to use the standard AWS credential chain.
-
-| Setting                | Description                                 |
-| ---------------------- | ------------------------------------------- |
-| `AWS:ServiceURL`                 | S3-compatible endpoint.                     |
-| `AWS:AuthenticationRegion`       | Region.                                     |
-| `AWS:ForcePathStyle`             | Enables path-style addressing.              |
-| `S3Storage:AccessKey`            | Access key.                                 |
-| `S3Storage:SecretKey`            | S3 access password.                         |
-| `S3Storage:BucketName`           | Bucket name.                                |
-| `S3Storage:KeyPrefix`            | Object prefix for this service/environment. |
-| `S3Storage:PresignedUrlLifetime` | Default presigned URL TTL.                  |
 
 ## Code Generation
 
@@ -812,15 +753,6 @@ DOTNET_ENVIRONMENT=Development
 ConnectionStrings__PostgreSqlConnectionString=Host=<host>;Port=5432;Database=<database>;Username=<username>;Password=<password>
 ConnectionStrings__MongoDbConnectionString=mongodb://<host>:27017/<database>
 
-AWS__ServiceURL=http://<host>:9000
-AWS__AuthenticationRegion=us-east-1
-AWS__ForcePathStyle=true
-S3Storage__AccessKey=<access-key>
-S3Storage__SecretKey=<password>
-S3Storage__BucketName=<bucket-name>
-S3Storage__KeyPrefix=development
-S3Storage__PresignedUrlLifetime=00:15:00
-
 ScalarConfiguration__Title=<ServiceName> API Reference
 
 OTEL_SERVICE_NAME=<service-name>-api-development
@@ -1067,7 +999,6 @@ Check:
 - `ASPNETCORE_ENVIRONMENT`;
 - `DOTNET_ENVIRONMENT`;
 - PostgreSQL connection string;
-- S3 configuration, if S3 is used;
 - MongoDB configuration, if MongoDB is used;
 - external service URLs;
 - port conflicts on `8080` and `8081`;
@@ -1165,10 +1096,8 @@ Also review and rename template-specific values:
 - `ghcr.io/panixida-templates/dotnet-backend-template/ef-migrator`;
 - default database name;
 - default PostgreSQL credentials;
-- default S3 bucket;
 - default gateway hosts;
 - unused MongoDB sections;
-- unused S3 sections;
 - unused gRPC sections;
 - unused observability sections.
 
@@ -1192,7 +1121,6 @@ This repository uses:
 - Shouldly;
 - NSubstitute;
 - functional, integration, unit and architecture tests;
-- optional S3-compatible storage;
 - optional MongoDB;
 - optional gRPC.
 

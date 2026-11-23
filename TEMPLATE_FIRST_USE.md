@@ -201,18 +201,17 @@ Required actions:
 2. Keep local development passwords in `appsettings.json` if that is the team convention.
 3. Update `ScalarConfiguration:Title`.
 4. Remove `MongoDbConnectionString` if MongoDB is not used.
-5. Configure `S3Storage` and `AWS` when the service uses file storage.
-6. Remove gRPC endpoint `Kestrel:Endpoints:Grpc` if the service does not expose gRPC.
-7. Check ports `8080`, `8081`, `launchSettings.json`, and Helm `service.containerPort`.
-8. Keep or regenerate the host project local settings identifier only if Visual Studio tooling requires it.
+5. Remove gRPC endpoint `Kestrel:Endpoints:Grpc` if the service does not expose gRPC.
+6. Check ports `8080`, `8081`, `launchSettings.json`, and Helm `service.containerPort`.
+7. Keep or regenerate the host project local settings identifier only if Visual Studio tooling requires it.
 
 Check:
 
 ```bash
-rg "dotnet-template|MongoDbConnectionString|S3Storage|SignalR" src tools deploy
+rg "dotnet-template|MongoDbConnectionString" src tools deploy
 ```
 
-Keep MongoDB or S3 matches only when the final service actually uses them.
+Keep MongoDB matches only when the final service uses MongoDB.
 
 ## 7. Check Dockerfiles
 
@@ -314,7 +313,7 @@ Check and replace:
 - `probes`;
 - migration job settings.
 
-If S3, MongoDB, a message bus, or external APIs are used in production, add the required environment values and provider mappings.
+If MongoDB, a message bus, or external APIs are used in production, add the required environment values and provider mappings.
 
 Reset image tags for the new service until CI/CD updates them:
 
@@ -378,7 +377,6 @@ Update:
 Remove README sections that do not apply to the service:
 
 - MongoDB;
-- S3;
 - gRPC;
 - code generation;
 - metrics/tracing;
