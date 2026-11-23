@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <ItemGroup>
-        <PackageReference Include="PANiXiDA.Core.Infrastructure.Messaging.Wolverine" />
         <PackageReference Include="PANiXiDA.Core.Infrastructure.Persistence.Ef" />
         <PackageReference Include="Riok.Mapperly" />
     </ItemGroup>
@@ -22,7 +21,6 @@
         <Using Include="PANiXiDA.Core.Application.Querying.Pagination" />
         <Using Include="PANiXiDA.Core.Application.Querying.Sorting" />
 
-        <Using Include="PANiXiDA.Core.Infrastructure.Messaging.Wolverine.DependencyInjection" />
         <Using Include="PANiXiDA.Core.Infrastructure.Persistence.Ef.DependencyInjection" />
         <Using Include="PANiXiDA.Core.Infrastructure.Persistence.Ef.Constants" />
         <Using Include="PANiXiDA.Core.Infrastructure.Persistence.Ef.DbContexts" />

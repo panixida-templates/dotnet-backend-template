@@ -9,7 +9,6 @@ internal static class ModuleModuleConfiguration
     {
         builder.Services.AddInfrastructure(builder.Configuration);
         builder.Services.AddPresentation(builder.Configuration);
-        builder.Host.UseInfrastructure(builder.Configuration);
 
         return builder;
     }
