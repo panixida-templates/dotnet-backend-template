@@ -201,7 +201,7 @@ Required actions:
 2. Keep local development passwords in `appsettings.json` if that is the team convention.
 3. Update `ScalarConfiguration:Title`.
 4. Remove `MongoDbConnectionString` if MongoDB is not used.
-5. Remove the `S3` section if file storage is not used.
+5. Configure `S3Storage` and `AWS` when the service uses file storage.
 6. Remove gRPC endpoint `Kestrel:Endpoints:Grpc` if the service does not expose gRPC.
 7. Check ports `8080`, `8081`, `launchSettings.json`, and Helm `service.containerPort`.
 8. Keep or regenerate the host project local settings identifier only if Visual Studio tooling requires it.
@@ -209,7 +209,7 @@ Required actions:
 Check:
 
 ```bash
-rg "dotnet-template|MongoDbConnectionString|S3:" src tools deploy
+rg "dotnet-template|MongoDbConnectionString|S3Storage|SignalR" src tools deploy
 ```
 
 Keep MongoDB or S3 matches only when the final service actually uses them.

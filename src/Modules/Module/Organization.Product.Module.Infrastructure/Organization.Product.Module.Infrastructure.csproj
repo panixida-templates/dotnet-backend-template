@@ -3,6 +3,7 @@
     <ItemGroup>
         <PackageReference Include="PANiXiDA.Core.Infrastructure.Messaging.Wolverine" />
         <PackageReference Include="PANiXiDA.Core.Infrastructure.Persistence.Ef" />
+        <PackageReference Include="PANiXiDA.Core.Infrastructure.Storage.S3" />
         <PackageReference Include="Riok.Mapperly" />
     </ItemGroup>
 
