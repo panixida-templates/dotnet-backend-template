@@ -66,13 +66,15 @@ PostgreSQL / S3 / Messaging / External Services
 ### Main projects
 
 - `src/Organization.Product.Host` — ASP.NET Core host, composition root, runtime configuration, Docker image entry point.
-- `src/Module/Organization.Product.Module.Domain` — domain model, aggregate roots, entities, value objects, domain events, policies and specifications.
-- `src/Module/Organization.Product.Module.Application` — use cases, commands, queries, handlers, validators, application abstractions.
-- `src/Module/Organization.Product.Module.Infrastructure` — persistence, EF Core integration, messaging, external infrastructure adapters.
-- `src/Module/Organization.Product.Module.Presentation` — HTTP endpoints, request/response models, mappers and presentation dependency injection.
-- `tests/Module/Organization.Product.Module.UnitTests` — isolated unit tests.
-- `tests/Module/Organization.Product.Module.IntegrationTests` — integration tests for module behavior and infrastructure.
-- `tests/Module/Organization.Product.Module.FunctionalTests` — API/host-level functional tests.
+- `src/Organization.Product.Common` — shared application code.
+- `src/Modules/Module/Organization.Product.Module.Contracts` — public module contracts.
+- `src/Modules/Module/Organization.Product.Module.Domain` — domain model, aggregate roots, entities, value objects, domain events, policies and specifications.
+- `src/Modules/Module/Organization.Product.Module.Application` — use cases, commands, queries, handlers, validators, application abstractions.
+- `src/Modules/Module/Organization.Product.Module.Infrastructure` — persistence, EF Core integration, messaging, external infrastructure adapters.
+- `src/Modules/Module/Organization.Product.Module.Presentation` — HTTP endpoints, request/response models, mappers and presentation dependency injection.
+- `tests/Modules/Module/Organization.Product.Module.UnitTests` — isolated unit tests.
+- `tests/Modules/Module/Organization.Product.Module.IntegrationTests` — integration tests for module behavior and infrastructure.
+- `tests/Modules/Module/Organization.Product.Module.FunctionalTests` — API/host-level functional tests.
 - `tests/Organization.Product.ArchitectureTests` — architecture and dependency rules.
 - `tests/Organization.Product.Testing` — shared testing helpers, factories, assertions and infrastructure.
 - `tools/Organization.Product.Ef.Migrator` — EF migration generation/application tool.
@@ -99,7 +101,7 @@ Domain ───────────► no application/infrastructure/presen
 
 ### Requirements
 
-- .NET 10 SDK
+- .NET SDK 10.0.401 or later in the 10.0 line
 - Docker
 - PostgreSQL
 - S3-compatible storage, if file storage is used
@@ -222,14 +224,15 @@ Configuration is read from:
 | `Kestrel:Endpoints:Grpc:Protocols`             | if gRPC is used             | gRPC protocol configuration.                            |
 | `ConnectionStrings:PostgreSqlConnectionString` | yes                         | PostgreSQL connection string.                           |
 | `ConnectionStrings:MongoDbConnectionString`    | if MongoDB is used          | MongoDB connection string.                              |
-| `S3:ServiceUrl`                                | if S3 is used               | S3-compatible service URL.                              |
-| `S3:Region`                                    | if S3 is used               | S3 region.                                              |
-| `S3:ForcePathStyle`                            | if S3 is used               | Path-style addressing flag for S3-compatible providers. |
-| `S3:AccessKey`                                 | if S3 is used               | S3 access key.                                          |
-| `S3:SecretKey`                                 | if S3 is used               | S3 access password.                                     |
-| `S3:BucketName`                                | if S3 is used               | Bucket name.                                            |
-| `S3:BasePrefix`                                | if S3 is used               | Prefix for objects created by this service.             |
-| `S3:DefaultPresignTtl`                         | if S3 is used               | Default presigned URL lifetime.                         |
+| `AWS:ServiceURL`                               | if S3 is used               | S3-compatible service URL.                              |
+| `AWS:AuthenticationRegion`                     | if S3 is used               | S3 region.                                              |
+| `AWS:ForcePathStyle`                           | if S3 is used               | Path-style addressing flag for S3-compatible providers. |
+| `S3Storage:AccessKey`                          | if S3 is used               | S3 access key.                                          |
+| `S3Storage:SecretKey`                          | if S3 is used               | S3 access password.                                     |
+| `S3Storage:BucketName`                         | if S3 is used               | Bucket name.                                            |
+| `S3Storage:KeyPrefix`                          | if S3 is used               | Prefix for objects created by this service.             |
+| `S3Storage:PresignedUrlLifetime`               | if S3 is used               | Default presigned URL lifetime.                         |
+| `HttpModules:Organization.Product.Module.Presentation` | yes | OpenAPI name and title for the module. |
 | `ScalarConfiguration:Title`                    | if API docs are enabled     | API reference title.                                    |
 | `OTEL_SERVICE_NAME`                            | if observability is enabled | OpenTelemetry service name.                             |
 | `OTEL_EXPORTER_OTLP_ENDPOINT`                  | if observability is enabled | OTLP collector endpoint.                                |
@@ -246,14 +249,14 @@ DOTNET_ENVIRONMENT=Development
 ConnectionStrings__PostgreSqlConnectionString=Host=localhost;Port=5432;Database=<database>;Username=<username>;Password=<password>
 ConnectionStrings__MongoDbConnectionString=mongodb://localhost:27017/<database>
 
-S3__ServiceUrl=http://localhost:9000
-S3__Region=us-east-1
-S3__ForcePathStyle=true
-S3__AccessKey=<access-key>
-S3__SecretKey=<password>
-S3__BucketName=<bucket-name>
-S3__BasePrefix=development
-S3__DefaultPresignTtl=00:15:00
+AWS__ServiceURL=http://localhost:9000
+AWS__AuthenticationRegion=us-east-1
+AWS__ForcePathStyle=true
+S3Storage__AccessKey=<access-key>
+S3Storage__SecretKey=<password>
+S3Storage__BucketName=<bucket-name>
+S3Storage__KeyPrefix=development
+S3Storage__PresignedUrlLifetime=00:15:00
 
 ScalarConfiguration__Title=<ServiceName> API Reference
 
@@ -290,15 +293,15 @@ OTEL_EXPORTER_OTLP_PROTOCOL=grpc
     "PostgreSqlConnectionString": "Host=localhost;Port=5432;Database=<database>;Username=<username>;Password=<password>",
     "MongoDbConnectionString": "mongodb://localhost:27017/<database>"
   },
-  "S3": {
-    "ServiceUrl": "http://localhost:9000",
-    "Region": "us-east-1",
-    "ForcePathStyle": true,
-    "AccessKey": "<access-key>",
-    "SecretKey": "<password>",
+  "AWS": {
+    "ServiceURL": "http://localhost:9000",
+    "AuthenticationRegion": "us-east-1",
+    "ForcePathStyle": true
+  },
+  "S3Storage": {
     "BucketName": "<bucket-name>",
-    "BasePrefix": "development",
-    "DefaultPresignTtl": "00:15:00"
+    "KeyPrefix": "development",
+    "PresignedUrlLifetime": "00:15:00"
   },
   "ScalarConfiguration": {
     "Title": "<ServiceName> API Reference"
@@ -409,7 +412,7 @@ Application layer contains use cases and orchestration logic.
 Suggested feature structure:
 
 ```text
-src/Module/Organization.Product.Module.Application/
+src/Modules/Module/Organization.Product.Module.Application/
 └── <Feature>/
     ├── Abstractions/
     ├── Create/
@@ -450,7 +453,7 @@ Possible responsibilities:
 Suggested structure:
 
 ```text
-src/Module/Organization.Product.Module.Infrastructure/
+src/Modules/Module/Organization.Product.Module.Infrastructure/
 ├── DependencyInjection/
 └── Persistence/
     ├── Core/
@@ -508,7 +511,7 @@ Example:
 ```json
 {
   "Ef": {
-    "ProjectPath": "../../../../../src/Module/Organization.Product.Module.Infrastructure",
+    "ProjectPath": "../../../../../src/Modules/Module/Organization.Product.Module.Infrastructure",
     "MigrationsDirectory": "Persistence/Core/Migrations"
   },
   "GenerateMigrations": true,
@@ -529,20 +532,24 @@ Configuration keys:
 | `ApplyMigrations`                              | Enables applying migrations to the database.                             |
 | `ConnectionStrings:PostgreSqlConnectionString` | PostgreSQL connection string used by the migrator.                       |
 
+## SignalR
+
+Add an `IHubEndpoint` implementation to `Organization.Product.Module.Presentation`, then set `SignalR__Enabled=true`. SignalR uses in-memory connection management by default. For a Redis backplane, set `SignalR__Redis__ChannelPrefix` and `ConnectionStrings__Redis`.
+
 ## File Storage
 
-Keep this section only if the service uses S3-compatible storage.
+The host registers `IFileStorage` when `S3Storage` is configured. For AWS S3, set `AWS:Region`. For an S3-compatible service, configure `AWS:ServiceURL` and `AWS:AuthenticationRegion`. Supply both credentials through secret configuration or omit both to use the standard AWS credential chain.
 
 | Setting                | Description                                 |
 | ---------------------- | ------------------------------------------- |
-| `S3:ServiceUrl`        | S3-compatible endpoint.                     |
-| `S3:Region`            | Region.                                     |
-| `S3:ForcePathStyle`    | Enables path-style addressing.              |
-| `S3:AccessKey`         | Access key.                                 |
-| `S3:SecretKey`         | S3 access password.                         |
-| `S3:BucketName`        | Bucket name.                                |
-| `S3:BasePrefix`        | Object prefix for this service/environment. |
-| `S3:DefaultPresignTtl` | Default presigned URL TTL.                  |
+| `AWS:ServiceURL`                 | S3-compatible endpoint.                     |
+| `AWS:AuthenticationRegion`       | Region.                                     |
+| `AWS:ForcePathStyle`             | Enables path-style addressing.              |
+| `S3Storage:AccessKey`            | Access key.                                 |
+| `S3Storage:SecretKey`            | S3 access password.                         |
+| `S3Storage:BucketName`           | Bucket name.                                |
+| `S3Storage:KeyPrefix`            | Object prefix for this service/environment. |
+| `S3Storage:PresignedUrlLifetime` | Default presigned URL TTL.                  |
 
 ## Code Generation
 
@@ -586,13 +593,15 @@ Remove this section if the final service does not use runtime/tooling code gener
 │   │   ├── Program.ExposeForTests.cs
 │   │   ├── appsettings.Development.json
 │   │   └── appsettings.json
-│   └── Module/
+│   ├── Organization.Product.Common/
+│   └── Modules/Module/
 │       ├── Organization.Product.Module.Application/
+│       ├── Organization.Product.Module.Contracts/
 │       ├── Organization.Product.Module.Domain/
 │       ├── Organization.Product.Module.Infrastructure/
 │       └── Organization.Product.Module.Presentation/
 ├── tests/
-│   ├── Module/
+│   ├── Modules/Module/
 │   │   ├── Organization.Product.Module.FunctionalTests/
 │   │   ├── Organization.Product.Module.IntegrationTests/
 │   │   └── Organization.Product.Module.UnitTests/
@@ -655,14 +664,14 @@ dotnet format PANiXiDA.DotnetTemplate.slnx
 ### Test
 
 ```bash
-dotnet test PANiXiDA.DotnetTemplate.slnx --configuration Release
+dotnet test --solution PANiXiDA.DotnetTemplate.slnx --configuration Release
 ```
 
 ### Run unit tests
 
 ```bash
 dotnet test \
-  tests/Module/Organization.Product.Module.UnitTests/Organization.Product.Module.UnitTests.csproj \
+  --project tests/Modules/Module/Organization.Product.Module.UnitTests/Organization.Product.Module.UnitTests.csproj \
   --configuration Release
 ```
 
@@ -670,7 +679,7 @@ dotnet test \
 
 ```bash
 dotnet test \
-  tests/Module/Organization.Product.Module.IntegrationTests/Organization.Product.Module.IntegrationTests.csproj \
+  --project tests/Modules/Module/Organization.Product.Module.IntegrationTests/Organization.Product.Module.IntegrationTests.csproj \
   --configuration Release
 ```
 
@@ -678,7 +687,7 @@ dotnet test \
 
 ```bash
 dotnet test \
-  tests/Module/Organization.Product.Module.FunctionalTests/Organization.Product.Module.FunctionalTests.csproj \
+  --project tests/Modules/Module/Organization.Product.Module.FunctionalTests/Organization.Product.Module.FunctionalTests.csproj \
   --configuration Release
 ```
 
@@ -686,7 +695,7 @@ dotnet test \
 
 ```bash
 dotnet test \
-  tests/Organization.Product.ArchitectureTests/Organization.Product.ArchitectureTests.csproj \
+  --project tests/Organization.Product.ArchitectureTests/Organization.Product.ArchitectureTests.csproj \
   --configuration Release
 ```
 
@@ -711,7 +720,7 @@ dotnet run \
 dotnet restore PANiXiDA.DotnetTemplate.slnx
 dotnet format PANiXiDA.DotnetTemplate.slnx
 dotnet build PANiXiDA.DotnetTemplate.slnx --configuration Release
-dotnet test PANiXiDA.DotnetTemplate.slnx --configuration Release
+dotnet test --solution PANiXiDA.DotnetTemplate.slnx --configuration Release
 ```
 
 ## Testing
@@ -803,14 +812,14 @@ DOTNET_ENVIRONMENT=Development
 ConnectionStrings__PostgreSqlConnectionString=Host=<host>;Port=5432;Database=<database>;Username=<username>;Password=<password>
 ConnectionStrings__MongoDbConnectionString=mongodb://<host>:27017/<database>
 
-S3__ServiceUrl=http://<host>:9000
-S3__Region=us-east-1
-S3__ForcePathStyle=true
-S3__AccessKey=<access-key>
-S3__SecretKey=<password>
-S3__BucketName=<bucket-name>
-S3__BasePrefix=development
-S3__DefaultPresignTtl=00:15:00
+AWS__ServiceURL=http://<host>:9000
+AWS__AuthenticationRegion=us-east-1
+AWS__ForcePathStyle=true
+S3Storage__AccessKey=<access-key>
+S3Storage__SecretKey=<password>
+S3Storage__BucketName=<bucket-name>
+S3Storage__KeyPrefix=development
+S3Storage__PresignedUrlLifetime=00:15:00
 
 ScalarConfiguration__Title=<ServiceName> API Reference
 
@@ -1034,7 +1043,7 @@ dotnet build PANiXiDA.DotnetTemplate.slnx --configuration Release
 dotnet format PANiXiDA.DotnetTemplate.slnx
 
 # Test
-dotnet test PANiXiDA.DotnetTemplate.slnx --configuration Release
+dotnet test --solution PANiXiDA.DotnetTemplate.slnx --configuration Release
 
 # Run API
 dotnet run --project src/Organization.Product.Host/Organization.Product.Host.csproj
@@ -1231,7 +1240,7 @@ Run:
 dotnet restore PANiXiDA.DotnetTemplate.slnx
 dotnet format PANiXiDA.DotnetTemplate.slnx
 dotnet build PANiXiDA.DotnetTemplate.slnx --configuration Release
-dotnet test PANiXiDA.DotnetTemplate.slnx --configuration Release
+dotnet test --solution PANiXiDA.DotnetTemplate.slnx --configuration Release
 ```
 
 ## License

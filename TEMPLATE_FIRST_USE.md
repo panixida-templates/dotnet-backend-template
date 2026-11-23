@@ -76,15 +76,17 @@ Current template names:
 
 - `PANiXiDA.DotnetTemplate.slnx`;
 - `src/Organization.Product.Host`;
-- `src/Module/Organization.Product.Module.Domain`;
-- `src/Module/Organization.Product.Module.Application`;
-- `src/Module/Organization.Product.Module.Infrastructure`;
-- `src/Module/Organization.Product.Module.Presentation`;
+- `src/Organization.Product.Common`;
+- `src/Modules/Module/Organization.Product.Module.Contracts`;
+- `src/Modules/Module/Organization.Product.Module.Domain`;
+- `src/Modules/Module/Organization.Product.Module.Application`;
+- `src/Modules/Module/Organization.Product.Module.Infrastructure`;
+- `src/Modules/Module/Organization.Product.Module.Presentation`;
 - `tests/Organization.Product.ArchitectureTests`;
 - `tests/Organization.Product.Testing`;
-- `tests/Module/Organization.Product.Module.UnitTests`;
-- `tests/Module/Organization.Product.Module.IntegrationTests`;
-- `tests/Module/Organization.Product.Module.FunctionalTests`;
+- `tests/Modules/Module/Organization.Product.Module.UnitTests`;
+- `tests/Modules/Module/Organization.Product.Module.IntegrationTests`;
+- `tests/Modules/Module/Organization.Product.Module.FunctionalTests`;
 - `tools/Organization.Product.Ef.Migrator`;
 - `deploy/helm/dotnet-template`.
 
@@ -120,6 +122,8 @@ Replace `Organization.Product` with the final root namespace in:
 
 Keep the layer suffixes:
 
+- `src/Organization.Product.Common`;
+- `src/Modules/Module/Organization.Product.Module.Contracts`;
 - `.Domain`;
 - `.Application`;
 - `.Infrastructure`;
@@ -136,13 +140,13 @@ Create the first real feature slice only after final names and namespaces are se
 Use this structure for a feature:
 
 ```text
-src/Module/<Root>.<Module>.Domain/<Feature>/
-src/Module/<Root>.<Module>.Application/<Feature>/
-src/Module/<Root>.<Module>.Infrastructure/Persistence/Features/<Feature>/
-src/Module/<Root>.<Module>.Presentation/Features/<Feature>/
-tests/Module/<Root>.<Module>.UnitTests/...
-tests/Module/<Root>.<Module>.IntegrationTests/...
-tests/Module/<Root>.<Module>.FunctionalTests/...
+src/Modules/<Module>/<Root>.<Module>.Domain/<Feature>/
+src/Modules/<Module>/<Root>.<Module>.Application/<Feature>/
+src/Modules/<Module>/<Root>.<Module>.Infrastructure/Persistence/Features/<Feature>/
+src/Modules/<Module>/<Root>.<Module>.Presentation/Features/<Feature>/
+tests/Modules/<Module>/<Root>.<Module>.UnitTests/...
+tests/Modules/<Module>/<Root>.<Module>.IntegrationTests/...
+tests/Modules/<Module>/<Root>.<Module>.FunctionalTests/...
 ```
 
 For the first feature, add only the files the service actually needs:
@@ -159,8 +163,8 @@ Do not add placeholder entities, endpoints, repositories or tests that are not p
 
 Current template classes:
 
-- `TemplateWriteDbContext`;
-- `TemplateReadDbContext`.
+- `ModuleWriteDbContext`;
+- `ModuleReadDbContext`.
 
 Actions:
 
@@ -197,7 +201,7 @@ Required actions:
 2. Keep local development passwords in `appsettings.json` if that is the team convention.
 3. Update `ScalarConfiguration:Title`.
 4. Remove `MongoDbConnectionString` if MongoDB is not used.
-5. Remove the `S3` section if file storage is not used.
+5. Configure `S3Storage` and `AWS` when the service uses file storage.
 6. Remove gRPC endpoint `Kestrel:Endpoints:Grpc` if the service does not expose gRPC.
 7. Check ports `8080`, `8081`, `launchSettings.json`, and Helm `service.containerPort`.
 8. Keep or regenerate the host project local settings identifier only if Visual Studio tooling requires it.
@@ -205,7 +209,7 @@ Required actions:
 Check:
 
 ```bash
-rg "dotnet-template|MongoDbConnectionString|S3:" src tools deploy
+rg "dotnet-template|MongoDbConnectionString|S3Storage|SignalR" src tools deploy
 ```
 
 Keep MongoDB or S3 matches only when the final service actually uses them.
@@ -461,7 +465,7 @@ Check .NET:
 dotnet restore <SolutionName>.slnx
 dotnet format <SolutionName>.slnx --verify-no-changes
 dotnet build <SolutionName>.slnx --configuration Release
-dotnet test <SolutionName>.slnx --configuration Release
+dotnet test --solution <SolutionName>.slnx --configuration Release
 ```
 
 Check Docker:

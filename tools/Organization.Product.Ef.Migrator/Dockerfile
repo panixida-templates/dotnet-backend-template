@@ -11,13 +11,14 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["nuget.config", "."]
+COPY ["global.json", "."]
 COPY ["Directory.Packages.props", "."]
 COPY ["Directory.Build.props", "."]
 COPY ["Directory.Build.targets", "."]
 COPY ["tools/Organization.Product.Ef.Migrator/Organization.Product.Ef.Migrator.csproj", "tools/Organization.Product.Ef.Migrator/"]
-COPY ["src/Module/Organization.Product.Module.Infrastructure/Organization.Product.Module.Infrastructure.csproj", "src/Module/Organization.Product.Module.Infrastructure/"]
-COPY ["src/Module/Organization.Product.Module.Application/Organization.Product.Module.Application.csproj", "src/Module/Organization.Product.Module.Application/"]
-COPY ["src/Module/Organization.Product.Module.Domain/Organization.Product.Module.Domain.csproj", "src/Module/Organization.Product.Module.Domain/"]
+COPY ["src/Modules/Module/Organization.Product.Module.Infrastructure/Organization.Product.Module.Infrastructure.csproj", "src/Modules/Module/Organization.Product.Module.Infrastructure/"]
+COPY ["src/Modules/Module/Organization.Product.Module.Application/Organization.Product.Module.Application.csproj", "src/Modules/Module/Organization.Product.Module.Application/"]
+COPY ["src/Modules/Module/Organization.Product.Module.Domain/Organization.Product.Module.Domain.csproj", "src/Modules/Module/Organization.Product.Module.Domain/"]
 RUN dotnet restore "./tools/Organization.Product.Ef.Migrator/Organization.Product.Ef.Migrator.csproj"
 COPY . .
 WORKDIR "/src/tools/Organization.Product.Ef.Migrator"

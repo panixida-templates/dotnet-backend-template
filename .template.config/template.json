@@ -38,6 +38,7 @@
         "src/Organization.Product.Host/Internal/Generated/**",
         ".tmp/**",
         "artifacts/**",
+        "**/TestResults/**",
         "template/**",
         ".template.config/**",
         "icon.png",
@@ -123,8 +124,6 @@
       "type": "parameter",
       "dataType": "string",
       "defaultValue": "Organization",
-      "replaces": "Organization",
-      "fileRename": "Organization",
       "displayName": "Organization",
       "description": "Root organization namespace segment."
     },
@@ -132,8 +131,6 @@
       "type": "parameter",
       "dataType": "string",
       "defaultValue": "Product",
-      "replaces": "Product",
-      "fileRename": "Product",
       "displayName": "Product",
       "description": "Product namespace segment."
     },
@@ -144,13 +141,17 @@
       "displayName": "Module",
       "description": "Main module namespace segment used in project and assembly names."
     },
-    "productModule": {
+    "moduleNamespace": {
       "type": "generated",
       "generator": "join",
-      "replaces": "Product.Module",
-      "fileRename": "Product.Module",
+      "replaces": "Organization.Product.Module",
+      "fileRename": "Organization.Product.Module",
       "parameters": {
         "symbols": [
+          {
+            "type": "ref",
+            "value": "organization"
+          },
           {
             "type": "ref",
             "value": "product"
@@ -160,10 +161,147 @@
             "value": "module"
           }
         ],
-        "separator": ".",
-        "removeEmptyValues": true
-      },
-      "description": "Internal replacement for the product and module namespace segment."
+        "separator": "."
+      }
+    },
+    "rootNamespace": {
+      "type": "generated",
+      "generator": "join",
+      "replaces": "Organization.Product",
+      "fileRename": "Organization.Product",
+      "parameters": {
+        "symbols": [
+          {
+            "type": "ref",
+            "value": "organization"
+          },
+          {
+            "type": "ref",
+            "value": "product"
+          }
+        ],
+        "separator": "."
+      }
+    },
+    "apiTitle": {
+      "type": "generated",
+      "generator": "join",
+      "replaces": "Organization Product",
+      "parameters": {
+        "symbols": [
+          {
+            "type": "ref",
+            "value": "organization"
+          },
+          {
+            "type": "ref",
+            "value": "product"
+          }
+        ],
+        "separator": " "
+      }
+    },
+    "moduleDirectory": {
+      "type": "generated",
+      "generator": "join",
+      "replaces": "Modules/Module/",
+      "fileRename": "Modules/Module/",
+      "parameters": {
+        "symbols": [
+          {
+            "type": "const",
+            "value": "Modules/"
+          },
+          {
+            "type": "ref",
+            "value": "module"
+          },
+          {
+            "type": "const",
+            "value": "/"
+          }
+        ],
+        "separator": ""
+      }
+    },
+    "moduleReadDbContext": {
+      "type": "generated",
+      "generator": "join",
+      "replaces": "ModuleReadDbContext",
+      "fileRename": "ModuleReadDbContext",
+      "parameters": {
+        "symbols": [
+          {
+            "type": "ref",
+            "value": "module"
+          },
+          {
+            "type": "const",
+            "value": "ReadDbContext"
+          }
+        ],
+        "separator": ""
+      }
+    },
+    "moduleWriteDbContext": {
+      "type": "generated",
+      "generator": "join",
+      "replaces": "ModuleWriteDbContext",
+      "fileRename": "ModuleWriteDbContext",
+      "parameters": {
+        "symbols": [
+          {
+            "type": "ref",
+            "value": "module"
+          },
+          {
+            "type": "const",
+            "value": "WriteDbContext"
+          }
+        ],
+        "separator": ""
+      }
+    },
+    "moduleConfiguration": {
+      "type": "generated",
+      "generator": "join",
+      "replaces": "ModuleModuleConfiguration",
+      "fileRename": "ModuleModuleConfiguration",
+      "parameters": {
+        "symbols": [
+          {
+            "type": "ref",
+            "value": "module"
+          },
+          {
+            "type": "const",
+            "value": "ModuleConfiguration"
+          }
+        ],
+        "separator": ""
+      }
+    },
+    "moduleRegistration": {
+      "type": "generated",
+      "generator": "join",
+      "replaces": "AddModuleModule",
+      "parameters": {
+        "symbols": [
+          {
+            "type": "const",
+            "value": "Add"
+          },
+          {
+            "type": "ref",
+            "value": "module"
+          },
+          {
+            "type": "const",
+            "value": "Module"
+          }
+        ],
+        "separator": ""
+      }
     },
     "serviceSlug": {
       "type": "parameter",

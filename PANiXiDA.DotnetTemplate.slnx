@@ -14,18 +14,20 @@
     <File Path="README.md" />
   </Folder>
   <Folder Name="/src/">
+    <Project Path="src/Organization.Product.Common/Organization.Product.Common.csproj" />
     <Project Path="src/Organization.Product.Host/Organization.Product.Host.csproj" />
   </Folder>
-  <Folder Name="/src/Module/">
-    <Project Path="src/Module/Organization.Product.Module.Application/Organization.Product.Module.Application.csproj" />
-    <Project Path="src/Module/Organization.Product.Module.Domain/Organization.Product.Module.Domain.csproj" />
-    <Project Path="src/Module/Organization.Product.Module.Infrastructure/Organization.Product.Module.Infrastructure.csproj" />
-    <Project Path="src/Module/Organization.Product.Module.Presentation/Organization.Product.Module.Presentation.csproj" />
+  <Folder Name="/src/Modules/Module/">
+    <Project Path="src/Modules/Module/Organization.Product.Module.Contracts/Organization.Product.Module.Contracts.csproj" />
+    <Project Path="src/Modules/Module/Organization.Product.Module.Application/Organization.Product.Module.Application.csproj" />
+    <Project Path="src/Modules/Module/Organization.Product.Module.Domain/Organization.Product.Module.Domain.csproj" />
+    <Project Path="src/Modules/Module/Organization.Product.Module.Infrastructure/Organization.Product.Module.Infrastructure.csproj" />
+    <Project Path="src/Modules/Module/Organization.Product.Module.Presentation/Organization.Product.Module.Presentation.csproj" />
   </Folder>
-  <Folder Name="/tests/Module/">
-    <Project Path="tests/Module/Organization.Product.Module.FunctionalTests/Organization.Product.Module.FunctionalTests.csproj" />
-    <Project Path="tests/Module/Organization.Product.Module.IntegrationTests/Organization.Product.Module.IntegrationTests.csproj" />
-    <Project Path="tests/Module/Organization.Product.Module.UnitTests/Organization.Product.Module.UnitTests.csproj" />
+  <Folder Name="/tests/Modules/Module/">
+    <Project Path="tests/Modules/Module/Organization.Product.Module.FunctionalTests/Organization.Product.Module.FunctionalTests.csproj" />
+    <Project Path="tests/Modules/Module/Organization.Product.Module.IntegrationTests/Organization.Product.Module.IntegrationTests.csproj" />
+    <Project Path="tests/Modules/Module/Organization.Product.Module.UnitTests/Organization.Product.Module.UnitTests.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Organization.Product.ArchitectureTests/Organization.Product.ArchitectureTests.csproj" />

@@ -12,7 +12,7 @@ public sealed class InfrastructureArchitectureTests
             .And().ResideInNamespaceMatching(ArchitectureDefinition.IncludeNamespaceSegment("Persistence.Features"))
             .And().HaveNameEndingWith("Repository")
             .Should().BePublic()
-            .Check(ArchitectureDefinition.Architecture);
+            .Check(ArchitectureDefinition.s_architecture);
     }
 
     [Fact(DisplayName = "Infrastructure read database models should be public")]
@@ -23,7 +23,7 @@ public sealed class InfrastructureArchitectureTests
             .And().ResideInNamespaceMatching(ArchitectureDefinition.IncludeNamespaceSegment("Persistence.Features"))
             .And().HaveNameEndingWith("ReadDbModel")
             .Should().BePublic()
-            .Check(ArchitectureDefinition.Architecture);
+            .Check(ArchitectureDefinition.s_architecture);
     }
 
     [Fact(DisplayName = "Infrastructure mappers should be internal")]
@@ -34,6 +34,6 @@ public sealed class InfrastructureArchitectureTests
             .And().ResideInNamespaceMatching(ArchitectureDefinition.IncludeNamespaceSegment("Persistence.Features"))
             .And().HaveNameEndingWith("Mapper")
             .Should().BeInternal()
-            .Check(ArchitectureDefinition.Architecture);
+            .Check(ArchitectureDefinition.s_architecture);
     }
 }

@@ -1,8 +1,8 @@
-using ArchUnitNET.Domain;
-using ArchUnitNET.Loader;
-
 using System.Text.Json;
 using System.Text.RegularExpressions;
+
+using ArchUnitNET.Domain;
+using ArchUnitNET.Loader;
 
 using static ArchUnitNET.Fluent.ArchRuleDefinition;
 
@@ -13,40 +13,80 @@ namespace Organization.Product.ArchitectureTests.Definitions;
 
 internal static class ArchitectureDefinition
 {
+    internal const string ModulesDirectoryName = "Modules";
+    internal const string RepositoryExamplesDirectoryName = "RepositoryExamples";
+
+    internal const string CommonAssemblyName = "Organization.Product.Common";
+
+    private const string ContractsLayerSuffix = ".Contracts";
     private const string DomainLayerSuffix = ".Domain";
     private const string ApplicationLayerSuffix = ".Application";
     private const string InfrastructureLayerSuffix = ".Infrastructure";
     private const string PresentationLayerSuffix = ".Presentation";
     private const string HostLayerSuffix = ".Host";
 
-    private static readonly IReadOnlyCollection<ReflectionAssembly> ProductionAssemblies =
-        LoadProductionAssemblies();
+    internal static readonly IReadOnlyCollection<ReflectionAssembly> s_productionAssemblies;
 
-    private static readonly IReadOnlyCollection<string> ProductionAssemblyNames =
-        [.. ProductionAssemblies
+    internal static readonly Architecture s_architecture;
+
+    internal static readonly IReadOnlyCollection<ModuleArchitecture> s_modules;
+
+    internal static readonly IReadOnlyCollection<string> s_moduleDiscoveryErrors;
+
+    internal static readonly IObjectProvider<IType> s_domainLayer;
+
+    internal static readonly IObjectProvider<IType> s_contractsLayer;
+
+    internal static readonly IObjectProvider<IType> s_applicationLayer;
+
+    internal static readonly IObjectProvider<IType> s_infrastructureLayer;
+
+    internal static readonly IObjectProvider<IType> s_presentationLayer;
+
+    internal static readonly IObjectProvider<IType> s_hostLayer;
+
+    private static readonly IReadOnlyCollection<string> s_productionAssemblyNames;
+
+    private static readonly ModuleDiscoveryResult s_moduleDiscoveryResult;
+
+    static ArchitectureDefinition()
+    {
+        s_productionAssemblies = LoadProductionAssemblies();
+
+        s_productionAssemblyNames = [.. s_productionAssemblies
             .Select(assembly => assembly.GetName().Name)
             .Where(name => !string.IsNullOrWhiteSpace(name))
             .Cast<string>()];
 
-    private static readonly ModuleDiscoveryResult ModuleDiscoveryResult =
-        DiscoverModules(ProductionAssemblyNames);
+        s_moduleDiscoveryResult = DiscoverModules(s_productionAssemblyNames);
 
-    internal static string IncludeNamespaceSegment(string namespaceSegment)
-    {
-        return $".*\\.{Regex.Escape(namespaceSegment)}(\\..*)?$";
+        s_architecture = new ArchLoader().LoadAssemblies([.. s_productionAssemblies]).Build();
+
+        s_modules = s_moduleDiscoveryResult.Modules;
+
+        s_moduleDiscoveryErrors = s_moduleDiscoveryResult.Errors;
+
+        s_domainLayer = Types().That().ResideInAssemblyMatching(DomainAssemblyNamePattern).As("Domain layer");
+
+        s_contractsLayer = Types().That().ResideInAssemblyMatching(ContractsAssemblyNamePattern).As("Contracts layer");
+
+        s_applicationLayer = Types().That().ResideInAssemblyMatching(ApplicationAssemblyNamePattern)
+            .As("Application layer");
+
+        s_infrastructureLayer = Types().That().ResideInAssemblyMatching(InfrastructureAssemblyNamePattern)
+            .As("Infrastructure layer");
+
+        s_presentationLayer = Types().That().ResideInAssemblyMatching(PresentationAssemblyNamePattern)
+            .As("Presentation layer");
+
+        s_hostLayer = Types().That().ResideInAssemblyMatching(AssemblyNamePattern(HostLayerSuffix)).As("Host layer");
     }
-
-    internal static readonly Architecture Architecture =
-        new ArchLoader().LoadAssemblies([.. ProductionAssemblies]).Build();
-
-    internal static readonly IReadOnlyCollection<ModuleArchitecture> Modules =
-        ModuleDiscoveryResult.Modules;
-
-    internal static readonly IReadOnlyCollection<string> ModuleDiscoveryErrors =
-        ModuleDiscoveryResult.Errors;
 
     internal static string DomainAssemblyNamePattern =>
         AssemblyNamePattern(DomainLayerSuffix);
+
+    internal static string ContractsAssemblyNamePattern =>
+        AssemblyNamePattern(ContractsLayerSuffix);
 
     internal static string ApplicationAssemblyNamePattern =>
         AssemblyNamePattern(ApplicationLayerSuffix);
@@ -57,20 +97,18 @@ internal static class ArchitectureDefinition
     internal static string PresentationAssemblyNamePattern =>
         AssemblyNamePattern(PresentationLayerSuffix);
 
-    internal static readonly IObjectProvider<IType> DomainLayer =
-        Types().That().ResideInAssemblyMatching(DomainAssemblyNamePattern).As("Domain layer");
+    internal static string IncludeNamespaceSegment(string namespaceSegment)
+    {
+        return $".*\\.{Regex.Escape(namespaceSegment)}(\\..*)?$";
+    }
 
-    internal static readonly IObjectProvider<IType> ApplicationLayer =
-        Types().That().ResideInAssemblyMatching(ApplicationAssemblyNamePattern).As("Application layer");
-
-    internal static readonly IObjectProvider<IType> InfrastructureLayer =
-        Types().That().ResideInAssemblyMatching(InfrastructureAssemblyNamePattern).As("Infrastructure layer");
-
-    internal static readonly IObjectProvider<IType> PresentationLayer =
-        Types().That().ResideInAssemblyMatching(PresentationAssemblyNamePattern).As("Presentation layer");
-
-    internal static readonly IObjectProvider<IType> HostLayer =
-        Types().That().ResideInAssemblyMatching(AssemblyNamePattern(HostLayerSuffix)).As("Host layer");
+    internal static IObjectProvider<IType> TypesInAssembly(string assemblyName)
+    {
+        return Types()
+            .That()
+            .ResideInAssemblyMatching(
+                $"^{Regex.Escape(assemblyName)}(,.*)?$");
+    }
 
     private static string AssemblyNamePattern(string suffix)
     {
@@ -100,24 +138,26 @@ internal static class ArchitectureDefinition
             .GetProperty("libraries")
             .EnumerateObject()
             .Where(library =>
-                library.Value.TryGetProperty("type", out var type) &&
-                type.GetString() == "project")
+                library.Value.TryGetProperty("type", out var type)
+                    && type.GetString() == "project")
             .Select(library => library.Name.Split('/')[0])
             .Where(assemblyName => assemblyName != executingAssemblyName)];
     }
 
     private static bool IsArchitecturalAssemblyName(string assemblyName)
     {
-        return IsLayerAssemblyName(assemblyName) ||
-               assemblyName.EndsWith(HostLayerSuffix, StringComparison.Ordinal);
+        return IsLayerAssemblyName(assemblyName)
+            || assemblyName == CommonAssemblyName
+            || assemblyName.EndsWith(HostLayerSuffix, StringComparison.Ordinal);
     }
 
     private static bool IsLayerAssemblyName(string assemblyName)
     {
-        return assemblyName.EndsWith(DomainLayerSuffix, StringComparison.Ordinal) ||
-               assemblyName.EndsWith(ApplicationLayerSuffix, StringComparison.Ordinal) ||
-               assemblyName.EndsWith(InfrastructureLayerSuffix, StringComparison.Ordinal) ||
-               assemblyName.EndsWith(PresentationLayerSuffix, StringComparison.Ordinal);
+        return assemblyName.EndsWith(ContractsLayerSuffix, StringComparison.Ordinal)
+            || assemblyName.EndsWith(DomainLayerSuffix, StringComparison.Ordinal)
+            || assemblyName.EndsWith(ApplicationLayerSuffix, StringComparison.Ordinal)
+            || assemblyName.EndsWith(InfrastructureLayerSuffix, StringComparison.Ordinal)
+            || assemblyName.EndsWith(PresentationLayerSuffix, StringComparison.Ordinal);
     }
 
     private static ReflectionAssembly LoadAssembly(string assemblyName)
@@ -161,6 +201,7 @@ internal static class ArchitectureDefinition
     {
         return new[]
             {
+                ContractsLayerSuffix,
                 DomainLayerSuffix,
                 ApplicationLayerSuffix,
                 InfrastructureLayerSuffix,
@@ -175,6 +216,7 @@ internal static class ArchitectureDefinition
         var assemblies = moduleAssemblies.ToDictionary(GetLayerSuffix, StringComparer.Ordinal);
         var missingLayers = new[]
             {
+                ContractsLayerSuffix,
                 DomainLayerSuffix,
                 ApplicationLayerSuffix,
                 InfrastructureLayerSuffix,
@@ -193,6 +235,7 @@ internal static class ArchitectureDefinition
         return (
             new ModuleArchitecture(
                 moduleAssemblies.Key,
+                assemblies[ContractsLayerSuffix],
                 assemblies[DomainLayerSuffix],
                 assemblies[ApplicationLayerSuffix],
                 assemblies[InfrastructureLayerSuffix],

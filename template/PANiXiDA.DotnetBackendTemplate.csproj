@@ -43,6 +43,7 @@
                     ../PANiXiDA.DotnetTemplate.slnx;
                     ../src/Organization.Product.Host/Internal/Generated/**;
                     ../artifacts/**;
+                    ../**/TestResults/**;
                     ../template/**;
                     ../icon.png;
                     ../LICENSE;

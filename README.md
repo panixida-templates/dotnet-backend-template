@@ -36,7 +36,7 @@ that folder convention so generated services keep empty but valid projects.
 | Solution name       | `-n`, `--name`        | current directory name        | `PANiXiDA.DotnetTemplate`                     |
 | Organization        | `--organization`      | `Organization`                | `Organization` in namespaces and file names   |
 | Product             | `--product`           | `Product`                     | `Product` in namespaces and file names        |
-| Module              | `--module`            | `Module`                      | `.Module` namespace/project segment           |
+| Module              | `--module`            | `Module`                      | `.Module` namespace and module directory           |
 | Service slug        | `--service-slug`      | `dotnet-template`             | Helm names, database names, service names     |
 | Repository name     | `--repository-name`   | `dotnet-backend-template`     | container image repository path segment       |
 | Registry owner      | `--registry-owner`    | `panixida-templates`          | container image owner path segment            |
@@ -173,7 +173,7 @@ Validate the template source solution:
 dotnet restore PANiXiDA.DotnetTemplate.slnx
 dotnet format PANiXiDA.DotnetTemplate.slnx --verify-no-changes
 dotnet build PANiXiDA.DotnetTemplate.slnx --configuration Release
-dotnet test PANiXiDA.DotnetTemplate.slnx --configuration Release
+dotnet test --solution PANiXiDA.DotnetTemplate.slnx --configuration Release
 dotnet pack template/PANiXiDA.DotnetBackendTemplate.csproj --configuration Release
 ```
 
