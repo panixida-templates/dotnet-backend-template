@@ -48,6 +48,7 @@ public sealed class ModuleConfigurationConventionTests
     [Fact(DisplayName = "The common HTTP pipeline should be configured in the Host project")]
     public async Task HttpPipeline_Should_BeConfiguredInHost_When_Registered()
     {
+        var httpExtensionsName = typeof(HttpServiceCollectionExtensions).FullName;
         var violations = await ProductionSourceDocumentDiscovery.GetItemsAsync<string>(
             async (_, document) =>
             {
@@ -69,9 +70,11 @@ public sealed class ModuleConfigurationConventionTests
                     .. root.DescendantNodes()
                         .OfType<InvocationExpressionSyntax>()
                         .Where(invocation =>
-                            semanticModel.GetSymbolInfo(invocation, cancellationToken).Symbol
-                                is IMethodSymbol { Name: "AddHttp" or "UseHttp" } method
-                            && method.ContainingType.ToDisplayString() == typeof(HttpServiceCollectionExtensions).FullName)
+                        {
+                            var symbol = semanticModel.GetSymbolInfo(invocation, cancellationToken).Symbol;
+                            return symbol is IMethodSymbol { Name: "AddHttp" or "UseHttp" } method
+                                && method.ContainingType.ToDisplayString() == httpExtensionsName;
+                        })
                         .Select(invocation => $"{document.Name}: {invocation.Expression} must be called from Host.")
                 ];
             });
