@@ -6,7 +6,8 @@ using Organization.Product.Module.Domain.RepositoryExamples.Users.Abstractions;
 using Organization.Product.Module.Domain.RepositoryExamples.Users.Enumerations;
 using Organization.Product.Module.Infrastructure.Persistence.Core;
 
-namespace Organization.Product.Module.IntegrationTests.RepositoryExamples.Infrastructure.Persistence.Features.Users.Write;
+namespace Organization.Product.Module.IntegrationTests.RepositoryExamples.Infrastructure.Persistence.Features
+    .Users.Write;
 
 public sealed class UsersRepositoryTests(IntegrationTestFixture fixture)
     : IntegrationTestBase(fixture)

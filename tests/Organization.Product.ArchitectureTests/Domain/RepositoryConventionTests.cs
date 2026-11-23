@@ -178,7 +178,6 @@ public sealed class RepositoryConventionTests
             .OrderBy(candidate => candidate.DeclaringType.FullName, StringComparer.Ordinal)
             .ToArray();
 
-
         var violations = repositoryParameters
             .Select(
                 candidate => new

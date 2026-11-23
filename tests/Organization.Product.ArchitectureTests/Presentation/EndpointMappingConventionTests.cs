@@ -2,9 +2,9 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Operations;
 
-using PANiXiDA.Core.Presentation.Http.Endpoints;
-
 using Organization.Product.ArchitectureTests.Global;
+
+using PANiXiDA.Core.Presentation.Http.Endpoints;
 
 namespace Organization.Product.ArchitectureTests.Presentation;
 

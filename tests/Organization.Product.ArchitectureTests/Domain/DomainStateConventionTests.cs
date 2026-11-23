@@ -23,7 +23,6 @@ public sealed class DomainStateConventionTests
                     && typeof(IAggregateRoot).IsAssignableFrom(type))
             .ToArray();
 
-
         var violations = GetStateViolations(
             aggregateRoots,
             allowEntities: true);
@@ -46,7 +45,6 @@ public sealed class DomainStateConventionTests
                     && typeof(IEntity).IsAssignableFrom(type)
                     && !typeof(IAggregateRoot).IsAssignableFrom(type))
             .ToArray();
-
 
         var violations = GetStateViolations(
             entities,

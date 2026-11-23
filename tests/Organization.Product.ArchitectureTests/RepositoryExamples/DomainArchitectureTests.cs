@@ -9,8 +9,10 @@ public sealed class DomainArchitectureTests
     {
         Classes().That()
             .ResideInAssemblyMatching(ArchitectureDefinition.DomainAssemblyNamePattern)
-            .And().ResideInNamespaceMatching(ArchitectureDefinition.IncludeNamespaceSegment("ValueObjects"))
-            .Should().BePublic()
+            .And()
+            .ResideInNamespaceMatching(ArchitectureDefinition.IncludeNamespaceSegment("ValueObjects"))
+            .Should()
+            .BePublic()
             .Check(ArchitectureDefinition.s_architecture);
     }
 
@@ -19,8 +21,10 @@ public sealed class DomainArchitectureTests
     {
         Classes().That()
             .ResideInAssemblyMatching(ArchitectureDefinition.DomainAssemblyNamePattern)
-            .And().ResideInNamespaceMatching(ArchitectureDefinition.IncludeNamespaceSegment("Policies"))
-            .Should().BePublic()
+            .And()
+            .ResideInNamespaceMatching(ArchitectureDefinition.IncludeNamespaceSegment("Policies"))
+            .Should()
+            .BePublic()
             .Check(ArchitectureDefinition.s_architecture);
     }
 
@@ -29,8 +33,10 @@ public sealed class DomainArchitectureTests
     {
         Classes().That()
             .ResideInAssemblyMatching(ArchitectureDefinition.DomainAssemblyNamePattern)
-            .And().ResideInNamespaceMatching(ArchitectureDefinition.IncludeNamespaceSegment("Specifications"))
-            .Should().BePublic()
+            .And()
+            .ResideInNamespaceMatching(ArchitectureDefinition.IncludeNamespaceSegment("Specifications"))
+            .Should()
+            .BePublic()
             .Check(ArchitectureDefinition.s_architecture);
     }
 }

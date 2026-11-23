@@ -24,7 +24,6 @@ public sealed class EndpointFunctionalTestConventionTests
             .OrderBy(type => type.FullName, StringComparer.Ordinal)
             .ToArray();
 
-
         var missingTestFiles = endpoints
             .Select(endpoint => GetExpectedTestFilePath(repositoryRoot, endpoint))
             .Where(expectedPath => !File.Exists(expectedPath))

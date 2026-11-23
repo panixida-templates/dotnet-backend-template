@@ -3,8 +3,9 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Operations;
 
-using PANiXiDA.Core.Domain.Identifiers;
 using Organization.Product.ArchitectureTests.Global;
+
+using PANiXiDA.Core.Domain.Identifiers;
 
 namespace Organization.Product.ArchitectureTests.Domain;
 

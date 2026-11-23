@@ -1,6 +1,8 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
+using Organization.Product.ArchitectureTests.Global;
+
 using PANiXiDA.Core.Application.Messaging.Mediator.Contracts;
 using PANiXiDA.Core.Application.Messaging.Mediator.Handlers;
 using PANiXiDA.Core.Application.Querying;
@@ -9,8 +11,6 @@ using PANiXiDA.Core.Application.Querying.Pagination;
 using PANiXiDA.Core.Application.Storage.Models;
 using PANiXiDA.Core.Domain.AggregateRoots;
 using PANiXiDA.Core.ResultPattern;
-using Organization.Product.ArchitectureTests.Global;
-
 
 namespace Organization.Product.ArchitectureTests.Application;
 

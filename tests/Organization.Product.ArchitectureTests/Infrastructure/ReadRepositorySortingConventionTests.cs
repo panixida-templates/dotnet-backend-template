@@ -5,10 +5,11 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Operations;
 
+using Organization.Product.ArchitectureTests.Global;
+
 using PANiXiDA.Core.Application.Querying;
 using PANiXiDA.Core.Application.Querying.Sorting;
 using PANiXiDA.Core.Infrastructure.Persistence.Ef.Read.Sorting;
-using Organization.Product.ArchitectureTests.Global;
 
 namespace Organization.Product.ArchitectureTests.Infrastructure;
 

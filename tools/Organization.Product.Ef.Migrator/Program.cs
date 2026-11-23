@@ -7,9 +7,10 @@ using var host = Host.CreateDefaultBuilder(args)
     .ConfigureAppConfiguration((ctx, cfg) =>
     {
         cfg.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-       .AddEnvironmentVariables();
+            .AddEnvironmentVariables();
     })
-        .ConfigureServices((ctx, services) =>
+    .ConfigureServices(
+        (ctx, services) =>
         {
             services.AddPostgreSqlEfRepository<
                 ModuleWriteDbContext, ModuleReadDbContext>(ctx.Configuration);

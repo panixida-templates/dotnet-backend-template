@@ -14,8 +14,8 @@ public static class HostBuilderExtensions
     {
         var messageStoreConnectionString =
             configuration.GetConnectionString(EfConstants.PostgreSqlConnectionStringName)
-            ?? throw new InvalidOperationException(
-                $"Connection string '{EfConstants.PostgreSqlConnectionStringName}' was not found.");
+                ?? throw new InvalidOperationException(
+                    $"Connection string '{EfConstants.PostgreSqlConnectionStringName}' was not found.");
 
         hostBuilder.UseWolverineMediator(
             messageStoreConnectionString,

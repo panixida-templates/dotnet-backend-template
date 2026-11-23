@@ -19,7 +19,7 @@ public sealed class Email : ValueObject
         {
             return Result.Failure<Email>(
                 Error.Validation("Email cannot be empty.")
-                .WithField(nameof(Email)));
+                    .WithField(nameof(Email)));
         }
 
         var normalizedValue = value.Trim().ToLowerInvariant();
@@ -28,7 +28,7 @@ public sealed class Email : ValueObject
         {
             return Result.Failure<Email>(
                 Error.Validation($"Email cannot be longer than {MaxLength} characters.")
-                .WithField(nameof(Email)));
+                    .WithField(nameof(Email)));
         }
 
         try
@@ -39,14 +39,14 @@ public sealed class Email : ValueObject
             {
                 return Result.Failure<Email>(
                     Error.Validation("Email has invalid format.")
-                    .WithField(nameof(Email)));
+                        .WithField(nameof(Email)));
             }
         }
         catch (FormatException)
         {
             return Result.Failure<Email>(
                 Error.Validation("Email has invalid format.")
-                .WithField(nameof(Email)));
+                    .WithField(nameof(Email)));
         }
 
         return Result.Success(new Email(normalizedValue));

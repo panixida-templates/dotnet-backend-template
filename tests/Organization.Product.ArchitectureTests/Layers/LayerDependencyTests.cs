@@ -144,7 +144,8 @@ public sealed class LayerDependencyTests
     {
         Types().That()
             .Are(source)
-            .And().DoNotResideInNamespaceMatching(@"^JasperFx\.Generated(?:\.|$)")
+            .And()
+            .DoNotResideInNamespaceMatching(@"^JasperFx\.Generated(?:\.|$)")
             .Should()
             .NotDependOnAny(forbiddenDependency)
             .WithoutRequiringPositiveResults()

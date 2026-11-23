@@ -3,10 +3,11 @@ using System.Reflection;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
+using Organization.Product.ArchitectureTests.Global;
+
 using PANiXiDA.Core.Infrastructure.Persistence.Ef.Read.Mapping;
 using PANiXiDA.Core.Infrastructure.Persistence.Ef.Read.Models;
 using PANiXiDA.Core.Infrastructure.Persistence.Ef.Read.Sorting;
-using Organization.Product.ArchitectureTests.Global;
 
 namespace Organization.Product.ArchitectureTests.Infrastructure;
 

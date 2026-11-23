@@ -4,18 +4,18 @@ using Organization.Product.Module.FunctionalTests.Presentation;
 
 namespace Organization.Product.Module.FunctionalTests.RepositoryExamples.Presentation.Streaming;
 
-[Collection(FunctionalTestCollection.Name)]
+[Collection(FunctionalTestCollectionDefinition.Name)]
 public sealed class ExampleHubTests
 {
     [Fact(DisplayName = "Negotiate should respond successfully when SignalR is enabled")]
     public async Task Negotiate_Should_RespondSuccessfully_When_SignalRIsEnabled()
     {
-        const string setting = "SignalR__Enabled";
-        var previousValue = Environment.GetEnvironmentVariable(setting);
+        const string SignalREnabledSetting = "SignalR__Enabled";
+        var previousValue = Environment.GetEnvironmentVariable(SignalREnabledSetting);
 
         try
         {
-            Environment.SetEnvironmentVariable(setting, "true");
+            Environment.SetEnvironmentVariable(SignalREnabledSetting, "true");
             await using var factory = new FunctionalTestWebApplicationFactory();
             using var client = factory.CreateClient();
 
@@ -28,7 +28,7 @@ public sealed class ExampleHubTests
         }
         finally
         {
-            Environment.SetEnvironmentVariable(setting, previousValue);
+            Environment.SetEnvironmentVariable(SignalREnabledSetting, previousValue);
         }
     }
 }

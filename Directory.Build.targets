@@ -2,4 +2,8 @@
     <ItemGroup>
         <PackageReference Update="Riok.Mapperly" PrivateAssets="all" />
     </ItemGroup>
+    <ItemGroup Condition="'$(ManagePackageVersionsCentrally)' == 'true'">
+        <PackageReference Include="Roslynator.Analyzers" PrivateAssets="all" />
+        <PackageReference Include="Roslynator.Formatting.Analyzers" PrivateAssets="all" />
+    </ItemGroup>
 </Project>

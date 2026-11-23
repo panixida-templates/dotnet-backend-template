@@ -18,7 +18,6 @@ public sealed partial class ApplicationInterfaceIntegrationTestConventionTests
         var repositoryRoot = FindRepositoryRoot();
         var implementations = GetInfrastructureImplementations();
 
-
         var missingTestFiles = implementations
             .Select(
                 target => new
@@ -47,7 +46,6 @@ public sealed partial class ApplicationInterfaceIntegrationTestConventionTests
     {
         var repositoryRoot = FindRepositoryRoot();
         var implementations = GetInfrastructureImplementations();
-
 
         var missingTestMethods = implementations
             .SelectMany(target => GetMissingTestMethods(repositoryRoot, target))
