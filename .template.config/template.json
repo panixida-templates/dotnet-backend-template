@@ -359,6 +359,16 @@
       ],
       "actionId": "210D431B-A78B-4D2F-B762-4ED3E3EA9025",
       "continueOnError": true
+    },
+    {
+      "condition": "(HostIdentifier == \"dotnetcli\" || HostIdentifier == \"dotnetcli-preview\")",
+      "description": "Format the generated solution after namespace substitution.",
+      "manualInstructions": [
+        {
+          "text": "From the generated solution directory, run 'dotnet format --severity warn --no-restore' to sort imports under the chosen namespace."
+        }
+      ],
+      "actionId": "AC1156F7-BB77-4DB8-B28F-24EEBCCA1E5C"
     }
   ]
 }

@@ -463,7 +463,8 @@ Check .NET:
 
 ```bash
 dotnet restore <SolutionName>.slnx
-dotnet format <SolutionName>.slnx --verify-no-changes
+dotnet format <SolutionName>.slnx --severity warn --no-restore
+dotnet format <SolutionName>.slnx --verify-no-changes --severity warn --no-restore
 dotnet build <SolutionName>.slnx --configuration Release
 dotnet test --solution <SolutionName>.slnx --configuration Release
 ```
