@@ -1,5 +1,12 @@
 using System.Reflection;
 
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+
+using Organization.Product.ArchitectureTests.Global;
+
+using HttpServiceCollectionExtensions = PANiXiDA.Core.Presentation.Http.DependencyInjection.ServiceCollectionExtensions;
+
 namespace Organization.Product.ArchitectureTests.Modules;
 
 public sealed class ModuleConfigurationConventionTests
@@ -36,6 +43,40 @@ public sealed class ModuleConfigurationConventionTests
             $"Every module must have a host configuration in "
                 + $"'{ModuleConfigurationsNamespace}':{Environment.NewLine}"
                 + string.Join(Environment.NewLine, violations));
+    }
+
+    [Fact(DisplayName = "The common HTTP pipeline should be configured in the Host project")]
+    public async Task HttpPipeline_Should_BeConfiguredInHost_When_Registered()
+    {
+        var violations = await ProductionSourceDocumentDiscovery.GetItemsAsync<string>(
+            async (_, document) =>
+            {
+                if (document.Project.AssemblyName == HostAssemblyName)
+                {
+                    return [];
+                }
+
+                var cancellationToken = TestContext.Current.CancellationToken;
+                var root = await document.GetSyntaxRootAsync(cancellationToken);
+                var semanticModel = await document.GetSemanticModelAsync(cancellationToken);
+                if (root is null || semanticModel is null)
+                {
+                    return [];
+                }
+
+                return
+                [
+                    .. root.DescendantNodes()
+                        .OfType<InvocationExpressionSyntax>()
+                        .Where(invocation =>
+                            semanticModel.GetSymbolInfo(invocation, cancellationToken).Symbol
+                                is IMethodSymbol { Name: "AddHttp" or "UseHttp" } method
+                            && method.ContainingType.ToDisplayString() == typeof(HttpServiceCollectionExtensions).FullName)
+                        .Select(invocation => $"{document.Name}: {invocation.Expression} must be called from Host.")
+                ];
+            });
+
+        Assert.Empty(violations);
     }
 
     private static string? GetConfigurationViolation(
