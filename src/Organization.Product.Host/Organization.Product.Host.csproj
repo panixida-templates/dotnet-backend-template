@@ -20,7 +20,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <InternalsVisibleTo Include="Organization.Product.Module.FunctionalTests" />
         <Using Include="PANiXiDA.Core.Observability" />
     </ItemGroup>
 </Project>

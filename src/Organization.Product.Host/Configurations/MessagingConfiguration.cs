@@ -10,10 +10,12 @@ internal static class MessagingConfiguration
 {
     internal static WebApplicationBuilder AddMessaging(this WebApplicationBuilder builder)
     {
-        var connectionString =
-            builder.Configuration.GetConnectionString(EfConstants.PostgreSqlConnectionStringName)
-                ?? throw new InvalidOperationException(
-                    $"Connection string '{EfConstants.PostgreSqlConnectionStringName}' was not found.");
+        var connectionString = builder.Configuration.GetConnectionString(EfConstants.PostgreSqlConnectionStringName);
+        if (string.IsNullOrWhiteSpace(connectionString))
+        {
+            throw new InvalidOperationException(
+                $"Connection string '{EfConstants.PostgreSqlConnectionStringName}' was not found.");
+        }
 
         builder.Host.UseWolverineMediator(
             messageStoreConnectionString: connectionString,
