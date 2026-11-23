@@ -1,10 +1,13 @@
+using Microsoft.EntityFrameworkCore;
+
 using Organization.Product.Module.Application.RepositoryExamples.Users.Abstractions;
 using Organization.Product.Module.Application.RepositoryExamples.Users.Common.Filters;
 using Organization.Product.Module.Application.RepositoryExamples.Users.Read.GetDetails;
 using Organization.Product.Module.Application.RepositoryExamples.Users.Read.GetList;
 using Organization.Product.Module.Infrastructure.Persistence.Core;
-using Organization.Product.Module.Infrastructure.RepositoryExamples.Persistence.Features.Users.Read.Filters;
-using Organization.Product.Module.Infrastructure.RepositoryExamples.Persistence.Features.Users.Read.Mappers;
+using Organization.Product.Module.Infrastructure.RepositoryExamples.Persistence.Features.Users.Read.DbModels;
+using Organization.Product.Module.Infrastructure.RepositoryExamples.Persistence.Features.Users.Read.GetDetails;
+using Organization.Product.Module.Infrastructure.RepositoryExamples.Persistence.Features.Users.Read.GetList;
 
 namespace Organization.Product.Module.Infrastructure.RepositoryExamples.Persistence.Features.Users.Read;
 
@@ -27,13 +30,29 @@ public sealed class UsersReadRepository(ModuleReadDbContext dbContext) :
         SortingParameters sortingParameters,
         CancellationToken cancellationToken)
     {
-        var query = Query;
-        query = UsersFilter.Apply(query, filterParameters);
+        var query = ApplyFilter(
+            query: Query,
+            filterParameters: filterParameters);
 
         return GetPagedResultAsync<UserListItemReadModel, UserListItemReadModelMapper, UserListItemReadModelSorting>(
             query,
             paginationParameters,
             sortingParameters,
             cancellationToken);
+    }
+
+    private static IQueryable<UserReadDbModel> ApplyFilter(
+        IQueryable<UserReadDbModel> query,
+        UsersFilterParameters filterParameters)
+    {
+        if (!string.IsNullOrWhiteSpace(filterParameters.Role))
+        {
+            query = query.Where(user =>
+                EF.Functions.ILike(
+                    matchExpression: user.Role,
+                    pattern: filterParameters.Role));
+        }
+
+        return query;
     }
 }

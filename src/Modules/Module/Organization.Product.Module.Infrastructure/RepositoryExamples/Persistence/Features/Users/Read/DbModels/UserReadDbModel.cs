@@ -1,4 +1,4 @@
-namespace Organization.Product.Module.Infrastructure.RepositoryExamples.Persistence.Features.Users.Read;
+namespace Organization.Product.Module.Infrastructure.RepositoryExamples.Persistence.Features.Users.Read.DbModels;
 
 public sealed class UserReadDbModel : AuditableReadDbModel<Guid>
 {

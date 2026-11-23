@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 using Organization.Product.Module.Domain.RepositoryExamples.Users;
 using Organization.Product.Module.Domain.RepositoryExamples.Users.Enumerations;
@@ -16,20 +15,28 @@ internal sealed class UserConfiguration : AuditableEntityConfiguration<User>
 
         builder.Property(item => item.Id)
             .HasColumnOrder(0)
-            .HasConversion(s_userIdConverter)
+            .HasConversion(
+                userId => userId.Value,
+                value => UserId.Create(value).Value)
             .ValueGeneratedNever();
 
         builder.Property(item => item.Role)
-            .HasConversion(s_userRoleConverter)
+            .HasConversion(
+                role => role.Name,
+                value => UserRole.Create(value).Value)
             .IsRequired();
 
         builder.Property(item => item.Name)
-            .HasConversion(s_userNameConverter)
+            .HasConversion(
+                name => name.Value,
+                value => UserName.Create(value).Value)
             .HasMaxLength(UserName.MaxLength)
             .IsRequired();
 
         builder.Property(item => item.Email)
-            .HasConversion(s_emailConverter)
+            .HasConversion(
+                email => email.Value,
+                value => Email.Create(value).Value)
             .HasMaxLength(Email.MaxLength)
             .IsRequired();
 
@@ -37,7 +44,9 @@ internal sealed class UserConfiguration : AuditableEntityConfiguration<User>
             .IsUnique();
 
         builder.Property(item => item.Phone)
-            .HasConversion(s_phoneNumberConverter)
+            .HasConversion(
+                phone => phone.Value,
+                value => PhoneNumber.Create(value).Value)
             .HasMaxLength(PhoneNumber.MaxLength)
             .IsRequired();
 
@@ -45,40 +54,16 @@ internal sealed class UserConfiguration : AuditableEntityConfiguration<User>
             .IsUnique();
 
         builder.Property(item => item.BirthDate)
-            .HasConversion(s_birthDateConverter)
+            .HasConversion(
+                birthDate => birthDate.Value,
+                value => BirthDate.Create(value).Value)
             .IsRequired();
 
         builder.Property(item => item.Avatar)
-            .HasConversion(s_avatarConverter)
+            .HasConversion(
+                avatar => avatar == null ? null : avatar.Value,
+                value => Avatar.Create(value).Value)
             .HasMaxLength(Avatar.MaxLength)
             .IsRequired(false);
     }
-
-    private static readonly ValueConverter<UserId, Guid> s_userIdConverter = new(
-        userId => userId.Value,
-        value => UserId.Create(value).Value);
-
-    private static readonly ValueConverter<UserRole, string> s_userRoleConverter = new(
-        role => role.Name,
-        value => UserRole.Create(value).Value);
-
-    private static readonly ValueConverter<UserName, string> s_userNameConverter = new(
-        name => name.Value,
-        value => UserName.Create(value).Value);
-
-    private static readonly ValueConverter<Email, string> s_emailConverter = new(
-        email => email.Value,
-        value => Email.Create(value).Value);
-
-    private static readonly ValueConverter<PhoneNumber, string> s_phoneNumberConverter = new(
-        phone => phone.Value,
-        value => PhoneNumber.Create(value).Value);
-
-    private static readonly ValueConverter<BirthDate, DateOnly> s_birthDateConverter = new(
-        birthDate => birthDate.Value,
-        value => BirthDate.Create(value).Value);
-
-    private static readonly ValueConverter<Avatar?, string?> s_avatarConverter = new(
-        avatar => avatar == null ? null : avatar.Value,
-        value => Avatar.Create(value).Value);
 }
