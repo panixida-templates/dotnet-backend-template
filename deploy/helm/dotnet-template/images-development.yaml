@@ -1,8 +1,8 @@
 image:
   repository: ghcr.io/panixida-templates/dotnet-backend-template/api
-  tag: development-267
+  tag: development-271
 
 migrations:
   image:
     repository: ghcr.io/panixida-templates/dotnet-backend-template/ef-migrator
-    tag: development-267
+    tag: development-271
