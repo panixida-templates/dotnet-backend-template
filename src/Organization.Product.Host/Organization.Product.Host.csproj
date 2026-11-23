@@ -8,6 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="PANiXiDA.Core.Infrastructure.Messaging.Wolverine" />
         <PackageReference Include="PANiXiDA.Core.Presentation.Scalar" />
     </ItemGroup>
 
@@ -19,6 +20,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <InternalsVisibleTo Include="Organization.Product.Module.FunctionalTests" />
         <Using Include="PANiXiDA.Core.Observability" />
     </ItemGroup>
 </Project>

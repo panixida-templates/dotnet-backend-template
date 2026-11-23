@@ -1,6 +1,7 @@
 using JasperFx;
 
 using Organization.Product.Host.Common;
+using Organization.Product.Host.Configurations;
 using Organization.Product.Host.Configurations.Modules;
 using Organization.Product.Module.Presentation.DependencyInjection;
 
@@ -17,6 +18,7 @@ builder.WebHost.ConfigureKestrel(
     });
 
 builder.AddModuleModule();
+builder.AddMessaging();
 builder.Services.AddApiDocumentation(builder.Configuration);
 
 var app = builder.Build();
