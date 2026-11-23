@@ -193,7 +193,7 @@ public sealed class ApplicationVerticalSliceConventionTests
             yield break;
         }
 
-        var segments = GetRelativeNamespace(type, target.Module.ApplicationAssemblyName).Split('.');
+        var segments = GetFeatureNamespaceSegments(type, target.Module.ApplicationAssemblyName);
         if (!segments.Skip(1).Take(expectedFolders.Length).SequenceEqual(expectedFolders, StringComparer.Ordinal)
             || !File.Exists(GetExpectedSourceFilePath(repositoryRoot, target.Module, type)))
         {
@@ -208,9 +208,7 @@ public sealed class ApplicationVerticalSliceConventionTests
     {
         var type = target.Type;
         var assemblyName = target.Module.ApplicationAssemblyName;
-        string[] segments = type.Namespace == assemblyName
-            ? []
-            : GetRelativeNamespace(type, assemblyName).Split('.');
+        var segments = GetFeatureNamespaceSegments(type, assemblyName);
         var isCommonModel = segments is [_, "Common", "ReadModels", ..];
         var isUseCaseModel = segments is [_, "Read" or "Write" or "Recurring" or "Deferred", _, ..];
 
@@ -367,38 +365,13 @@ public sealed class ApplicationVerticalSliceConventionTests
     {
         return
         [
-            .. ArchitectureDefinition.s_modules
-                .SelectMany(module =>
-                {
-                    var applicationAssembly =
-                        ArchitectureDefinition.s_productionAssemblies.Single(
-                            assembly => string.Equals(
-                                assembly.GetName().Name,
-                                module.ApplicationAssemblyName,
-                                StringComparison.Ordinal));
-
-                    return applicationAssembly
-                        .GetServiceTypes()
-                        .Where(IsRequestType)
-                        .Select(requestType =>
-                        {
-                            var relativeNamespaceSegments =
-                                GetRelativeNamespace(
-                                    requestType,
-                                    module.ApplicationAssemblyName)
-                                    .Split(
-                                        '.',
-                                        StringSplitOptions.RemoveEmptyEntries);
-                            return new ApplicationUseCase(
-                                Module: module,
-                                RequestType: requestType,
-                                RelativeNamespaceSegments:
-                                    relativeNamespaceSegments);
-                        });
-                })
-                .OrderBy(
-                    useCase => useCase.RequestType.FullName,
-                    StringComparer.Ordinal)
+            .. GetApplicationTypes()
+                .Where(target => IsRequestType(target.Type))
+                .Select(target => new ApplicationUseCase(
+                    target.Module,
+                    target.Type,
+                    GetFeatureNamespaceSegments(target.Type, target.Module.ApplicationAssemblyName)))
+                .OrderBy(useCase => useCase.RequestType.FullName, StringComparer.Ordinal)
         ];
     }
 
@@ -417,8 +390,8 @@ public sealed class ApplicationVerticalSliceConventionTests
             .. ArchitectureDefinition.s_modules
                 .SelectMany(module => productionAssemblies[
                     module.ApplicationAssemblyName]
-                    .GetServiceTypes()
-                    .Where(type => type.Namespace is not null)
+                    .GetTypes()
+                    .Where(type => type.Namespace is not null || IsRequestType(type))
                     .Select(type => new ApplicationType(module, type)))
         ];
     }
@@ -582,6 +555,18 @@ public sealed class ApplicationVerticalSliceConventionTests
                 ],
                 StringSplitOptions.RemoveEmptyEntries)
             .Contains(segment, StringComparer.OrdinalIgnoreCase);
+    }
+
+    private static string[] GetFeatureNamespaceSegments(
+        Type type,
+        string assemblyName)
+    {
+        string[] segments = type.Namespace == assemblyName
+            ? []
+            : GetRelativeNamespace(type, assemblyName).Split('.');
+        return segments is [ArchitectureDefinition.RepositoryExamplesDirectoryName, .. var featureSegments]
+            ? featureSegments
+            : segments;
     }
 
     private static string GetRelativeNamespace(

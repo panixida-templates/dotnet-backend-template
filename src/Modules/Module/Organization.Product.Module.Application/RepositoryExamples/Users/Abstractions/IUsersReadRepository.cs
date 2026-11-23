@@ -1,5 +1,7 @@
-using Organization.Product.Module.Application.RepositoryExamples.Users.GetDetails;
-using Organization.Product.Module.Application.RepositoryExamples.Users.GetList;
+using Organization.Product.Module.Application.RepositoryExamples.Users.Common.Filters;
+
+using Organization.Product.Module.Application.RepositoryExamples.Users.Read.GetDetails;
+using Organization.Product.Module.Application.RepositoryExamples.Users.Read.GetList;
 
 namespace Organization.Product.Module.Application.RepositoryExamples.Users.Abstractions;
 

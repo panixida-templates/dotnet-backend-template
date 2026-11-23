@@ -2,7 +2,7 @@ using System.Text;
 
 namespace Organization.Product.Module.Domain.RepositoryExamples.Users.ValueObjects;
 
-public sealed class PhoneNumber : ValueObject
+public sealed partial class PhoneNumber : ValueObject
 {
     public const int MinDigitsCount = 8;
     public const int MaxDigitsCount = 15;
@@ -42,16 +42,6 @@ public sealed class PhoneNumber : ValueObject
         }
 
         return Result.Success(new PhoneNumber(normalizedValue));
-    }
-
-    public override string ToString()
-    {
-        return Value;
-    }
-
-    protected override IEnumerable<object?> GetEqualityComponents()
-    {
-        yield return Value;
     }
 
     private static Result<string> Normalize(string value)

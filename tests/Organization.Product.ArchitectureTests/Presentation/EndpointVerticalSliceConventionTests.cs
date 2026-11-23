@@ -50,7 +50,7 @@ public sealed class EndpointVerticalSliceConventionTests
     [Fact(DisplayName = "Endpoints should reside in feature slices under their generic groups when declared")]
     public void Endpoints_Should_ResideInFeatureSlicesUnderTheirGenericGroups_When_Declared()
     {
-        var endpoints = PresentationArchitectureConvention.GetEndpoints();
+        var endpoints = PresentationArchitectureConvention.GetEndpoints(includeRepositoryExamples: true);
         var violations = endpoints
             .SelectMany(GetEndpointLocationViolations)
             .ToArray();

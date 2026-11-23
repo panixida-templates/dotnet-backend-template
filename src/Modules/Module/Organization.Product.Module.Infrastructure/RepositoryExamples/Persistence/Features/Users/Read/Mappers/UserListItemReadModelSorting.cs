@@ -1,4 +1,4 @@
-using Organization.Product.Module.Application.RepositoryExamples.Users.GetList;
+using Organization.Product.Module.Application.RepositoryExamples.Users.Read.GetList;
 
 namespace Organization.Product.Module.Infrastructure.RepositoryExamples.Persistence.Features.Users.Read.Mappers;
 

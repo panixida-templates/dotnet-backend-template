@@ -1,7 +1,7 @@
-using Organization.Product.Module.Application.RepositoryExamples.Users;
 using Organization.Product.Module.Application.RepositoryExamples.Users.Abstractions;
-using Organization.Product.Module.Application.RepositoryExamples.Users.GetDetails;
-using Organization.Product.Module.Application.RepositoryExamples.Users.GetList;
+using Organization.Product.Module.Application.RepositoryExamples.Users.Common.Filters;
+using Organization.Product.Module.Application.RepositoryExamples.Users.Read.GetDetails;
+using Organization.Product.Module.Application.RepositoryExamples.Users.Read.GetList;
 using Organization.Product.Module.Infrastructure.Persistence.Core;
 using Organization.Product.Module.Infrastructure.RepositoryExamples.Persistence.Features.Users.Read.Filters;
 using Organization.Product.Module.Infrastructure.RepositoryExamples.Persistence.Features.Users.Read.Mappers;

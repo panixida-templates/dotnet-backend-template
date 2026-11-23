@@ -1,4 +1,4 @@
-using Organization.Product.Module.Application.RepositoryExamples.Users.GetDetails;
+using Organization.Product.Module.Application.RepositoryExamples.Users.Read.GetDetails;
 
 using Riok.Mapperly.Abstractions;
 

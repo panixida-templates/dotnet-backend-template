@@ -30,7 +30,8 @@ internal static class PresentationArchitectureConvention
     }
 
     internal static Type[] GetPresentationTypes(
-        Func<Type, bool> predicate)
+        Func<Type, bool> predicate,
+        bool includeRepositoryExamples = false)
     {
         return
         [
@@ -41,7 +42,9 @@ internal static class PresentationArchitectureConvention
                             assembly.GetName().Name,
                             module.PresentationAssemblyName,
                             StringComparison.Ordinal)))
-                .SelectMany(assembly => assembly.GetServiceTypes())
+                .SelectMany(assembly => includeRepositoryExamples
+                    ? assembly.GetTypes()
+                    : assembly.GetServiceTypes())
                 .Where(type =>
                     type is { IsClass: true }
                         && type.Namespace is not null
@@ -59,10 +62,11 @@ internal static class PresentationArchitectureConvention
             typeof(IEndpointGroup).IsAssignableFrom(type));
     }
 
-    internal static Type[] GetEndpoints()
+    internal static Type[] GetEndpoints(bool includeRepositoryExamples = false)
     {
-        return GetConcretePresentationTypes(type =>
-            typeof(IEndpoint).IsAssignableFrom(type));
+        return GetPresentationTypes(
+            type => !type.IsAbstract && typeof(IEndpoint).IsAssignableFrom(type),
+            includeRepositoryExamples);
     }
 
     internal static Type GetEndpointGroup(Type endpoint)
