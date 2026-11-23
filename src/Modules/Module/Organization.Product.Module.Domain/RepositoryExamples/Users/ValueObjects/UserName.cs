@@ -1,6 +1,6 @@
 namespace Organization.Product.Module.Domain.RepositoryExamples.Users.ValueObjects;
 
-public sealed class UserName : ValueObject
+public sealed partial class UserName : ValueObject
 {
     public const int MaxLength = 200;
 
@@ -30,15 +30,5 @@ public sealed class UserName : ValueObject
         }
 
         return Result.Success(new UserName(normalizedValue));
-    }
-
-    public override string ToString()
-    {
-        return Value;
-    }
-
-    protected override IEnumerable<object?> GetEqualityComponents()
-    {
-        yield return Value;
     }
 }

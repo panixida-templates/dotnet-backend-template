@@ -1,6 +1,6 @@
 namespace Organization.Product.Module.Domain.RepositoryExamples.Users.ValueObjects;
 
-public sealed class BirthDate : ValueObject
+public sealed partial class BirthDate : ValueObject
 {
     public const int MinimumAge = 18;
 
@@ -59,15 +59,5 @@ public sealed class BirthDate : ValueObject
     public bool IsAtLeast(int age, DateOnly onDate)
     {
         return GetAge(onDate) >= age;
-    }
-
-    public override string ToString()
-    {
-        return Value.ToString("yyyy-MM-dd");
-    }
-
-    protected override IEnumerable<object?> GetEqualityComponents()
-    {
-        yield return Value;
     }
 }

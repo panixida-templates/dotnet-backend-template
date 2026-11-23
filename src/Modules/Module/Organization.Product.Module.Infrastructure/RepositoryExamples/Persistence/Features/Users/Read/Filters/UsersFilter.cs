@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-using Organization.Product.Module.Application.RepositoryExamples.Users;
+using Organization.Product.Module.Application.RepositoryExamples.Users.Common.Filters;
 
 namespace Organization.Product.Module.Infrastructure.RepositoryExamples.Persistence.Features.Users.Read.Filters;
 

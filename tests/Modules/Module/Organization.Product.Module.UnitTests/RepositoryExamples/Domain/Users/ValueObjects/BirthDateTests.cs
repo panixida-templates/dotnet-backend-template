@@ -13,7 +13,7 @@ public sealed class BirthDateTests
 
         result.IsSuccess.ShouldBeTrue();
         result.Value.Value.ShouldBe(birthDate);
-        result.Value.ToString().ShouldBe(birthDate.ToString("yyyy-MM-dd"));
+        result.Value.ToString().ShouldBe(FormattableString.Invariant($"BirthDate {{ Value = {birthDate} }}"));
     }
 
     [Fact(DisplayName = "Create should return failure when birth date is in future")]

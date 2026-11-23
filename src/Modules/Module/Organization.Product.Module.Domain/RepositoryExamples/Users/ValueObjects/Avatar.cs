@@ -1,6 +1,6 @@
 namespace Organization.Product.Module.Domain.RepositoryExamples.Users.ValueObjects;
 
-public sealed class Avatar : ValueObject
+public sealed partial class Avatar : ValueObject
 {
     public const int MaxLength = 2048;
 
@@ -28,15 +28,5 @@ public sealed class Avatar : ValueObject
         }
 
         return Result.Success<Avatar?>(new Avatar(normalizedValue));
-    }
-
-    public override string ToString()
-    {
-        return Value;
-    }
-
-    protected override IEnumerable<object?> GetEqualityComponents()
-    {
-        yield return Value;
     }
 }

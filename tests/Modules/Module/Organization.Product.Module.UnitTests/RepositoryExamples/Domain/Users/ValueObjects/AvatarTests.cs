@@ -26,7 +26,7 @@ public sealed class AvatarTests
         result.IsSuccess.ShouldBeTrue();
         result.Value.ShouldNotBeNull();
         result.Value.Value.ShouldBe("https://example.com/avatar.png");
-        result.Value.ToString().ShouldBe("https://example.com/avatar.png");
+        result.Value.ToString().ShouldBe("Avatar { Value = https://example.com/avatar.png }");
     }
 
     [Fact(DisplayName = "Create should return failure when avatar is too long")]

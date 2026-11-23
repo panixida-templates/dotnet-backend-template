@@ -2,7 +2,7 @@ using System.Net.Mail;
 
 namespace Organization.Product.Module.Domain.RepositoryExamples.Users.ValueObjects;
 
-public sealed class Email : ValueObject
+public sealed partial class Email : ValueObject
 {
     public const int MaxLength = 320;
 
@@ -50,15 +50,5 @@ public sealed class Email : ValueObject
         }
 
         return Result.Success(new Email(normalizedValue));
-    }
-
-    public override string ToString()
-    {
-        return Value;
-    }
-
-    protected override IEnumerable<object?> GetEqualityComponents()
-    {
-        yield return Value;
     }
 }

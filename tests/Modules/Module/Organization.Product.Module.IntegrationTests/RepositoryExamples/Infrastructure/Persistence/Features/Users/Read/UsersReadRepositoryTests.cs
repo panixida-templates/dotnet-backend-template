@@ -1,7 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 
-using Organization.Product.Module.Application.RepositoryExamples.Users;
 using Organization.Product.Module.Application.RepositoryExamples.Users.Abstractions;
+using Organization.Product.Module.Application.RepositoryExamples.Users.Common.Filters;
 using Organization.Product.Module.Domain.RepositoryExamples.Users;
 using Organization.Product.Module.Domain.RepositoryExamples.Users.Abstractions;
 using Organization.Product.Module.Infrastructure.Persistence.Core;

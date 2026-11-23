@@ -13,7 +13,7 @@ public sealed class PhoneNumberTests
 
         result.IsSuccess.ShouldBeTrue();
         result.Value.Value.ShouldBe("+12345678901");
-        result.Value.ToString().ShouldBe("+12345678901");
+        result.Value.ToString().ShouldBe("PhoneNumber { Value = +12345678901 }");
     }
 
     [Fact(DisplayName = "Create should ignore plus when it is not first normalized character")]

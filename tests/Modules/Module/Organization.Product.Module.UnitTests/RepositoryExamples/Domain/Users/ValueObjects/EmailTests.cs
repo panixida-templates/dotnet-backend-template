@@ -13,7 +13,7 @@ public sealed class EmailTests
 
         result.IsSuccess.ShouldBeTrue();
         result.Value.Value.ShouldBe("user.name@example.com");
-        result.Value.ToString().ShouldBe("user.name@example.com");
+        result.Value.ToString().ShouldBe("Email { Value = user.name@example.com }");
     }
 
     [Fact(DisplayName = "Create should return failure when email is empty")]

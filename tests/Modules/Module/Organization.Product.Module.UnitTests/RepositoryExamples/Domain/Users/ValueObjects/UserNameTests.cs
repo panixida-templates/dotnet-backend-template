@@ -13,7 +13,7 @@ public sealed class UserNameTests
 
         result.IsSuccess.ShouldBeTrue();
         result.Value.Value.ShouldBe("John Doe");
-        result.Value.ToString().ShouldBe("John Doe");
+        result.Value.ToString().ShouldBe("UserName { Value = John Doe }");
     }
 
     [Fact(DisplayName = "Create should return failure when name is empty")]
