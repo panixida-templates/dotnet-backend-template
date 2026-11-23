@@ -4,7 +4,7 @@ using Organization.Product.Module.Domain.RepositoryExamples.Users.Abstractions;
 namespace Organization.Product.Module.Application.RepositoryExamples.Users.Update;
 
 public sealed class UpdateUserHandler(IUsersRepository usersRepository)
-    : ICommandHandler<UpdateUserCommand, Result>
+    : ICommandHandler<UpdateUserCommand, Result>, IRequireTransaction
 {
     public async Task<Result> HandleAsync(
         UpdateUserCommand command,
