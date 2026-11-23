@@ -363,14 +363,16 @@ public sealed class ApplicationVerticalSliceConventionTests
 
     private static ApplicationUseCase[] GetApplicationUseCases()
     {
-        return GetApplicationTypes()
-            .Where(target => IsRequestType(target.Type))
-            .Select(target => new ApplicationUseCase(
-                target.Module,
-                target.Type,
-                GetFeatureNamespaceSegments(target.Type, target.Module.ApplicationAssemblyName)))
-            .OrderBy(useCase => useCase.RequestType.FullName, StringComparer.Ordinal)
-            .ToArray();
+        return
+        [
+            .. GetApplicationTypes()
+                .Where(target => IsRequestType(target.Type))
+                .Select(target => new ApplicationUseCase(
+                    target.Module,
+                    target.Type,
+                    GetFeatureNamespaceSegments(target.Type, target.Module.ApplicationAssemblyName)))
+                .OrderBy(useCase => useCase.RequestType.FullName, StringComparer.Ordinal)
+        ];
     }
 
     private static ApplicationType[] GetApplicationTypes()
