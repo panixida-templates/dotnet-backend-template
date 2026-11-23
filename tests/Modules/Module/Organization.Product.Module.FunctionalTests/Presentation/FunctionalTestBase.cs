@@ -2,7 +2,7 @@ using System.Text.Json;
 
 namespace Organization.Product.Module.FunctionalTests.Presentation;
 
-[Collection(FunctionalTestCollection.Name)]
+[Collection(FunctionalTestCollectionDefinition.Name)]
 public abstract class FunctionalTestBase(FunctionalTestFixture fixture) : IAsyncLifetime
 {
     protected static JsonSerializerOptions JsonOptions => TestJsonSerializerOptions.Web;

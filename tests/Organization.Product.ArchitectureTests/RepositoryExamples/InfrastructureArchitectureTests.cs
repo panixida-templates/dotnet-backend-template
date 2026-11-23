@@ -9,9 +9,12 @@ public sealed class InfrastructureArchitectureTests
     {
         Classes().That()
             .ResideInAssemblyMatching(ArchitectureDefinition.InfrastructureAssemblyNamePattern)
-            .And().ResideInNamespaceMatching(ArchitectureDefinition.IncludeNamespaceSegment("Persistence.Features"))
-            .And().HaveNameEndingWith("Repository")
-            .Should().BePublic()
+            .And()
+            .ResideInNamespaceMatching(ArchitectureDefinition.IncludeNamespaceSegment("Persistence.Features"))
+            .And()
+            .HaveNameEndingWith("Repository")
+            .Should()
+            .BePublic()
             .Check(ArchitectureDefinition.s_architecture);
     }
 
@@ -20,9 +23,12 @@ public sealed class InfrastructureArchitectureTests
     {
         Classes().That()
             .ResideInAssemblyMatching(ArchitectureDefinition.InfrastructureAssemblyNamePattern)
-            .And().ResideInNamespaceMatching(ArchitectureDefinition.IncludeNamespaceSegment("Persistence.Features"))
-            .And().HaveNameEndingWith("ReadDbModel")
-            .Should().BePublic()
+            .And()
+            .ResideInNamespaceMatching(ArchitectureDefinition.IncludeNamespaceSegment("Persistence.Features"))
+            .And()
+            .HaveNameEndingWith("ReadDbModel")
+            .Should()
+            .BePublic()
             .Check(ArchitectureDefinition.s_architecture);
     }
 
@@ -31,9 +37,12 @@ public sealed class InfrastructureArchitectureTests
     {
         Classes().That()
             .ResideInAssemblyMatching(ArchitectureDefinition.InfrastructureAssemblyNamePattern)
-            .And().ResideInNamespaceMatching(ArchitectureDefinition.IncludeNamespaceSegment("Persistence.Features"))
-            .And().HaveNameEndingWith("Mapper")
-            .Should().BeInternal()
+            .And()
+            .ResideInNamespaceMatching(ArchitectureDefinition.IncludeNamespaceSegment("Persistence.Features"))
+            .And()
+            .HaveNameEndingWith("Mapper")
+            .Should()
+            .BeInternal()
             .Check(ArchitectureDefinition.s_architecture);
     }
 }

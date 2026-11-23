@@ -9,8 +9,10 @@ public sealed class ApplicationArchitectureTests
     {
         Classes().That()
             .ResideInAssemblyMatching(ArchitectureDefinition.ApplicationAssemblyNamePattern)
-            .And().HaveNameEndingWith("Handler")
-            .Should().BePublic()
+            .And()
+            .HaveNameEndingWith("Handler")
+            .Should()
+            .BePublic()
             .Check(ArchitectureDefinition.s_architecture);
     }
 
@@ -19,8 +21,10 @@ public sealed class ApplicationArchitectureTests
     {
         Classes().That()
             .ResideInAssemblyMatching(ArchitectureDefinition.ApplicationAssemblyNamePattern)
-            .And().HaveNameEndingWith("Command")
-            .Should().BePublic()
+            .And()
+            .HaveNameEndingWith("Command")
+            .Should()
+            .BePublic()
             .Check(ArchitectureDefinition.s_architecture);
     }
 
@@ -29,8 +33,10 @@ public sealed class ApplicationArchitectureTests
     {
         Classes().That()
             .ResideInAssemblyMatching(ArchitectureDefinition.ApplicationAssemblyNamePattern)
-            .And().HaveNameEndingWith("Query")
-            .Should().BePublic()
+            .And()
+            .HaveNameEndingWith("Query")
+            .Should()
+            .BePublic()
             .Check(ArchitectureDefinition.s_architecture);
     }
 
@@ -39,8 +45,10 @@ public sealed class ApplicationArchitectureTests
     {
         Classes().That()
             .ResideInAssemblyMatching(ArchitectureDefinition.ApplicationAssemblyNamePattern)
-            .And().HaveNameEndingWith("ReadModel")
-            .Should().BePublic()
+            .And()
+            .HaveNameEndingWith("ReadModel")
+            .Should()
+            .BePublic()
             .Check(ArchitectureDefinition.s_architecture);
     }
 }

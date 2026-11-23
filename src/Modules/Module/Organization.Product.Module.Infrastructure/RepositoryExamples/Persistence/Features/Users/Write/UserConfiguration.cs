@@ -16,20 +16,20 @@ internal sealed class UserConfiguration : AuditableEntityConfiguration<User>
 
         builder.Property(item => item.Id)
             .HasColumnOrder(0)
-            .HasConversion(UserIdConverter)
+            .HasConversion(s_userIdConverter)
             .ValueGeneratedNever();
 
         builder.Property(item => item.Role)
-            .HasConversion(UserRoleConverter)
+            .HasConversion(s_userRoleConverter)
             .IsRequired();
 
         builder.Property(item => item.Name)
-            .HasConversion(UserNameConverter)
+            .HasConversion(s_userNameConverter)
             .HasMaxLength(UserName.MaxLength)
             .IsRequired();
 
         builder.Property(item => item.Email)
-            .HasConversion(EmailConverter)
+            .HasConversion(s_emailConverter)
             .HasMaxLength(Email.MaxLength)
             .IsRequired();
 
@@ -37,7 +37,7 @@ internal sealed class UserConfiguration : AuditableEntityConfiguration<User>
             .IsUnique();
 
         builder.Property(item => item.Phone)
-            .HasConversion(PhoneNumberConverter)
+            .HasConversion(s_phoneNumberConverter)
             .HasMaxLength(PhoneNumber.MaxLength)
             .IsRequired();
 
@@ -45,40 +45,40 @@ internal sealed class UserConfiguration : AuditableEntityConfiguration<User>
             .IsUnique();
 
         builder.Property(item => item.BirthDate)
-            .HasConversion(BirthDateConverter)
+            .HasConversion(s_birthDateConverter)
             .IsRequired();
 
         builder.Property(item => item.Avatar)
-            .HasConversion(AvatarConverter)
+            .HasConversion(s_avatarConverter)
             .HasMaxLength(Avatar.MaxLength)
             .IsRequired(false);
     }
 
-    private static readonly ValueConverter<UserId, Guid> UserIdConverter = new(
+    private static readonly ValueConverter<UserId, Guid> s_userIdConverter = new(
         userId => userId.Value,
         value => UserId.Create(value).Value);
 
-    private static readonly ValueConverter<UserRole, string> UserRoleConverter = new(
+    private static readonly ValueConverter<UserRole, string> s_userRoleConverter = new(
         role => role.Name,
         value => UserRole.Create(value).Value);
 
-    private static readonly ValueConverter<UserName, string> UserNameConverter = new(
+    private static readonly ValueConverter<UserName, string> s_userNameConverter = new(
         name => name.Value,
         value => UserName.Create(value).Value);
 
-    private static readonly ValueConverter<Email, string> EmailConverter = new(
+    private static readonly ValueConverter<Email, string> s_emailConverter = new(
         email => email.Value,
         value => Email.Create(value).Value);
 
-    private static readonly ValueConverter<PhoneNumber, string> PhoneNumberConverter = new(
+    private static readonly ValueConverter<PhoneNumber, string> s_phoneNumberConverter = new(
         phone => phone.Value,
         value => PhoneNumber.Create(value).Value);
 
-    private static readonly ValueConverter<BirthDate, DateOnly> BirthDateConverter = new(
+    private static readonly ValueConverter<BirthDate, DateOnly> s_birthDateConverter = new(
         birthDate => birthDate.Value,
         value => BirthDate.Create(value).Value);
 
-    private static readonly ValueConverter<Avatar?, string?> AvatarConverter = new(
+    private static readonly ValueConverter<Avatar?, string?> s_avatarConverter = new(
         avatar => avatar == null ? null : avatar.Value,
         value => Avatar.Create(value).Value);
 }

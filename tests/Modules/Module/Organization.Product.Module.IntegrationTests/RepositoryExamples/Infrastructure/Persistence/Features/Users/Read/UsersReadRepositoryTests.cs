@@ -6,7 +6,8 @@ using Organization.Product.Module.Domain.RepositoryExamples.Users;
 using Organization.Product.Module.Domain.RepositoryExamples.Users.Abstractions;
 using Organization.Product.Module.Infrastructure.Persistence.Core;
 
-namespace Organization.Product.Module.IntegrationTests.RepositoryExamples.Infrastructure.Persistence.Features.Users.Read;
+namespace Organization.Product.Module.IntegrationTests.RepositoryExamples.Infrastructure.Persistence.Features
+    .Users.Read;
 
 public sealed class UsersReadRepositoryTests(IntegrationTestFixture fixture)
     : IntegrationTestBase(fixture)

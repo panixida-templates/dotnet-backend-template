@@ -1,10 +1,10 @@
 using FluentValidation;
 
+using Organization.Product.ArchitectureTests.Tests;
+
 using PANiXiDA.Core.Application.Messaging.EventBus.Handlers;
 using PANiXiDA.Core.Application.Messaging.Mediator.Handlers;
 using PANiXiDA.Core.Application.Querying.Sorting;
-
-using Organization.Product.ArchitectureTests.Tests;
 
 namespace Organization.Product.ArchitectureTests.Application;
 
@@ -35,7 +35,6 @@ public sealed class ApplicationHandlerConventionTests
         var handlers = GetApplicationHandlers(repositoryRoot);
         var testMethods = TestSourceDiscovery.GetTestMethods();
 
-
         var violations = handlers
             .Where(handler =>
                 !File.Exists(handler.ExpectedTestFilePath)
@@ -65,7 +64,6 @@ public sealed class ApplicationHandlerConventionTests
         var handlers = GetApplicationHandlers(repositoryRoot);
         var testMethods = TestSourceDiscovery.GetTestMethods();
 
-
         var violations = handlers
             .Where(handler => File.Exists(handler.ExpectedTestFilePath))
             .SelectMany(handler => GetMissingHandlerTestMethods(
@@ -86,7 +84,6 @@ public sealed class ApplicationHandlerConventionTests
     {
         var handlers = GetApplicationHandlers(FindRepositoryRoot());
         var validators = GetApplicationValidators();
-
 
         var violations = handlers
             .SelectMany(handler => handler.HandlerInterfaces
@@ -116,7 +113,6 @@ public sealed class ApplicationHandlerConventionTests
         var repositoryRoot = FindRepositoryRoot();
         var validators = GetApplicationValidators();
         var testMethods = TestSourceDiscovery.GetTestMethods();
-
 
         var violations = validators
             .Select(
@@ -157,7 +153,6 @@ public sealed class ApplicationHandlerConventionTests
             .Where(type => type.GetInterfaces().Any(IsValidatorInterface))
             .OrderBy(type => type.FullName, StringComparer.Ordinal)
             .ToArray();
-
 
         var violations = validators
             .Where(type => !type.IsVisible || !type.IsSealed)

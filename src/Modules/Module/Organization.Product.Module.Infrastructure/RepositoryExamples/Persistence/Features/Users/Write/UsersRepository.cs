@@ -6,5 +6,6 @@ namespace Organization.Product.Module.Infrastructure.RepositoryExamples.Persiste
 
 public sealed class UsersRepository(
     ModuleWriteDbContext dbContext)
-    : EfRepository<ModuleWriteDbContext, UserId, User>(dbContext),
-    IUsersRepository;
+    :
+        EfRepository<ModuleWriteDbContext, UserId, User>(dbContext),
+        IUsersRepository;

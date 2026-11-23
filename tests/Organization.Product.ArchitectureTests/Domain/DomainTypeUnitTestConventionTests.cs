@@ -1,13 +1,13 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
+using Organization.Product.ArchitectureTests.Tests;
+
 using PANiXiDA.Core.Domain.AggregateRoots;
 using PANiXiDA.Core.Domain.Entities;
 using PANiXiDA.Core.Domain.Enumerations;
 using PANiXiDA.Core.Domain.Identifiers;
 using PANiXiDA.Core.Domain.ValueObjects;
-
-using Organization.Product.ArchitectureTests.Tests;
 
 namespace Organization.Product.ArchitectureTests.Domain;
 
@@ -24,7 +24,6 @@ public sealed class DomainTypeUnitTestConventionTests
         var repositoryRoot = FindRepositoryRoot();
         var domainTypes = GetDomainTypes(repositoryRoot);
         var testMethods = TestSourceDiscovery.GetTestMethods();
-
 
         var violations = domainTypes
             .Select(
@@ -61,7 +60,6 @@ public sealed class DomainTypeUnitTestConventionTests
         var repositoryRoot = FindRepositoryRoot();
         var domainTypes = GetDomainTypes(repositoryRoot);
         var testMethods = TestSourceDiscovery.GetTestMethods();
-
 
         var violations = domainTypes
             .Where(domainType =>

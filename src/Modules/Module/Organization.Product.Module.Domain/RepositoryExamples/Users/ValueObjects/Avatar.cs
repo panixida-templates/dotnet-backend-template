@@ -24,7 +24,7 @@ public sealed class Avatar : ValueObject
         {
             return Result.Failure<Avatar?>(
                 Error.Validation($"Avatar cannot be longer than {MaxLength} characters.")
-                .WithField(nameof(Avatar)));
+                    .WithField(nameof(Avatar)));
         }
 
         return Result.Success<Avatar?>(new Avatar(normalizedValue));

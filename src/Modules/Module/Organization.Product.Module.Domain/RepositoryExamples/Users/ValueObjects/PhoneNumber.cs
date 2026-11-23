@@ -21,7 +21,7 @@ public sealed class PhoneNumber : ValueObject
         {
             return Result.Failure<PhoneNumber>(
                 Error.Validation("Phone number cannot be empty.")
-                .WithField(nameof(PhoneNumber)));
+                    .WithField(nameof(PhoneNumber)));
         }
 
         var normalizeResult = Normalize(value);
@@ -38,7 +38,7 @@ public sealed class PhoneNumber : ValueObject
         {
             return Result.Failure<PhoneNumber>(
                 Error.Validation($"Phone number must contain from {MinDigitsCount} to {MaxDigitsCount} digits.")
-                .WithField(nameof(PhoneNumber)));
+                    .WithField(nameof(PhoneNumber)));
         }
 
         return Result.Success(new PhoneNumber(normalizedValue));
@@ -79,7 +79,7 @@ public sealed class PhoneNumber : ValueObject
         {
             return Result.Failure<string>(
                 Error.Validation("Phone number has invalid format.")
-                .WithField(nameof(PhoneNumber)));
+                    .WithField(nameof(PhoneNumber)));
         }
 
         return Result.Success(builder.ToString());

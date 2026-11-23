@@ -17,7 +17,7 @@ public sealed class UserName : ValueObject
         {
             return Result.Failure<UserName>(
                 Error.Validation("User name cannot be empty.")
-                .WithField(nameof(UserName)));
+                    .WithField(nameof(UserName)));
         }
 
         var normalizedValue = value.Trim();
@@ -26,7 +26,7 @@ public sealed class UserName : ValueObject
         {
             return Result.Failure<UserName>(
                 Error.Validation($"User name cannot be longer than {MaxLength} characters.")
-                .WithField(nameof(UserName)));
+                    .WithField(nameof(UserName)));
         }
 
         return Result.Success(new UserName(normalizedValue));

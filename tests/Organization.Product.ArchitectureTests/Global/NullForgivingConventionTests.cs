@@ -82,7 +82,9 @@ public sealed class NullForgivingConventionTests
         true)]
     [InlineData("private Sample(int _) : this() { _stats = null!; } private SampleStats _stats;", true)]
     [InlineData("public DbSet<SampleRow> Rows { get; set; } = null!;", true)]
-    [InlineData("public sealed class Context : DbContext { public DbSet<SampleRow> Rows { get; set; } = null!; }", false)]
+    [InlineData(
+        "public sealed class Context : DbContext { public DbSet<SampleRow> Rows { get; set; } = null!; }",
+        false)]
     [InlineData(
         "public sealed class Context : DbContext { public DbSet<SampleRow> Rows { get; set; } = (default!); }",
         false)]

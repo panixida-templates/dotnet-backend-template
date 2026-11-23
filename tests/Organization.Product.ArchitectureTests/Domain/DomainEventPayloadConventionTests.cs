@@ -2,7 +2,6 @@ using System.Collections.Immutable;
 
 using PANiXiDA.Core.Domain.DomainEvents;
 
-
 namespace Organization.Product.ArchitectureTests.Domain;
 
 public sealed class DomainEventPayloadConventionTests

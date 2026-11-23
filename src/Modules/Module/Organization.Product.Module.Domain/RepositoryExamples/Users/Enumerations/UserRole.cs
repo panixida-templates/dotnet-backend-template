@@ -17,7 +17,7 @@ public sealed partial class UserRole : Enumeration<UserRole>
         {
             return Result.Failure<UserRole>(
                 Error.Validation("User role cannot be empty.")
-                .WithField(nameof(UserRole)));
+                    .WithField(nameof(UserRole)));
         }
 
         var normalizedValue = value.Trim();
@@ -29,6 +29,6 @@ public sealed partial class UserRole : Enumeration<UserRole>
 
         return Result.Failure<UserRole>(
             Error.Validation($"User role '{normalizedValue}' is invalid.")
-            .WithField(nameof(UserRole)));
+                .WithField(nameof(UserRole)));
     }
 }

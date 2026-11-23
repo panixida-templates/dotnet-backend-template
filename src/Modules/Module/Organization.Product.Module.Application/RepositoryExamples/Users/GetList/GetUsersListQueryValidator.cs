@@ -10,14 +10,16 @@ public sealed class GetUsersListQueryValidator : AbstractValidator<GetUsersListQ
         RuleFor(query => query.PaginationParameters)
             .NotNull();
 
-        When(query => query.PaginationParameters is not null, () =>
-        {
-            RuleFor(query => query.PaginationParameters.PageNumber)
-                .GreaterThan(0);
+        When(
+            query => query.PaginationParameters is not null,
+            () =>
+            {
+                RuleFor(query => query.PaginationParameters.PageNumber)
+                    .GreaterThan(0);
 
-            RuleFor(query => query.PaginationParameters.PageSize)
-                .GreaterThan(0);
-        });
+                RuleFor(query => query.PaginationParameters.PageSize)
+                    .GreaterThan(0);
+            });
 
         RuleFor(query => query.SortingParameters)
             .NotNull();

@@ -9,9 +9,12 @@ public sealed class PresentationArchitectureTests
     {
         Classes().That()
             .ResideInAssemblyMatching(ArchitectureDefinition.PresentationAssemblyNamePattern)
-            .And().ResideInNamespaceMatching(ArchitectureDefinition.IncludeNamespaceSegment("Features"))
-            .And().HaveNameEndingWith("Endpoint")
-            .Should().BeInternal()
+            .And()
+            .ResideInNamespaceMatching(ArchitectureDefinition.IncludeNamespaceSegment("Features"))
+            .And()
+            .HaveNameEndingWith("Endpoint")
+            .Should()
+            .BeInternal()
             .Check(ArchitectureDefinition.s_architecture);
     }
 
@@ -20,9 +23,12 @@ public sealed class PresentationArchitectureTests
     {
         Classes().That()
             .ResideInAssemblyMatching(ArchitectureDefinition.PresentationAssemblyNamePattern)
-            .And().ResideInNamespaceMatching(ArchitectureDefinition.IncludeNamespaceSegment("Features"))
-            .And().HaveNameEndingWith("Request")
-            .Should().BeInternal()
+            .And()
+            .ResideInNamespaceMatching(ArchitectureDefinition.IncludeNamespaceSegment("Features"))
+            .And()
+            .HaveNameEndingWith("Request")
+            .Should()
+            .BeInternal()
             .Check(ArchitectureDefinition.s_architecture);
     }
 
@@ -31,9 +37,12 @@ public sealed class PresentationArchitectureTests
     {
         Classes().That()
             .ResideInAssemblyMatching(ArchitectureDefinition.PresentationAssemblyNamePattern)
-            .And().ResideInNamespaceMatching(ArchitectureDefinition.IncludeNamespaceSegment("Features"))
-            .And().HaveNameEndingWith("Response")
-            .Should().BeInternal()
+            .And()
+            .ResideInNamespaceMatching(ArchitectureDefinition.IncludeNamespaceSegment("Features"))
+            .And()
+            .HaveNameEndingWith("Response")
+            .Should()
+            .BeInternal()
             .Check(ArchitectureDefinition.s_architecture);
     }
 
@@ -42,9 +51,12 @@ public sealed class PresentationArchitectureTests
     {
         Classes().That()
             .ResideInAssemblyMatching(ArchitectureDefinition.PresentationAssemblyNamePattern)
-            .And().ResideInNamespaceMatching(ArchitectureDefinition.IncludeNamespaceSegment("Features"))
-            .And().HaveNameEndingWith("Mapper")
-            .Should().BeInternal()
+            .And()
+            .ResideInNamespaceMatching(ArchitectureDefinition.IncludeNamespaceSegment("Features"))
+            .And()
+            .HaveNameEndingWith("Mapper")
+            .Should()
+            .BeInternal()
             .Check(ArchitectureDefinition.s_architecture);
     }
 }
