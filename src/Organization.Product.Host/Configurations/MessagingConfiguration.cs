@@ -19,9 +19,11 @@ internal static class MessagingConfiguration
 
         builder.Host.UseWolverineMediator(
             messageStoreConnectionString: connectionString,
+            configuration: builder.Configuration,
             configureModules: modules => modules.AddModule<ModuleWriteDbContext>(
                 ApplicationAssembly.Instance,
-                typeof(ModuleWriteDbContext).Assembly));
+                typeof(ModuleWriteDbContext).Assembly),
+            configureKafka: null);
 
         return builder;
     }
