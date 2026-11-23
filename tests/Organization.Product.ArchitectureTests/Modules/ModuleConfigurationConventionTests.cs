@@ -45,7 +45,7 @@ public sealed class ModuleConfigurationConventionTests
                 + string.Join(Environment.NewLine, violations));
     }
 
-    [Fact(DisplayName = "The common HTTP pipeline should be configured in the Host project")]
+    [Fact(DisplayName = "HTTP pipeline should be configured in Host when registered")]
     public async Task HttpPipeline_Should_BeConfiguredInHost_When_Registered()
     {
         var httpExtensionsName = typeof(HttpServiceCollectionExtensions).FullName;
