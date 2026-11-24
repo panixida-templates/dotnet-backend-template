@@ -10,10 +10,17 @@ public sealed class Get{{ model.feature }}ListHandler(I{{ model.feature }}ReadRe
         CancellationToken cancellationToken)
     {
         var items = await repository.GetPagedListAsync(
-            query.PaginationParameters,
+{{ if model.child }}            query.ParentId,
+{{ end }}            query.PaginationParameters,
             query.SortingParameters,
             cancellationToken);
 
-        return Result.Success(items);
+{{ if model.child }}        if (items is null)
+        {
+            return Result.Failure<PaginationResult<{{ model.resource }}ListItemReadModel>>(
+                Error.NotFound($"{{ model.child.parent_resource }} with id '{query.ParentId}' was not found."));
+        }
+
+{{ end }}        return Result.Success(items);
     }
 }

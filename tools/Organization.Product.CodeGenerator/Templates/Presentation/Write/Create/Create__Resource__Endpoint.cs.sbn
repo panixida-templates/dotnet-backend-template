@@ -15,21 +15,23 @@ internal sealed class Create{{ model.resource }}Endpoint : IEndpoint<{{ model.fe
     {
         builder.MapPost(builder.Route, HandleAsync)
             .Produces<Create{{ model.resource }}Response>(StatusCodes.Status201Created)
-            .ProducesValidationProblem(StatusCodes.Status400BadRequest);
+            .ProducesValidationProblem(StatusCodes.Status400BadRequest){{ if model.child }}
+            .ProducesProblem(StatusCodes.Status404NotFound){{ end }};
     }
 
     private static async Task<IResult> HandleAsync(
-        Create{{ model.resource }}Request request,
+{{ if model.child }}        Guid {{ model.child.route_id }},
+{{ end }}        Create{{ model.resource }}Request request,
         IMediator mediator,
         CancellationToken cancellationToken)
     {
-        var command = Create{{ model.resource }}Mapper.ToCommand(request);
+        var command = Create{{ model.resource }}Mapper.ToCommand(request{{ if model.child }}, {{ model.child.route_id }}{{ end }});
         var result = await mediator.SendAsync(command, cancellationToken);
 
         return result.ToHttpResult(createdId =>
             TypedResults.CreatedAtRoute(
                 Create{{ model.resource }}Mapper.ToResponse(createdId),
                 new Get{{ model.resource }}DetailsEndpoint().Name,
-                new { id = createdId }));
+                new { {{ if model.child }}{{ model.child.route_id }}, {{ end }}id = createdId }));
     }
 }

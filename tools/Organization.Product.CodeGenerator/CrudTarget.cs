@@ -6,6 +6,19 @@ internal sealed record CrudTarget(DomainProject Project, string Feature, string 
 
     public string Aggregate => $"{Domain}.{Resource}";
 
+    internal CrudTarget ForChild(ChildSettings? child)
+    {
+        if (child is null
+            || !DomainProject.IsIdentifier(child.Collection)
+            || !DomainProject.IsIdentifier(child.Resource))
+        {
+            throw new InvalidOperationException(
+                $"'{Aggregate}' requires a valid collection and resource for each child.");
+        }
+
+        return new CrudTarget(Project, Resource + child.Collection, child.Resource);
+    }
+
     internal string DefaultDirectory(string layer)
     {
         var moduleDirectory = Path.GetDirectoryName(Path.GetDirectoryName(Project.ProjectFile))

@@ -14,18 +14,20 @@ internal sealed class Get{{ model.feature }}ListEndpoint : IEndpoint<{{ model.fe
     public void Map(EndpointMapBuilder builder)
     {
         builder.MapGet(builder.Route, HandleAsync)
-            .Produces<PaginationResult<{{ model.resource }}ListItemResponse>>(StatusCodes.Status200OK){{ if model.has_compound_list }}
-            .ProducesValidationProblem(StatusCodes.Status400BadRequest){{ end }};
+            .Produces<PaginationResult<{{ model.resource }}ListItemResponse>>(StatusCodes.Status200OK){{ if model.has_compound_list || model.child }}
+            .ProducesValidationProblem(StatusCodes.Status400BadRequest){{ end }}{{ if model.child }}
+            .ProducesProblem(StatusCodes.Status404NotFound){{ end }};
     }
 
     private static async Task<IResult> HandleAsync(
-        [AsParameters] PaginationParameters paginationParameters,
+{{ if model.child }}        Guid {{ model.child.route_id }},
+{{ end }}        [AsParameters] PaginationParameters paginationParameters,
         [AsParameters] SortingParameters sortingParameters,
         IMediator mediator,
         CancellationToken cancellationToken)
     {
         var result = await mediator.QueryAsync(
-            new Get{{ model.feature }}ListQuery(paginationParameters, sortingParameters),
+            new Get{{ model.feature }}ListQuery({{ if model.child }}{{ model.child.route_id }}, {{ end }}paginationParameters, sortingParameters),
             cancellationToken);
 
         return result.ToHttpResult(item

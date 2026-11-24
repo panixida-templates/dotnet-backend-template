@@ -15,9 +15,12 @@ internal sealed record ResourceModel(
     IReadOnlyList<CrudField> CreateFields,
     IReadOnlyList<CrudField> UpdateFields,
     IReadOnlyList<CrudField> DetailsFields,
-    IReadOnlyList<CrudField> ListFields)
+    IReadOnlyList<CrudField> ListFields,
+    ChildModel? Child = null)
 {
     private const string AggregateRootType = "PANiXiDA.Core.Domain.AggregateRoots.AggregateRoot`1";
+    private const string EntityType = "PANiXiDA.Core.Domain.Entities.Entity`1";
+    private const string EntityInterface = "PANiXiDA.Core.Domain.Entities.IEntity";
     private const string ResultType = "PANiXiDA.Core.ResultPattern.Result";
     private const string GenericResultType = ResultType + "`1";
 
@@ -57,6 +60,97 @@ internal sealed record ResourceModel(
                 $"'{target.Aggregate}' requires a lowercase, single-segment route.");
         }
 
+        var aggregate = GetAggregate(domainAssembly, target);
+        var id = GetId(aggregate, AggregateRootType);
+        var nullability = new NullabilityInfoContext();
+        var fields = GetFields(aggregate, nullability);
+        var create = GetOperation(aggregate, "Create", isStatic: true, payload: aggregate);
+        var update = GetOperation(aggregate, "Update", isStatic: false, payload: null);
+
+        return MakeModel(
+            target,
+            target.Domain,
+            id,
+            settings.Route,
+            fields,
+            BindParameters(create, fields, nullability),
+            BindParameters(update, fields, nullability),
+            settings.DetailsFields,
+            settings.ListFields);
+    }
+
+    internal static ResourceModel CreateChild(
+        Assembly domainAssembly,
+        CrudTarget parent,
+        CrudTarget target,
+        string parentRoute,
+        ChildSettings settings,
+        IReadOnlyList<string> artifacts)
+    {
+        if (!IsRoute(parentRoute) || !IsRoute(settings.Route))
+        {
+            throw new InvalidOperationException(
+                $"'{parent.Aggregate}' and its child require lowercase route segments.");
+        }
+
+        var aggregate = GetAggregate(domainAssembly, parent);
+        var parentId = GetId(aggregate, AggregateRootType);
+        var collection = aggregate.GetProperty(settings.Collection, BindingFlags.Instance | BindingFlags.Public);
+        var entities = collection is { GetMethod.IsPublic: true }
+            ? GetEntityElements(collection.PropertyType)
+            : [];
+        if (entities is not [{ IsPublic: true, IsClass: true, IsAbstract: false, IsGenericType: false } entity])
+        {
+            throw new InvalidOperationException(
+                $"'{parent.Aggregate}.{settings.Collection}' must be a public collection of child entities.");
+        }
+
+        var id = GetId(entity, EntityType);
+        var nullability = new NullabilityInfoContext();
+        var fields = GetFields(entity, nullability);
+        if (fields.Any(field => field.Name == "ParentId"))
+        {
+            throw new InvalidOperationException(
+                $"'{entity.FullName}.ParentId' is reserved for the generated association.");
+        }
+
+        var create = GetChildOperation(aggregate, settings.CreateMethod, id, artifacts, "ChildCreate");
+        var update = GetChildOperation(aggregate, settings.UpdateMethod, null, artifacts, "ChildUpdate");
+        var delete = GetChildOperation(aggregate, settings.DeleteMethod, null, artifacts, "ChildDelete");
+        var createFields = create is null ? [] : BindParameters(create, fields, nullability);
+        var updateFields = update is null ? [] : BindParameters(update, fields, nullability, id);
+        if (delete is not null)
+        {
+            BindParameters(delete, [], nullability, id);
+        }
+
+        var routeId = char.ToLowerInvariant(parent.Resource[0]) + parent.Resource[1..] + "Id";
+        var child = new ChildModel(
+            parent.Domain,
+            parent.Feature,
+            parent.Resource,
+            parentId.Name,
+            routeId,
+            settings.Collection,
+            entity.Name,
+            settings.CreateMethod,
+            settings.UpdateMethod,
+            settings.DeleteMethod);
+        return MakeModel(
+            target,
+            entity.Namespace!,
+            id,
+            $"{parentRoute}/{{{routeId}:guid}}/{settings.Route}",
+            fields,
+            createFields,
+            updateFields,
+            settings.DetailsFields,
+            settings.ListFields,
+            child);
+    }
+
+    private static Type GetAggregate(Assembly domainAssembly, CrudTarget target)
+    {
         var aggregate = domainAssembly.GetType(target.Aggregate);
         if (aggregate is not { IsPublic: true, IsClass: true, IsAbstract: false, IsGenericType: false })
         {
@@ -64,18 +158,41 @@ internal sealed record ResourceModel(
                 $"'{target.Aggregate}' must be a public concrete aggregate in '{target.Project.ProjectFile}'.");
         }
 
-        var id = GetId(aggregate, target.Domain);
-        var nullability = new NullabilityInfoContext();
-        var fields = aggregate.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly)
+        return aggregate;
+    }
+
+    private static CrudField[] GetFields(Type entity, NullabilityInfoContext nullability) =>
+        [.. entity.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly)
             .Where(property => property.Name != "Id"
                 && property.GetMethod is { IsPublic: true }
                 && property.GetIndexParameters().Length == 0
-                && property.SetMethod is not null)
-            .Select(property => DescribeField(property, nullability))
-            .ToArray();
+                && property.SetMethod is not null
+                && !IsEntity(property.PropertyType)
+                && GetEntityElements(property.PropertyType).Length == 0)
+            .Select(property => DescribeField(property, nullability))];
 
-        var create = GetOperation(aggregate, "Create", isStatic: true, payload: aggregate);
-        var update = GetOperation(aggregate, "Update", isStatic: false, payload: null);
+    private static bool IsEntity(Type type) => type.GetInterface(EntityInterface) is not null;
+
+    private static Type[] GetEntityElements(Type type) =>
+        [.. type.GetInterfaces().Prepend(type)
+            .Where(candidate => candidate.IsGenericType
+                && candidate.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+            .Select(candidate => candidate.GetGenericArguments()[0])
+            .Where(IsEntity)
+            .Distinct()];
+
+    private static ResourceModel MakeModel(
+        CrudTarget target,
+        string domain,
+        Type id,
+        string route,
+        CrudField[] fields,
+        CrudField[] createFields,
+        CrudField[] updateFields,
+        IReadOnlyList<string> details,
+        IReadOnlyList<string> list,
+        ChildModel? child = null)
+    {
         var readableFields = fields.Prepend(new CrudField("Id", nameof(Guid), false, null, null, false)).ToArray();
 
         return new ResourceModel(
@@ -83,36 +200,54 @@ internal sealed record ResourceModel(
             target.Project.ModuleName,
             target.Feature,
             target.Resource,
-            target.Domain,
+            domain,
             id.Name,
-            settings.Route,
+            route,
             fields,
-            BindParameters(create, fields, nullability),
-            BindParameters(update, fields, nullability),
-            SelectProjection(settings.DetailsFields, readableFields, nameof(settings.DetailsFields)),
-            SelectProjection(settings.ListFields, readableFields, nameof(settings.ListFields)));
+            createFields,
+            updateFields,
+            SelectProjection(details, readableFields, "detailsFields"),
+            SelectProjection(list, readableFields, "listFields"),
+            child);
     }
 
-    private static Type GetId(Type aggregate, string domain)
+    private static Type GetId(Type entity, string baseTypeName)
     {
-        var baseType = aggregate.BaseType;
+        var baseType = entity.BaseType;
         if (baseType is null
             || !baseType.IsGenericType
-            || baseType.GetGenericTypeDefinition().FullName != AggregateRootType)
+            || baseType.GetGenericTypeDefinition().FullName != baseTypeName)
         {
-            throw new InvalidOperationException($"'{aggregate.FullName}' must derive from AggregateRoot<TId>.");
+            var baseName = baseTypeName == AggregateRootType ? "AggregateRoot" : "Entity";
+            throw new InvalidOperationException($"'{entity.FullName}' must derive from {baseName}<TId>.");
         }
 
         var id = baseType.GetGenericArguments()[0];
-        if (id.Namespace != domain
+        if (id.Namespace != entity.Namespace
             || id.GetProperty("Value")?.PropertyType != typeof(Guid)
             || !HasFactory(id, typeof(Guid), allowNullableResult: false))
         {
             throw new InvalidOperationException(
-                $"'{aggregate.FullName}' requires a typed Guid ID in the same namespace with Value and Create(Guid).");
+                $"'{entity.FullName}' requires a typed Guid ID in the same namespace with Value and Create(Guid).");
         }
 
         return id;
+    }
+
+    private static MethodInfo? GetChildOperation(
+        Type aggregate, string? name, Type? payload, IReadOnlyList<string> artifacts, string operation)
+    {
+        if (!artifacts.Any(artifact => artifact.StartsWith(operation, StringComparison.Ordinal)))
+        {
+            return null;
+        }
+
+        if (!DomainProject.IsIdentifier(name))
+        {
+            throw new InvalidOperationException($"'{aggregate.FullName}' requires a method for '{operation}'.");
+        }
+
+        return GetOperation(aggregate, name!, isStatic: false, payload);
     }
 
     private static MethodInfo GetOperation(Type aggregate, string name, bool isStatic, Type? payload)
@@ -261,9 +396,19 @@ internal sealed record ResourceModel(
         type.IsGenericType && type.GetGenericTypeDefinition().FullName == GenericResultType;
 
     private static CrudField[] BindParameters(
-        MethodInfo method, IReadOnlyList<CrudField> fields, NullabilityInfoContext nullability)
+        MethodInfo method, IReadOnlyList<CrudField> fields, NullabilityInfoContext nullability, Type? leadingId = null)
     {
         var parameters = method.GetParameters();
+        if (leadingId is not null)
+        {
+            if (parameters.Length == 0 || parameters[0].ParameterType != leadingId)
+            {
+                throw new InvalidOperationException($"'{method.Name}' must take '{leadingId.Name}' first.");
+            }
+
+            parameters = parameters[1..];
+        }
+
         var bound = new List<CrudField>(parameters.Length);
         foreach (var parameter in parameters)
         {
@@ -277,7 +422,7 @@ internal sealed record ResourceModel(
             {
                 var parameterName = $"{method.DeclaringType?.Name}.{method.Name}({parameter.Name})";
                 throw new InvalidOperationException(
-                    $"'{parameterName}' must match a writable aggregate property and its input type.");
+                    $"'{parameterName}' must match a writable domain property and its input type.");
             }
 
             bound.Add(field);
@@ -318,6 +463,18 @@ internal sealed record ResourceModel(
             @"^[a-z][a-z0-9]*(?:-[a-z0-9]+)*\z",
             RegexOptions.CultureInvariant | RegexOptions.NonBacktracking);
 }
+
+internal sealed record ChildModel(
+    string ParentDomain,
+    string ParentFeature,
+    string ParentResource,
+    string ParentId,
+    string RouteId,
+    string Collection,
+    string Entity,
+    string? CreateMethod,
+    string? UpdateMethod,
+    string? DeleteMethod);
 
 internal sealed record CrudField(
     string Name,

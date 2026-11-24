@@ -10,7 +10,7 @@ public sealed class Get{{ model.resource }}DetailsHandler(
         Get{{ model.resource }}DetailsQuery query,
         CancellationToken cancellationToken)
     {
-        var entity = await repository.GetByIdAsync(query.Id, cancellationToken);
+        var entity = await repository.GetByIdAsync({{ if model.child }}query.ParentId, {{ end }}query.Id, cancellationToken);
         if (entity is null)
         {
             return Result.Failure<{{ model.resource }}DetailsReadModel>(

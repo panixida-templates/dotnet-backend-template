@@ -90,8 +90,11 @@ internal sealed record DomainProject(string ProjectFile, string Module, string M
         return new DomainLoadContext(targetPath).LoadFromAssemblyPath(targetPath);
     }
 
-    private static bool IsIdentifier(string name) =>
-        Regex.IsMatch(name, @"^[A-Za-z_][A-Za-z0-9_]*\z", RegexOptions.CultureInvariant | RegexOptions.NonBacktracking);
+    internal static bool IsIdentifier(string? name) =>
+        Regex.IsMatch(
+            name ?? string.Empty,
+            @"^[A-Za-z_][A-Za-z0-9_]*\z",
+            RegexOptions.CultureInvariant | RegexOptions.NonBacktracking);
 
     private sealed class DomainLoadContext(string targetPath) : AssemblyLoadContext
     {

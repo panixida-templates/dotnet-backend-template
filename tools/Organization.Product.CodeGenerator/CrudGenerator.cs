@@ -21,6 +21,10 @@ internal static class CrudGenerator
         foreach (var job in jobs)
         {
             ValidateJob(job, catalog);
+            var artifacts = job.GeneratedFiles.Select(name => catalog[name]).ToArray();
+            var rootArtifacts = artifacts.Where(artifact => !artifact.Child).ToArray();
+            var childArtifacts = artifacts.Where(artifact => artifact.Child).ToArray();
+            var childNames = childArtifacts.Select(artifact => artifact.Name).ToArray();
             var project = DomainProject.Find(repository, job.PathToModels);
             var assembly = job.DeleteGenerated ? null : await GetDomainAsync(repository, project, domains);
             foreach (var settings in job.Models)
@@ -31,33 +35,63 @@ internal static class CrudGenerator
                 }
 
                 var target = project.Locate(settings.Aggregate);
-                var model = assembly is null ? null : ResourceModel.Create(assembly, target, settings);
-                if (model is not null && job.GeneratedFiles.Contains("Endpoints"))
+                if (rootArtifacts.Length > 0)
                 {
-                    RegisterRoute(routes, model.Route, target.Aggregate);
+                    var model = assembly is null ? null : ResourceModel.Create(assembly, target, settings);
+                    Plan(target, target.Aggregate, model, job, rootArtifacts);
                 }
 
-                foreach (var artifactName in job.GeneratedFiles)
+                if (childArtifacts.Length == 0)
                 {
-                    var artifact = catalog[artifactName];
-                    var path = GetOutputPath(repository, target, job, artifact);
-                    if (!paths.Add(path) || Directory.Exists(path))
-                    {
-                        throw new InvalidOperationException(
-                            $"'{RelativePath(repository, path)}' is not a unique file path.");
-                    }
+                    continue;
+                }
 
-                    var change = PlanChange(repository, target, model, job, artifact, path, parsedTemplates);
-                    if (change is not null)
-                    {
-                        changes.Add(change);
-                    }
+                if (settings.Children is not { Count: > 0 })
+                {
+                    throw new InvalidOperationException($"'{target.Aggregate}' requires children for Child artifacts.");
+                }
+
+                foreach (var child in settings.Children)
+                {
+                    var childTarget = target.ForChild(child);
+                    var model = assembly is null
+                        ? null
+                        : ResourceModel.CreateChild(assembly, target, childTarget, settings.Route, child, childNames);
+                    Plan(childTarget, $"{target.Aggregate}.{child.Collection}", model, job, childArtifacts);
                 }
             }
         }
 
         OutputChange.ApplyAll(changes);
         return changes;
+
+        void Plan(
+            CrudTarget target, string owner, ResourceModel? model, JobSettings job, TemplateArtifact[] artifacts)
+        {
+            if (model is not null && artifacts.Any(artifact => artifact.Name is "Endpoints" or "ChildEndpoints"))
+            {
+                var route = model.Child is null
+                    ? model.Route
+                    : model.Route.Replace(model.Child.RouteId + ":guid", "parentId:guid", StringComparison.Ordinal);
+                RegisterRoute(routes, route, owner);
+            }
+
+            foreach (var artifact in artifacts)
+            {
+                var path = GetOutputPath(repository, target, job, artifact);
+                if (!paths.Add(path) || Directory.Exists(path))
+                {
+                    throw new InvalidOperationException(
+                        $"'{RelativePath(repository, path)}' is not a unique file path.");
+                }
+
+                var change = PlanChange(repository, owner, model, job, artifact, path, parsedTemplates);
+                if (change is not null)
+                {
+                    changes.Add(change);
+                }
+            }
+        }
     }
 
     private static async Task<Assembly> GetDomainAsync(
@@ -133,7 +167,7 @@ internal static class CrudGenerator
 
     private static OutputChange? PlanChange(
         RepositoryLayout repository,
-        CrudTarget target,
+        string owner,
         ResourceModel? model,
         JobSettings job,
         TemplateArtifact artifact,
@@ -142,7 +176,7 @@ internal static class CrudGenerator
     {
         var previous = File.Exists(path) ? File.ReadAllBytes(path) : null;
         var label = RelativePath(repository, path);
-        var header = $"// Scaffolded by CodeGenerator for {target.Aggregate}.";
+        var header = $"// Scaffolded by CodeGenerator for {owner}.";
         if (job.DeleteGenerated)
         {
             if (previous is null)
@@ -213,10 +247,16 @@ internal static class CrudGenerator
             var name = Path.GetFileNameWithoutExtension(outputFile)
                 .Replace("__Resource__", string.Empty, StringComparison.Ordinal)
                 .Replace("__Feature__", string.Empty, StringComparison.Ordinal);
-            var artifact = new TemplateArtifact(name, relativePath[..separator], outputFile, path);
+            var artifact = new TemplateArtifact(name, relativePath[..separator], outputFile, path, Child: false);
             if (!catalog.TryAdd(name, artifact))
             {
                 throw new InvalidOperationException($"Duplicate artifact name '{name}' in the bundled templates.");
+            }
+
+            if (name is not ("IRepository" or "Repository"))
+            {
+                var child = artifact with { Name = $"Child{name}", Child = true };
+                catalog.Add(child.Name, child);
             }
         }
 
@@ -226,5 +266,6 @@ internal static class CrudGenerator
     private static string RelativePath(RepositoryLayout repository, string path) =>
         Path.GetRelativePath(repository.Root, path);
 
-    private sealed record TemplateArtifact(string Name, string Layer, string RelativePath, string SourcePath);
+    private sealed record TemplateArtifact(
+        string Name, string Layer, string RelativePath, string SourcePath, bool Child);
 }

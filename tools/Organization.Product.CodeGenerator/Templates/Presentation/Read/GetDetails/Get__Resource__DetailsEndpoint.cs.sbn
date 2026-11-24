@@ -20,12 +20,13 @@ internal sealed class Get{{ model.resource }}DetailsEndpoint : IEndpoint<{{ mode
     }
 
     private static async Task<IResult> HandleAsync(
-        Guid id,
+{{ if model.child }}        Guid {{ model.child.route_id }},
+{{ end }}        Guid id,
         IMediator mediator,
         CancellationToken cancellationToken)
     {
         var result = await mediator.QueryAsync(
-            new Get{{ model.resource }}DetailsQuery(id), cancellationToken);
+            new Get{{ model.resource }}DetailsQuery({{ if model.child }}{{ model.child.route_id }}, {{ end }}id), cancellationToken);
 
         return result.ToHttpResult(dto =>
             TypedResults.Ok({{ model.resource }}DetailsMapper.ToResponse(dto)));

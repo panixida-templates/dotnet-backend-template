@@ -6,7 +6,9 @@ public sealed class Get{{ model.resource }}DetailsQueryValidator : AbstractValid
 {
     public Get{{ model.resource }}DetailsQueryValidator()
     {
-        RuleFor(query => query.Id)
+{{ if model.child }}        RuleFor(query => query.ParentId).NotEmpty();
+
+{{ end }}        RuleFor(query => query.Id)
             .MustBeValidDomainValue({{ model.id }}.Create);
     }
 }

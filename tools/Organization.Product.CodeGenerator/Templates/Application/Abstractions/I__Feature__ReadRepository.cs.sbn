@@ -6,11 +6,13 @@ namespace {{ model.module }}.Application.{{ model.feature }}.Abstractions;
 public interface I{{ model.feature }}ReadRepository : IReadRepository<Guid>
 {
     Task<{{ model.resource }}DetailsReadModel?> GetByIdAsync(
-        Guid id,
+{{ if model.child }}        Guid parentId,
+{{ end }}        Guid id,
         CancellationToken cancellationToken);
 
-    Task<PaginationResult<{{ model.resource }}ListItemReadModel>> GetPagedListAsync(
-        PaginationParameters paginationParameters,
+    Task<PaginationResult<{{ model.resource }}ListItemReadModel>{{ if model.child }}?{{ end }}> GetPagedListAsync(
+{{ if model.child }}        Guid parentId,
+{{ end }}        PaginationParameters paginationParameters,
         SortingParameters sortingParameters,
         CancellationToken cancellationToken);
 }

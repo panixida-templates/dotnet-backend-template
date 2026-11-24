@@ -7,6 +7,9 @@ namespace {{ model.module }}.Presentation.Features.{{ model.feature }}.Write.Cre
 [Mapper]
 internal static partial class Create{{ model.resource }}Mapper
 {
-    internal static partial Create{{ model.resource }}Command ToCommand(Create{{ model.resource }}Request request);
-    internal static partial Create{{ model.resource }}Response ToResponse(Guid id);
+    internal static partial Create{{ model.resource }}Command ToCommand({{ if model.child }}
+        Create{{ model.resource }}Request request,
+        Guid parentId{{ else }}Create{{ model.resource }}Request request{{ end }});
+{{ if model.child }}
+{{ end }}    internal static partial Create{{ model.resource }}Response ToResponse(Guid id);
 }

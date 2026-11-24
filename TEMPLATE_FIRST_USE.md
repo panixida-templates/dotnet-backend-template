@@ -159,7 +159,8 @@ PostgreSQL `jsonb` column per aggregate property. The generator calls the
 factory when constructing commands' domain values and when reading them into
 the aggregate. To expose a compound value in a response, include its aggregate
 property in the projection. List sorting uses top-level scalar fields.
-Collections and relationships need hand-written persistence and contracts.
+Entity references and entity collections are excluded from the root CRUD
+fields. Generate child collection operations explicitly with `children`.
 
 In `tools/<Root>.CodeGenerator/appsettings.json`, configure one or more entries
 in `jobs`. Each job uses a single Domain project and can contain several models.
@@ -235,6 +236,38 @@ discovery use the template's existing module registrations. The generator
 checks the output paths for all jobs before applying any changes.
 Review the HTTP and persistence contracts, add feature tests, and use the EF
 migrator once the model is ready. Commit the resulting C# files with the feature.
+
+### Generate CRUD for a child entity collection
+
+Add a `children` entry to an aggregate model. The commented job in
+`appsettings.json` includes the complete `Child*` artifact list and an example
+for `Product.Variants`. Use a separate job when different collections need
+different artifact selections. Each child requires:
+
+- `collection`, a public collection property whose elements derive from
+  `Entity<TId>`. Use a typed Guid ID with `Value` and `Create(Guid)`.
+- `resource`, the singular name for generated types and files, such as
+  `ProductVariant`. Choose a unique name for each endpoint resource.
+- `route`, the lowercase child route segment, such as `variants`.
+- `createMethod`, `updateMethod`, and `deleteMethod` for the write artifacts
+  you select. Define these public instance methods on the aggregate. Create
+  returns `Result<TChildId>`. Update and delete take the typed child ID first
+  and return `Result`. Any remaining parameters follow the same field
+  conventions as aggregate CRUD.
+- `detailsFields` and `listFields`, each including `Id`.
+
+Write handlers use the parent repository and call the aggregate's methods.
+The EF configuration maps the collection with `OwnsMany` and a separate table.
+Read handlers use the parent's read model to check that the aggregate exists.
+Generate the parent repository and read database model in the same job, or
+reuse them from an existing root CRUD. Use a mutable backing collection, such as `_variants`
+for the `Variants` property, so EF can track additions and removals.
+
+For a route such as `/products/{productId}/variants`, the generator provides
+POST and paged GET on the collection, and GET, PUT, and DELETE on an item.
+Item access is scoped to the parent. A missing parent returns 404, and an
+existing parent without children returns an empty page. Run the EF migrator
+after generating the collection configuration.
 
 ### Feature layout
 

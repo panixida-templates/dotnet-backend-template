@@ -18,12 +18,13 @@ internal sealed class Update{{ model.resource }}Endpoint : IEndpoint<{{ model.fe
     }
 
     private static async Task<IResult> HandleAsync(
-        Guid id,
+{{ if model.child }}        Guid {{ model.child.route_id }},
+{{ end }}        Guid id,
         Update{{ model.resource }}Request request,
         IMediator mediator,
         CancellationToken cancellationToken)
     {
-        var command = Update{{ model.resource }}Mapper.ToCommand(request, id);
+        var command = Update{{ model.resource }}Mapper.ToCommand(request, {{ if model.child }}{{ model.child.route_id }}, {{ end }}id);
         var result = await mediator.SendAsync(command, cancellationToken);
 
         return result.ToHttpResult(TypedResults.NoContent);

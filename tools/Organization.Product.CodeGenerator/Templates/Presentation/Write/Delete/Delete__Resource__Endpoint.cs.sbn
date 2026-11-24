@@ -20,11 +20,12 @@ internal sealed class Delete{{ model.resource }}Endpoint : IEndpoint<{{ model.fe
     }
 
     private static async Task<IResult> HandleAsync(
-        Guid id,
+{{ if model.child }}        Guid {{ model.child.route_id }},
+{{ end }}        Guid id,
         IMediator mediator,
         CancellationToken cancellationToken)
     {
-        var result = await mediator.SendAsync(new Delete{{ model.resource }}Command(id), cancellationToken);
+        var result = await mediator.SendAsync(new Delete{{ model.resource }}Command({{ if model.child }}{{ model.child.route_id }}, {{ end }}id), cancellationToken);
 
         return result.ToHttpResult(TypedResults.NoContent);
     }

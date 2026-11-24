@@ -16,4 +16,15 @@ internal sealed record ResourceSettings(
     string Aggregate,
     string Route,
     IReadOnlyList<string> DetailsFields,
+    IReadOnlyList<string> ListFields,
+    IReadOnlyList<ChildSettings>? Children);
+
+internal sealed record ChildSettings(
+    string Collection,
+    string Resource,
+    string Route,
+    string? CreateMethod,
+    string? UpdateMethod,
+    string? DeleteMethod,
+    IReadOnlyList<string> DetailsFields,
     IReadOnlyList<string> ListFields);

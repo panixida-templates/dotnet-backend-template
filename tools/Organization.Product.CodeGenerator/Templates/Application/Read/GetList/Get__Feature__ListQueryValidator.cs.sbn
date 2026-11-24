@@ -9,7 +9,9 @@ public sealed class Get{{ model.feature }}ListQueryValidator : AbstractValidator
 
 {{ end }}    public Get{{ model.feature }}ListQueryValidator()
     {
-        RuleFor(query => query.PaginationParameters)
+{{ if model.child }}        RuleFor(query => query.ParentId).NotEmpty();
+
+{{ end }}        RuleFor(query => query.PaginationParameters)
             .NotNull();
 
         When(

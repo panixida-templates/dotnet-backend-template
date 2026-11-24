@@ -1,0 +1,26 @@
+        var parentIdResult = {{ model.child.parent_id }}.Create(command.ParentId);
+        if (parentIdResult.IsFailure)
+        {
+            return {{ failure }}(parentIdResult.Errors);
+        }
+
+        var parent = await repository.GetByIdAsync(parentIdResult.Value, cancellationToken);
+        if (parent is null)
+        {
+            return {{ failure }}(
+                Error.NotFound($"{{ model.child.parent_resource }} with id '{command.ParentId}' was not found."));
+        }
+
+{{ if with_id }}        var idResult = {{ model.id }}.Create(command.Id);
+        if (idResult.IsFailure)
+        {
+            return {{ failure }}(idResult.Errors);
+        }
+
+        if (!parent.{{ model.child.collection }}.Any(item => item.Id.Equals(idResult.Value)))
+        {
+            return {{ failure }}(
+                Error.NotFound($"{{ model.resource }} with id '{command.Id}' was not found."));
+        }
+
+{{ end -}}

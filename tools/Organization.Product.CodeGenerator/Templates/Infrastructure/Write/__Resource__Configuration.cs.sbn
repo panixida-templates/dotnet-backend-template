@@ -1,17 +1,37 @@
 {{ if model.has_compound_fields }}using System.Text.Json;
 
+{{ end }}{{ if model.child }}using Humanizer;
+
 {{ end }}using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-using {{ model.domain }};
-
+{{ if model.child }}using {{ model.child.parent_domain }};
+{{ if model.domain != model.child.parent_domain }}using {{ model.domain }};
+{{ end }}{{ else }}using {{ model.domain }};
+{{ end }}
 namespace {{ model.module }}.Infrastructure.Persistence.Features.{{ model.feature }}.Write;
 
-internal sealed class {{ model.resource }}Configuration : AuditableEntityConfiguration<{{ model.resource }}>
+{{ if model.child }}internal sealed class {{ model.resource }}Configuration
+    : IEntityTypeConfiguration<{{ model.child.parent_resource }}>
+{
+    public void Configure(EntityTypeBuilder<{{ model.child.parent_resource }}> builder)
+    {
+        builder.OwnsMany(item => item.{{ model.child.collection }}, ConfigureChild);
+    }
+
+    private static void ConfigureChild(
+        OwnedNavigationBuilder<{{ model.child.parent_resource }}, {{ model.child.entity }}> builder)
+    {
+        var tableName = "{{ model.resource }}"
+            .Pluralize(inputIsKnownToBeSingular: false)
+            .Underscore()
+            .ToLowerInvariant();
+        builder.ToTable(tableName);
+        builder.WithOwner().HasForeignKey("ParentId");{{ else }}internal sealed class {{ model.resource }}Configuration : AuditableEntityConfiguration<{{ model.resource }}>
 {
     protected override void ConfigureEntity(EntityTypeBuilder<{{ model.resource }}> builder)
     {
-        builder.HasKey(item => item.Id);
+        builder.HasKey(item => item.Id);{{ end }}
 
         builder.Property(item => item.Id)
             .HasColumnOrder(0)
@@ -19,7 +39,9 @@ internal sealed class {{ model.resource }}Configuration : AuditableEntityConfigu
                 id => id.Value,
                 value => {{ model.id }}.Create(value).Value)
             .ValueGeneratedNever();
-{{ for field in model.fields }}{{ if field.composite }}
+{{ if model.child }}
+        builder.HasKey("ParentId", nameof({{ model.child.entity }}.Id));
+{{ end }}{{ for field in model.fields }}{{ if field.composite }}
         builder.Property(item => item.{{ field.name }})
             .HasConversion<string{{ if field.optional }}?{{ end }}>(
                 value => {{ if field.optional }}value == null ? null : {{ end }}Serialize{{ field.name }}(value{{ if field.nullable_struct }}.Value{{ end }}),
