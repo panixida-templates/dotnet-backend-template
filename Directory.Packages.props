@@ -30,6 +30,7 @@
         <PackageVersion Include="Riok.Mapperly" Version="5.0.0-next.11" />
         <PackageVersion Include="Roslynator.Analyzers" Version="5.0.0" />
         <PackageVersion Include="Roslynator.Formatting.Analyzers" Version="5.0.0" />
+        <PackageVersion Include="Scriban" Version="7.6.1" />
         <PackageVersion Include="Shouldly" Version="4.3.0" />
         <PackageVersion Include="Testcontainers.PostgreSql" Version="4.15.0" />
         <PackageVersion Include="TngTech.ArchUnitNET" Version="0.13.4" />

@@ -1,0 +1,5 @@
+namespace {{ model.module }}.Presentation.Features.{{ model.feature }}.Write.Create;
+
+internal sealed record Create{{ model.resource }}Request({{ if model.create_fields.size > 0 }}
+{{ for field in model.create_fields }}    {{ field.type }} {{ field.name }}{{ if !for.last }},
+{{ end }}{{ end }}{{ end }});

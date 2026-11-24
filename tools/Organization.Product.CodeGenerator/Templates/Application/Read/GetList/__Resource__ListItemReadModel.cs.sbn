@@ -1,0 +1,5 @@
+namespace {{ model.module }}.Application.{{ model.feature }}.Read.GetList;
+
+public sealed record {{ model.resource }}ListItemReadModel({{ if model.list_fields.size > 0 }}
+{{ for field in model.list_fields }}    {{ field.type }} {{ field.name }}{{ if !for.last }},
+{{ end }}{{ end }}{{ end }}) : IReadModel;

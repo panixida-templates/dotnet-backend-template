@@ -1,0 +1,14 @@
+using {{ model.module }}.Application.{{ model.feature }}.Read.GetList;
+using {{ model.module }}.Infrastructure.Persistence.Features.{{ model.feature }}.Read.DbModels;
+
+using Riok.Mapperly.Abstractions;
+
+namespace {{ model.module }}.Infrastructure.Persistence.Features.{{ model.feature }}.Read.GetList;
+
+[Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
+internal sealed partial class {{ model.resource }}ListItemReadModelMapper
+    : IReadModelMapper<Guid, {{ model.resource }}ReadDbModel, {{ model.resource }}ListItemReadModel>
+{
+    public static partial IQueryable<{{ model.resource }}ListItemReadModel> ProjectTo(
+        IQueryable<{{ model.resource }}ReadDbModel> query);
+}

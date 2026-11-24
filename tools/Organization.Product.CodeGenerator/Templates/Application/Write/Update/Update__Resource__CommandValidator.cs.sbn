@@ -1,0 +1,15 @@
+using {{ model.domain }};
+
+namespace {{ model.module }}.Application.{{ model.feature }}.Write.Update;
+
+public sealed class Update{{ model.resource }}CommandValidator : AbstractValidator<Update{{ model.resource }}Command>
+{
+    public Update{{ model.resource }}CommandValidator()
+    {
+        RuleFor(command => command.Id)
+            .MustBeValidDomainValue({{ model.id }}.Create);
+{{ for field in model.update_validation_fields }}
+        RuleFor(command => command.{{ field.name }})
+            {{ if field.value_object }}.MustBeValidDomainValue({{ field.value_object }}.Create);{{ else }}.NotNull();{{ end }}
+{{ end }}    }
+}

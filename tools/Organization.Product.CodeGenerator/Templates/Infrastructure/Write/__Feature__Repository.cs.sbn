@@ -1,0 +1,11 @@
+using {{ model.domain }};
+using {{ model.domain }}.Abstractions;
+using {{ model.module }}.Infrastructure.Persistence.Core;
+
+namespace {{ model.module }}.Infrastructure.Persistence.Features.{{ model.feature }}.Write;
+
+public sealed class {{ model.feature }}Repository(
+    {{ model.module_name }}WriteDbContext dbContext)
+    :
+        EfRepository<{{ model.module_name }}WriteDbContext, {{ model.id }}, {{ model.resource }}>(dbContext),
+        I{{ model.feature }}Repository;

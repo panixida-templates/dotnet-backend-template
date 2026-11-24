@@ -1,0 +1,6 @@
+namespace {{ model.module }}.Application.{{ model.feature }}.Write.Update;
+
+public sealed record Update{{ model.resource }}Command({{ if model.update_fields.size > 0 }}
+    {{ end }}Guid Id{{ if model.update_fields.size > 0 }},
+{{ for field in model.update_fields }}    {{ field.type }} {{ field.name }}{{ if !for.last }},
+{{ end }}{{ end }}{{ end }}) : ICommand<Result>;

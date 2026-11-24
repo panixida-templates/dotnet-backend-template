@@ -1,0 +1,16 @@
+using {{ model.module }}.Application.{{ model.feature }}.Read.GetDetails;
+using {{ model.module }}.Application.{{ model.feature }}.Read.GetList;
+
+namespace {{ model.module }}.Application.{{ model.feature }}.Abstractions;
+
+public interface I{{ model.feature }}ReadRepository : IReadRepository<Guid>
+{
+    Task<{{ model.resource }}DetailsReadModel?> GetByIdAsync(
+        Guid id,
+        CancellationToken cancellationToken);
+
+    Task<PaginationResult<{{ model.resource }}ListItemReadModel>> GetPagedListAsync(
+        PaginationParameters paginationParameters,
+        SortingParameters sortingParameters,
+        CancellationToken cancellationToken);
+}

@@ -1,0 +1,14 @@
+using {{ model.module }}.Application.{{ model.feature }}.Read.GetDetails;
+using {{ model.module }}.Infrastructure.Persistence.Features.{{ model.feature }}.Read.DbModels;
+
+using Riok.Mapperly.Abstractions;
+
+namespace {{ model.module }}.Infrastructure.Persistence.Features.{{ model.feature }}.Read.GetDetails;
+
+[Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
+internal sealed partial class {{ model.resource }}DetailsReadModelMapper
+    : IReadModelMapper<Guid, {{ model.resource }}ReadDbModel, {{ model.resource }}DetailsReadModel>
+{
+    public static partial IQueryable<{{ model.resource }}DetailsReadModel> ProjectTo(
+        IQueryable<{{ model.resource }}ReadDbModel> query);
+}

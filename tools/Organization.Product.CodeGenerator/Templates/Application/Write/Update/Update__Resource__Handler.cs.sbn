@@ -1,0 +1,44 @@
+using {{ model.domain }};
+using {{ model.domain }}.Abstractions;
+
+namespace {{ model.module }}.Application.{{ model.feature }}.Write.Update;
+
+public sealed class Update{{ model.resource }}Handler(I{{ model.feature }}Repository repository)
+    : ICommandHandler<Update{{ model.resource }}Command, Result>, IRequireTransaction
+{
+    public async Task<Result> HandleAsync(
+        Update{{ model.resource }}Command command,
+        CancellationToken cancellationToken)
+    {
+        var idResult = {{ model.id }}.Create(command.Id);
+
+        if (idResult.IsFailure)
+        {
+            return Result.Failure(idResult.Errors);
+        }
+
+        var entity = await repository.GetByIdAsync(
+            idResult.Value,
+            cancellationToken);
+
+        if (entity is null)
+        {
+            return Result.Failure(
+                Error.NotFound($"{{ model.resource }} with id '{command.Id}' was not found.")
+                    .WithField(nameof({{ model.resource }})));
+        }
+
+        var updateResult = entity.Update({{ if model.update_fields.size > 0 }}
+{{ for field in model.update_fields }}            command.{{ field.name }}{{ if !for.last }},
+{{ end }}{{ end }}{{ end }});
+
+        if (updateResult.IsFailure)
+        {
+            return updateResult;
+        }
+
+        repository.Update(entity);
+
+        return Result.Success();
+    }
+}

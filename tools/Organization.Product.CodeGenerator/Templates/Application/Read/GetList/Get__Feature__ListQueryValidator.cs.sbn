@@ -1,0 +1,24 @@
+namespace {{ model.module }}.Application.{{ model.feature }}.Read.GetList;
+
+public sealed class Get{{ model.feature }}ListQueryValidator : AbstractValidator<Get{{ model.feature }}ListQuery>
+{
+    public Get{{ model.feature }}ListQueryValidator()
+    {
+        RuleFor(query => query.PaginationParameters)
+            .NotNull();
+
+        When(
+            query => query.PaginationParameters is not null,
+            () =>
+            {
+                RuleFor(query => query.PaginationParameters.PageNumber)
+                    .GreaterThan(0);
+
+                RuleFor(query => query.PaginationParameters.PageSize)
+                    .GreaterThan(0);
+            });
+
+        RuleFor(query => query.SortingParameters)
+            .NotNull();
+    }
+}

@@ -1,0 +1,5 @@
+namespace {{ model.module }}.Presentation.Features.{{ model.feature }}.Write.Update;
+
+internal sealed record Update{{ model.resource }}Request({{ if model.update_fields.size > 0 }}
+{{ for field in model.update_fields }}    {{ field.type }} {{ field.name }}{{ if !for.last }},
+{{ end }}{{ end }}{{ end }});

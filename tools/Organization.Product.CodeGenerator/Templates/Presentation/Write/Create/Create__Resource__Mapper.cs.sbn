@@ -1,0 +1,12 @@
+using {{ model.module }}.Application.{{ model.feature }}.Write.Create;
+
+using Riok.Mapperly.Abstractions;
+
+namespace {{ model.module }}.Presentation.Features.{{ model.feature }}.Write.Create;
+
+[Mapper]
+internal static partial class Create{{ model.resource }}Mapper
+{
+    internal static partial Create{{ model.resource }}Command ToCommand(Create{{ model.resource }}Request request);
+    internal static partial Create{{ model.resource }}Response ToResponse(Guid id);
+}

@@ -1,0 +1,26 @@
+using {{ model.domain }};
+using {{ model.domain }}.Abstractions;
+
+namespace {{ model.module }}.Application.{{ model.feature }}.Write.Create;
+
+public sealed class Create{{ model.resource }}Handler(I{{ model.feature }}Repository repository)
+    : ICommandHandler<Create{{ model.resource }}Command, Result<Guid>>
+{
+    public Task<Result<Guid>> HandleAsync(
+        Create{{ model.resource }}Command command,
+        CancellationToken cancellationToken)
+    {
+        var entityResult = {{ model.resource }}.Create({{ if model.create_fields.size > 0 }}
+{{ for field in model.create_fields }}            command.{{ field.name }}{{ if !for.last }},
+{{ end }}{{ end }}{{ end }});
+
+        if (entityResult.IsFailure)
+        {
+            return Task.FromResult(Result.Failure<Guid>(entityResult.Errors));
+        }
+
+        repository.Add(entityResult.Value);
+
+        return Task.FromResult(Result.Success(entityResult.Value.Id.Value));
+    }
+}

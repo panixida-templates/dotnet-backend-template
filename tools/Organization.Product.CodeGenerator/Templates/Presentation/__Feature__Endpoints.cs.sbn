@@ -1,0 +1,19 @@
+using Asp.Versioning;
+
+using Microsoft.AspNetCore.Routing;
+
+namespace {{ model.module }}.Presentation.Features.{{ model.feature }};
+
+internal sealed class {{ model.feature }}Endpoints : IEndpointGroup
+{
+    internal const string IdRoute = "{id:guid}";
+
+    public string Route { get; } = "{{ model.route }}";
+    public string Name { get; } = "{{ model.feature }}";
+    public ApiVersion ApiVersion { get; } = new(1, 0);
+
+    public void Map(IEndpointRouteBuilder endpoints)
+    {
+        EndpointMapper.MapGroupEndpoints<{{ model.feature }}Endpoints>(endpoints);
+    }
+}

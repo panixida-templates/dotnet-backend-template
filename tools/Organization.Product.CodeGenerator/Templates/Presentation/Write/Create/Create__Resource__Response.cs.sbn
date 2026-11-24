@@ -1,0 +1,3 @@
+namespace {{ model.module }}.Presentation.Features.{{ model.feature }}.Write.Create;
+
+internal sealed record Create{{ model.resource }}Response(Guid Id);

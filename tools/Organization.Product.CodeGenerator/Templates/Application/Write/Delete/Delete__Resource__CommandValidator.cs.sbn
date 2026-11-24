@@ -1,0 +1,12 @@
+using {{ model.domain }};
+
+namespace {{ model.module }}.Application.{{ model.feature }}.Write.Delete;
+
+public sealed class Delete{{ model.resource }}CommandValidator : AbstractValidator<Delete{{ model.resource }}Command>
+{
+    public Delete{{ model.resource }}CommandValidator()
+    {
+        RuleFor(command => command.Id)
+            .MustBeValidDomainValue({{ model.id }}.Create);
+    }
+}

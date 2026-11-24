@@ -1,0 +1,19 @@
+using {{ model.module }}.Application.{{ model.feature }}.Abstractions;
+
+namespace {{ model.module }}.Application.{{ model.feature }}.Read.GetList;
+
+public sealed class Get{{ model.feature }}ListHandler(I{{ model.feature }}ReadRepository repository)
+    : IQueryHandler<Get{{ model.feature }}ListQuery, Result<PaginationResult<{{ model.resource }}ListItemReadModel>>>
+{
+    public async Task<Result<PaginationResult<{{ model.resource }}ListItemReadModel>>> HandleAsync(
+        Get{{ model.feature }}ListQuery query,
+        CancellationToken cancellationToken)
+    {
+        var items = await repository.GetPagedListAsync(
+            query.PaginationParameters,
+            query.SortingParameters,
+            cancellationToken);
+
+        return Result.Success(items);
+    }
+}

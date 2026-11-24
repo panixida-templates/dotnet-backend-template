@@ -1,0 +1,34 @@
+using {{ model.domain }};
+using {{ model.domain }}.Abstractions;
+
+namespace {{ model.module }}.Application.{{ model.feature }}.Write.Delete;
+
+public sealed class Delete{{ model.resource }}Handler(I{{ model.feature }}Repository repository)
+    : ICommandHandler<Delete{{ model.resource }}Command, Result>
+{
+    public async Task<Result> HandleAsync(
+        Delete{{ model.resource }}Command command,
+        CancellationToken cancellationToken)
+    {
+        var idResult = {{ model.id }}.Create(command.Id);
+
+        if (idResult.IsFailure)
+        {
+            return Result.Failure(idResult.Errors);
+        }
+
+        var entity = await repository.GetByIdAsync(
+            idResult.Value,
+            cancellationToken);
+
+        if (entity is null)
+        {
+            return Result.Failure(
+                Error.NotFound($"{{ model.resource }} with id '{command.Id}' was not found."));
+        }
+
+        repository.Delete(entity);
+
+        return Result.Success();
+    }
+}

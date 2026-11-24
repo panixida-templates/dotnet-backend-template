@@ -1,0 +1,6 @@
+namespace {{ model.module }}.Infrastructure.Persistence.Features.{{ model.feature }}.Read.DbModels;
+
+public sealed class {{ model.resource }}ReadDbModel : AuditableReadDbModel<Guid>
+{
+{{ for field in model.fields }}    public {{ if field.required_string }}required {{ end }}{{ field.type }} {{ field.name }} { get; set; }
+{{ end }}}

@@ -1,0 +1,5 @@
+namespace {{ model.domain }}.Abstractions;
+
+public interface I{{ model.feature }}Repository : IRepository<{{ model.id }}, {{ model.resource }}>
+{
+}

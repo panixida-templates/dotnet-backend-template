@@ -1,0 +1,4 @@
+namespace {{ model.module }}.Application.{{ model.feature }}.Read.GetDetails;
+
+public sealed record Get{{ model.resource }}DetailsQuery(Guid Id)
+    : IQuery<Result<{{ model.resource }}DetailsReadModel>>;

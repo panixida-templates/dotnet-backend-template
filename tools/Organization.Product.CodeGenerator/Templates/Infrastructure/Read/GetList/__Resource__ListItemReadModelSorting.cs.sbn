@@ -1,0 +1,9 @@
+using {{ model.module }}.Application.{{ model.feature }}.Read.GetList;
+
+namespace {{ model.module }}.Infrastructure.Persistence.Features.{{ model.feature }}.Read.GetList;
+
+internal sealed partial class {{ model.resource }}ListItemReadModelSorting : IReadModelSorting<{{ model.resource }}ListItemReadModel>
+{
+    public static SortingParameters DefaultSorting { get; } =
+        SortingParameters.Ascending(nameof({{ model.resource }}ListItemReadModel.Id));
+}

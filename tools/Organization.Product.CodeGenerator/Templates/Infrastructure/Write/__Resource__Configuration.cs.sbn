@@ -1,0 +1,28 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+using {{ model.domain }};
+
+namespace {{ model.module }}.Infrastructure.Persistence.Features.{{ model.feature }}.Write;
+
+internal sealed class {{ model.resource }}Configuration : AuditableEntityConfiguration<{{ model.resource }}>
+{
+    protected override void ConfigureEntity(EntityTypeBuilder<{{ model.resource }}> builder)
+    {
+        builder.HasKey(item => item.Id);
+
+        builder.Property(item => item.Id)
+            .HasColumnOrder(0)
+            .HasConversion(
+                id => id.Value,
+                value => {{ model.id }}.Create(value).Value)
+            .ValueGeneratedNever();
+{{ for field in model.fields }}{{ if field.value_object }}
+        builder.Property(item => item.{{ field.name }})
+            .HasConversion<{{ field.type }}>(
+                value => {{ if field.optional }}value == null ? null : {{ end }}value.{{ field.value_member }},
+                value => {{ field.value_object }}.Create(value).Value)
+{{ if field.has_max_length }}            .HasMaxLength({{ field.value_object }}.MaxLength)
+{{ end }}            .IsRequired({{ if field.optional }}false{{ end }});
+{{ end }}{{ end }}    }
+}

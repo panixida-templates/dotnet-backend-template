@@ -137,6 +137,53 @@ Architecture tests discover modules by these suffixes. If you intentionally chan
 The generated template starts without sample business features or pre-generated migrations.
 Create the first real feature slice only after final names and namespaces are set.
 
+### Generate a CRUD slice
+
+Define a public `AggregateRoot<TId>` in the module's Domain project under
+`<ModuleNamespace>.Domain.<PluralFeature>`. The generator expects a Guid-backed
+ID in the aggregate's namespace with `Value` and `Create(Guid)`, a public static
+`Create(...)` returning `Result<TAggregate>`, and a public instance
+`Update(...)` returning `Result`. Parameters must match writable aggregate
+properties by name and scalar type. A private setter is supported.
+
+The first version supports scalar properties and value objects that expose a
+scalar `Value` or `Name` and a corresponding `Create` factory. Collections and
+relationships need hand-written persistence and contracts.
+
+In `tools/<Root>.CodeGenerator/appsettings.json`, configure the aggregate,
+resource route, and the fields exposed by each read operation. Both projections
+include `Id`.
+
+```json
+{
+  "Crud": {
+    "Resources": [
+      {
+        "Aggregate": "Acme.Store.Catalog.Domain.Products.Product",
+        "Route": "products",
+        "DetailsFields": ["Id", "Name", "Description"],
+        "ListFields": ["Id", "Name"]
+      }
+    ]
+  }
+}
+```
+
+Run the project from the solution directory, using the generated project name.
+
+```bash
+dotnet run --project tools/Acme.Store.CodeGenerator
+```
+
+The tool creates C# files for Create, GetDetails, GetList, Update, and Delete.
+GetList includes pagination and sorting. Repository, EF model, and endpoint
+discovery use the template's existing module registrations. The generator
+checks all output paths before writing and refuses to overwrite existing files.
+Review the HTTP and persistence contracts, add feature tests, and use the EF
+migrator once the model is ready. Commit the resulting C# files with the feature.
+
+### Feature layout
+
 Use this structure for a feature:
 
 ```text
