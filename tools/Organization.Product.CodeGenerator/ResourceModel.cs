@@ -1,9 +1,6 @@
 using System.Reflection;
 using System.Text.RegularExpressions;
 
-using PANiXiDA.Core.Domain.AggregateRoots;
-using PANiXiDA.Core.ResultPattern;
-
 namespace Organization.Product.CodeGenerator;
 
 internal sealed record ResourceModel(
@@ -20,6 +17,10 @@ internal sealed record ResourceModel(
     IReadOnlyList<CrudField> DetailsFields,
     IReadOnlyList<CrudField> ListFields)
 {
+    private const string AggregateRootType = "PANiXiDA.Core.Domain.AggregateRoots.AggregateRoot`1";
+    private const string ResultType = "PANiXiDA.Core.ResultPattern.Result";
+    private const string GenericResultType = ResultType + "`1";
+
     private static readonly Dictionary<Type, string> s_scalarNames = new()
     {
         [typeof(bool)] = "bool",
@@ -42,26 +43,22 @@ internal sealed record ResourceModel(
 
     public CrudField[] UpdateValidationFields => [.. UpdateFields.Where(item => item.HasValidation)];
 
-    internal static ResourceModel Create(RepositoryLayout repository, ResourceSettings settings)
+    internal static ResourceModel Create(Assembly domainAssembly, CrudTarget target, ResourceSettings settings)
     {
-        if (settings is null || string.IsNullOrWhiteSpace(settings.Aggregate) || !IsRoute(settings.Route))
+        if (!IsRoute(settings.Route))
         {
             throw new InvalidOperationException(
-                "Each CRUD resource requires an Aggregate and a lowercase, single-segment Route.");
+                $"'{target.Aggregate}' requires a lowercase, single-segment route.");
         }
 
-        var aggregate = repository.Domain.GetType(settings.Aggregate);
-        var domainPrefix = $"{repository.ModuleNamespace}.Domain.";
-        if (aggregate is not { IsPublic: true, IsClass: true, IsAbstract: false, IsGenericType: false }
-            || aggregate.Namespace is not { } domain
-            || !domain.StartsWith(domainPrefix, StringComparison.Ordinal)
-            || domain[domainPrefix.Length..].Contains('.'))
+        var aggregate = domainAssembly.GetType(target.Aggregate);
+        if (aggregate is not { IsPublic: true, IsClass: true, IsAbstract: false, IsGenericType: false })
         {
             throw new InvalidOperationException(
-                $"'{settings.Aggregate}' must be a public concrete aggregate in '{domainPrefix}<Feature>'.");
+                $"'{target.Aggregate}' must be a public concrete aggregate in '{target.Project.ProjectFile}'.");
         }
 
-        var id = GetId(aggregate, domain);
+        var id = GetId(aggregate, target.Domain);
         var nullability = new NullabilityInfoContext();
         var fields = aggregate.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly)
             .Where(property => property.Name != "Id"
@@ -71,16 +68,16 @@ internal sealed record ResourceModel(
             .Select(property => DescribeField(property, nullability))
             .ToArray();
 
-        var create = GetOperation(aggregate, "Create", isStatic: true, typeof(Result<>).MakeGenericType(aggregate));
-        var update = GetOperation(aggregate, "Update", isStatic: false, typeof(Result));
+        var create = GetOperation(aggregate, "Create", isStatic: true, payload: aggregate);
+        var update = GetOperation(aggregate, "Update", isStatic: false, payload: null);
         var readableFields = fields.Prepend(new CrudField("Id", nameof(Guid), false, null, null, false)).ToArray();
 
         return new ResourceModel(
-            repository.ModuleNamespace,
-            repository.ModuleName,
-            domain[domainPrefix.Length..],
-            aggregate.Name,
-            domain,
+            target.Project.Module,
+            target.Project.ModuleName,
+            target.Feature,
+            target.Resource,
+            target.Domain,
             id.Name,
             settings.Route,
             fields,
@@ -95,7 +92,7 @@ internal sealed record ResourceModel(
         var baseType = aggregate.BaseType;
         if (baseType is null
             || !baseType.IsGenericType
-            || baseType.GetGenericTypeDefinition() != typeof(AggregateRoot<>))
+            || baseType.GetGenericTypeDefinition().FullName != AggregateRootType)
         {
             throw new InvalidOperationException($"'{aggregate.FullName}' must derive from AggregateRoot<TId>.");
         }
@@ -112,12 +109,14 @@ internal sealed record ResourceModel(
         return id;
     }
 
-    private static MethodInfo GetOperation(Type aggregate, string name, bool isStatic, Type resultType)
+    private static MethodInfo GetOperation(Type aggregate, string name, bool isStatic, Type? payload)
     {
         var flags = BindingFlags.Public | BindingFlags.DeclaredOnly;
         flags |= isStatic ? BindingFlags.Static : BindingFlags.Instance;
         var methods = aggregate.GetMethods(flags)
-            .Where(method => method.Name == name && !method.IsGenericMethod && method.ReturnType == resultType)
+            .Where(method => method.Name == name
+                && !method.IsGenericMethod
+                && MatchesResult(method.ReturnType, payload))
             .ToArray();
         return methods.Length == 1
             ? methods[0]
@@ -167,9 +166,7 @@ internal sealed record ResourceModel(
     {
         var factory = type.GetMethod("Create", BindingFlags.Public | BindingFlags.Static, [argumentType]);
         var resultType = factory?.ReturnType;
-        if (resultType is null
-            || !resultType.IsGenericType
-            || resultType.GetGenericTypeDefinition() != typeof(Result<>))
+        if (resultType is null || !IsGenericResult(resultType))
         {
             return false;
         }
@@ -177,6 +174,14 @@ internal sealed record ResourceModel(
         var payload = resultType.GetGenericArguments()[0];
         return payload == type || (allowNullableResult && Nullable.GetUnderlyingType(payload) == type);
     }
+
+    private static bool MatchesResult(Type type, Type? payload) =>
+        payload is null
+            ? type.FullName == ResultType
+            : IsGenericResult(type) && type.GetGenericArguments()[0] == payload;
+
+    private static bool IsGenericResult(Type type) =>
+        type.IsGenericType && type.GetGenericTypeDefinition().FullName == GenericResultType;
 
     private static CrudField[] BindParameters(
         MethodInfo method, IReadOnlyList<CrudField> fields, NullabilityInfoContext nullability)

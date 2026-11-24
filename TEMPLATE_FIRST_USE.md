@@ -150,24 +150,66 @@ The first version supports scalar properties and value objects that expose a
 scalar `Value` or `Name` and a corresponding `Create` factory. Collections and
 relationships need hand-written persistence and contracts.
 
-In `tools/<Root>.CodeGenerator/appsettings.json`, configure the aggregate,
-resource route, and the fields exposed by each read operation. Both projections
-include `Id`.
+In `tools/<Root>.CodeGenerator/appsettings.json`, configure one or more entries
+in `jobs`. Each job uses a single Domain project and can contain several models.
+Use a separate job for each additional Domain project. `pathToModels` accepts
+the project directory or its `.Domain.csproj`, relative to the repository root.
+Each model uses its full C# name and specifies its own route and read
+projections. Both projections include `Id`.
 
 ```json
 {
-  "Crud": {
-    "Resources": [
-      {
-        "Aggregate": "Acme.Store.Catalog.Domain.Products.Product",
-        "Route": "products",
-        "DetailsFields": ["Id", "Name", "Description"],
-        "ListFields": ["Id", "Name"]
-      }
-    ]
-  }
+  "jobs": [
+    {
+      "pathToModels": "src/Modules/Catalog/Acme.Store.Catalog.Domain",
+      "models": [
+        {
+          "aggregate": "Acme.Store.Catalog.Domain.Products.Product",
+          "route": "products",
+          "detailsFields": ["Id", "Name", "Description"],
+          "listFields": ["Id", "Name"]
+        },
+        {
+          "aggregate": "Acme.Store.Catalog.Domain.Categories.Category",
+          "route": "categories",
+          "detailsFields": ["Id", "Name"],
+          "listFields": ["Id", "Name"]
+        }
+      ],
+      "generatedFiles": ["CreateCommand", "UpdateCommand"],
+      "templates": {
+        "CreateCommand": "Templates/Application/Write/Create/Create__Resource__Command.cs.sbn"
+      },
+      "outputDirectory": {
+        "CreateCommand": "src/Modules/{ModuleName}/{Module}.Application/{Feature}/Write/Create"
+      },
+      "overwriteExisting": false,
+      "deleteGenerated": false,
+      "needMigrate": false
+    }
+  ]
 }
 ```
+
+The example selects two artifacts to illustrate selective generation. The
+commented job in `appsettings.json` lists all available artifacts for a full
+CRUD. Omitted artifacts may still be required by the generated code.
+
+- `templates` overrides the Scriban template for an artifact. Relative paths are
+  resolved from the generator project. Keep custom templates in
+  `Templates/Custom` or another directory outside the four bundled layers.
+- `outputDirectory` overrides the destination directory for an artifact.
+  Relative paths are resolved from the repository root. Use `{Module}` for the
+  full module namespace, `{ModuleName}` for its last segment, and `{Feature}`
+  or `{Resource}` for the selected model's plural or singular name. The generator
+  keeps its conventional file name. Configure output directories inside the
+  repository.
+- `overwriteExisting` allows replacing existing files for the selected
+  artifacts. Its default is `false`.
+- `deleteGenerated` removes only the selected files whose first line still
+  identifies the scaffolded aggregate. It works without building Domain and
+  cannot be combined with `overwriteExisting`.
+- `needMigrate` is reserved for future use. Run the EF migrator separately.
 
 Run the project from the solution directory, using the generated project name.
 
@@ -175,10 +217,11 @@ Run the project from the solution directory, using the generated project name.
 dotnet run --project tools/Acme.Store.CodeGenerator
 ```
 
-The tool creates C# files for Create, GetDetails, GetList, Update, and Delete.
+For a full CRUD, the tool creates C# files for Create, GetDetails, GetList,
+Update, and Delete.
 GetList includes pagination and sorting. Repository, EF model, and endpoint
 discovery use the template's existing module registrations. The generator
-checks all output paths before writing and refuses to overwrite existing files.
+checks the output paths for all jobs before applying any changes.
 Review the HTTP and persistence contracts, add feature tests, and use the EF
 migrator once the model is ready. Commit the resulting C# files with the feature.
 

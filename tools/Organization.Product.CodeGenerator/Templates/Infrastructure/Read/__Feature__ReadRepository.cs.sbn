@@ -26,10 +26,13 @@ public sealed class {{ model.feature }}ReadRepository({{ model.module_name }}Rea
         SortingParameters sortingParameters,
         CancellationToken cancellationToken)
     {
-        return GetPagedResultAsync<{{ model.resource }}ListItemReadModel, {{ model.resource }}ListItemReadModelMapper, {{ model.resource }}ListItemReadModelSorting>(
-            Query,
-            paginationParameters,
-            sortingParameters,
-            cancellationToken);
+        return GetPagedResultAsync<
+            {{ model.resource }}ListItemReadModel,
+            {{ model.resource }}ListItemReadModelMapper,
+            {{ model.resource }}ListItemReadModelSorting>(
+                Query,
+                paginationParameters,
+                sortingParameters,
+                cancellationToken);
     }
 }

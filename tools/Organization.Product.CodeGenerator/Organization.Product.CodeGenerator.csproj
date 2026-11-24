@@ -8,10 +8,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="../../src/Modules/Module/Organization.Product.Module.Domain/Organization.Product.Module.Domain.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
         <None Update="appsettings.json" CopyToOutputDirectory="PreserveNewest" />
         <None Update="Templates\**\*.sbn" CopyToOutputDirectory="PreserveNewest" />
     </ItemGroup>

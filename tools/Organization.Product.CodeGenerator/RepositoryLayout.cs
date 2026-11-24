@@ -1,45 +1,58 @@
-using System.Reflection;
-
 namespace Organization.Product.CodeGenerator;
 
-internal sealed record RepositoryLayout(
-    string Root,
-    string ModuleName,
-    string ModuleNamespace,
-    Assembly Domain)
+internal sealed record RepositoryLayout(string Root, string GeneratorDirectory)
 {
-    internal static RepositoryLayout Find(string startDirectory, Assembly domain)
+    internal static RepositoryLayout Find(string startDirectory)
     {
-        var moduleNamespace = (domain.GetName().Name
-            ?? throw new InvalidOperationException("The Domain assembly has no name."))[..^".Domain".Length];
-        var moduleName = moduleNamespace[(moduleNamespace.LastIndexOf('.') + 1)..];
+        var projectName = typeof(RepositoryLayout).Assembly.GetName().Name
+            ?? throw new InvalidOperationException("The generator assembly has no name.");
         for (var directory = new DirectoryInfo(startDirectory); directory is not null; directory = directory.Parent)
         {
-            var modulePath = Path.Combine(directory.FullName, "src", "Modules", moduleName);
-            if (File.Exists(Path.Combine(modulePath, $"{moduleNamespace}.Domain", $"{moduleNamespace}.Domain.csproj")))
+            var generatorDirectory = Path.Combine(directory.FullName, "tools", projectName);
+            if (File.Exists(Path.Combine(generatorDirectory, $"{projectName}.csproj")))
             {
-                return new RepositoryLayout(directory.FullName, moduleName, moduleNamespace, domain);
+                return new RepositoryLayout(directory.FullName, generatorDirectory);
             }
         }
 
-        throw new InvalidOperationException($"Could not find the source projects for module '{moduleNamespace}'.");
+        throw new InvalidOperationException("Could not find the repository containing the generator project.");
     }
 
-    internal string GetFeatureDirectory(string layer, string feature)
+    internal string ResolvePath(string path, string relativeTo)
     {
-        var projectName = $"{ModuleNamespace}.{layer}";
-        var projectPath = Path.Combine(Root, "src", "Modules", ModuleName, projectName);
-        if (!File.Exists(Path.Combine(projectPath, $"{projectName}.csproj")))
+        if (string.IsNullOrWhiteSpace(path))
         {
-            throw new InvalidOperationException($"Project '{projectName}' was not found in '{projectPath}'.");
+            throw new InvalidOperationException("Configured paths must be nonempty.");
         }
 
-        return layer switch
+        var fullPath = Path.GetFullPath(path, relativeTo);
+        var relativePath = Path.GetRelativePath(Root, fullPath);
+        if (relativePath == ".."
+            || relativePath.StartsWith($"..{Path.DirectorySeparatorChar}", StringComparison.Ordinal)
+            || Path.IsPathRooted(relativePath))
         {
-            "Domain" or "Application" => Path.Combine(projectPath, feature),
-            "Infrastructure" => Path.Combine(projectPath, "Persistence", "Features", feature),
-            "Presentation" => Path.Combine(projectPath, "Features", feature),
-            _ => throw new InvalidOperationException($"Unknown template layer '{layer}'.")
-        };
+            throw new InvalidOperationException($"'{path}' must resolve inside the repository.");
+        }
+
+        EnsureNoLinks(fullPath, relativePath);
+        return fullPath;
+    }
+
+    private static void EnsureNoLinks(string fullPath, string relativePath)
+    {
+        // Paths supplied in configuration must stay inside the repository on disk as well.
+        var remaining = relativePath;
+        var currentPath = fullPath;
+        while (remaining != "." && remaining.Length > 0)
+        {
+            if ((File.Exists(currentPath) || Directory.Exists(currentPath))
+                && File.GetAttributes(currentPath).HasFlag(FileAttributes.ReparsePoint))
+            {
+                throw new InvalidOperationException($"'{currentPath}' points to a symbolic link or junction.");
+            }
+
+            currentPath = Path.GetDirectoryName(currentPath) ?? string.Empty;
+            remaining = Path.GetDirectoryName(remaining) ?? string.Empty;
+        }
     }
 }
