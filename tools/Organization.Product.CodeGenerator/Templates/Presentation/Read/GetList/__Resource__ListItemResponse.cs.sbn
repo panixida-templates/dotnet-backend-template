@@ -1,5 +1,9 @@
 namespace {{ model.module }}.Presentation.Features.{{ model.feature }}.Read.GetList;
 
-internal sealed record {{ model.resource }}ListItemResponse({{ if model.list_fields.size > 0 }}
-{{ for field in model.list_fields }}    {{ field.type }} {{ field.name }}{{ if !for.last }},
-{{ end }}{{ end }}{{ end }});
+{{ fields = model.list_fields
+   access = "internal"
+   dto_name = model.resource + "ListItemResponse"
+   contract = ""
+   input = false
+   with_id = false
+   include "DtoRecord.sbn" }}

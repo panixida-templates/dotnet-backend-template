@@ -144,11 +144,22 @@ Define a public `AggregateRoot<TId>` in the module's Domain project under
 ID in the aggregate's namespace with `Value` and `Create(Guid)`, a public static
 `Create(...)` returning `Result<TAggregate>`, and a public instance
 `Update(...)` returning `Result`. Parameters must match writable aggregate
-properties by name and scalar type. A private setter is supported.
+properties by name. Use scalar parameters for scalar-backed properties and the
+value object's type for compound properties. A private setter is supported.
 
-The first version supports scalar properties and value objects that expose a
-scalar `Value` or `Name` and a corresponding `Create` factory. Collections and
-relationships need hand-written persistence and contracts.
+The generator supports scalar properties and value objects that expose a scalar
+`Value` or `Name` and a corresponding `Create` factory. For a compound value
+object, it matches each public static `Create` parameter to a readable property
+by name, scalar type, and nullability. The factory returns `Result<TValueObject>`
+and the aggregate method accepts the value object itself. For example,
+`Address.Create(string city, string street)` binds to `City` and `Street`.
+
+Compound value objects become nested API objects and are stored in one
+PostgreSQL `jsonb` column per aggregate property. The generator calls the
+factory when constructing commands' domain values and when reading them into
+the aggregate. To expose a compound value in a response, include its aggregate
+property in the projection. List sorting uses top-level scalar fields.
+Collections and relationships need hand-written persistence and contracts.
 
 In `tools/<Root>.CodeGenerator/appsettings.json`, configure one or more entries
 in `jobs`. Each job uses a single Domain project and can contain several models.

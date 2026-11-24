@@ -188,7 +188,8 @@ internal static class CrudGenerator
         var context = new TemplateContext
         {
             StrictVariables = true,
-            EnableRelaxedMemberAccess = false
+            EnableRelaxedMemberAccess = false,
+            TemplateLoader = new PartialTemplateLoader()
         };
         context.PushGlobal(new ScriptObject { ["model"] = model });
         return template.Render(context).ReplaceLineEndings("\n").TrimEnd() + "\n";

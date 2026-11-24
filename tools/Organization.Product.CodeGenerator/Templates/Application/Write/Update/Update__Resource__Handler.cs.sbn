@@ -28,8 +28,11 @@ public sealed class Update{{ model.resource }}Handler(I{{ model.feature }}Reposi
                     .WithField(nameof({{ model.resource }})));
         }
 
-        var updateResult = entity.Update({{ if model.update_fields.size > 0 }}
-{{ for field in model.update_fields }}            command.{{ field.name }}{{ if !for.last }},
+{{ fields = model.update_fields
+   fail_start = "Result.Failure("
+   fail_end = ")"
+   include "BindCompoundValues.sbn" }}        var updateResult = entity.Update({{ if model.update_fields.size > 0 }}
+{{ for field in model.update_fields }}            {{ if field.composite }}{{ field.local_name }}Value{{ else }}command.{{ field.name }}{{ end }}{{ if !for.last }},
 {{ end }}{{ end }}{{ end }});
 
         if (updateResult.IsFailure)

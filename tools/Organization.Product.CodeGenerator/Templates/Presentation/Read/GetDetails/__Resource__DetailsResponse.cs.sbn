@@ -1,5 +1,9 @@
 namespace {{ model.module }}.Presentation.Features.{{ model.feature }}.Read.GetDetails;
 
-internal sealed record {{ model.resource }}DetailsResponse({{ if model.details_fields.size > 0 }}
-{{ for field in model.details_fields }}    {{ field.type }} {{ field.name }}{{ if !for.last }},
-{{ end }}{{ end }}{{ end }});
+{{ fields = model.details_fields
+   access = "internal"
+   dto_name = model.resource + "DetailsResponse"
+   contract = ""
+   input = false
+   with_id = false
+   include "DtoRecord.sbn" }}

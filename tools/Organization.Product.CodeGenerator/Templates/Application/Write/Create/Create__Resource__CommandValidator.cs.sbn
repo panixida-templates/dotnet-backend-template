@@ -6,6 +6,6 @@ public sealed class Create{{ model.resource }}CommandValidator : AbstractValidat
     {
 {{ for field in model.create_validation_fields }}{{ if !for.first }}
 {{ end }}        RuleFor(command => command.{{ field.name }})
-            {{ if field.value_object }}.MustBeValidDomainValue({{ field.value_object }}.Create);{{ else }}.NotNull();{{ end }}
+            {{ if field.value_object && !field.composite }}.MustBeValidDomainValue({{ field.value_object }}.Create);{{ else }}.NotNull();{{ end }}
 {{ end }}    }
 }{{ else }};{{ end }}

@@ -1,14 +1,19 @@
-using {{ model.module }}.Application.{{ model.feature }}.Read.GetList;
+{{ if model.has_compound_list }}using System.Text.Json;
+
+{{ end }}using {{ model.module }}.Application.{{ model.feature }}.Read.GetList;
 using {{ model.module }}.Infrastructure.Persistence.Features.{{ model.feature }}.Read.DbModels;
 
-using Riok.Mapperly.Abstractions;
+{{ if !model.has_compound_list }}using Riok.Mapperly.Abstractions;
 
-namespace {{ model.module }}.Infrastructure.Persistence.Features.{{ model.feature }}.Read.GetList;
+{{ end }}namespace {{ model.module }}.Infrastructure.Persistence.Features.{{ model.feature }}.Read.GetList;
 
-[Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
-internal sealed partial class {{ model.resource }}ListItemReadModelMapper
+{{ if !model.has_compound_list }}[Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
+{{ end }}internal sealed {{ if !model.has_compound_list }}partial {{ end }}class {{ model.resource }}ListItemReadModelMapper
     : IReadModelMapper<Guid, {{ model.resource }}ReadDbModel, {{ model.resource }}ListItemReadModel>
 {
-    public static partial IQueryable<{{ model.resource }}ListItemReadModel> ProjectTo(
+{{ if model.has_compound_list }}{{ fields = model.list_fields
+   dto_name = model.resource + "ListItemReadModel"
+   include "ReadCompoundProjection.sbn" }}
+{{ else }}    public static partial IQueryable<{{ model.resource }}ListItemReadModel> ProjectTo(
         IQueryable<{{ model.resource }}ReadDbModel> query);
-}
+{{ end }}}

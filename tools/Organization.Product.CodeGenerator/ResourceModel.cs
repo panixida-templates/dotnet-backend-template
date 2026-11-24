@@ -43,6 +43,12 @@ internal sealed record ResourceModel(
 
     public CrudField[] UpdateValidationFields => [.. UpdateFields.Where(item => item.HasValidation)];
 
+    public bool HasCompoundFields => Fields.Any(item => item.Composite);
+
+    public bool HasCompoundDetails => DetailsFields.Any(item => item.Composite);
+
+    public bool HasCompoundList => ListFields.Any(item => item.Composite);
+
     internal static ResourceModel Create(Assembly domainAssembly, CrudTarget target, ResourceSettings settings)
     {
         if (!IsRoute(settings.Route))
@@ -158,8 +164,79 @@ internal sealed record ResourceModel(
         }
 
         var propertyName = $"{property.DeclaringType?.FullName}.{property.Name}";
+        var components = GetComponents(type, nullability, propertyName);
+        if (components is not null)
+        {
+            return new CrudField(
+                property.Name,
+                string.Empty,
+                optional,
+                $"global::{type.FullName}",
+                null,
+                false,
+                components,
+                optional && type.IsValueType);
+        }
+
         throw new InvalidOperationException(
-            $"'{propertyName}' requires a scalar or a single-value object with a matching Create factory.");
+            $"'{propertyName}' requires a scalar or a value object with a matching Create factory.");
+    }
+
+    private static ValueComponent[]? GetComponents(Type type, NullabilityInfoContext nullability, string propertyName)
+    {
+        if (!type.IsPublic || type.IsGenericType)
+        {
+            return null;
+        }
+
+        var candidates = type.GetMethods(BindingFlags.Public | BindingFlags.Static)
+            .Where(method => method.Name == "Create"
+                && !method.IsGenericMethod
+                && MatchesResult(method.ReturnType, type))
+            .Select(method => method.GetParameters())
+            .Where(parameters => parameters.Length > 1)
+            .ToArray();
+        var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+            .Where(property => property.GetMethod is { IsPublic: true } && property.GetIndexParameters().Length == 0)
+            .ToArray();
+        var matches = candidates
+            .Select(parameters => BindComponents(parameters, properties, nullability))
+            .OfType<ValueComponent[]>()
+            .ToArray();
+        if (matches.Length > 1)
+        {
+            throw new InvalidOperationException(
+                $"'{propertyName}' has more than one matching compound Create factory.");
+        }
+
+        return matches.FirstOrDefault();
+    }
+
+    private static ValueComponent[]? BindComponents(
+        IReadOnlyList<ParameterInfo> parameters,
+        IReadOnlyList<PropertyInfo> properties,
+        NullabilityInfoContext nullability)
+    {
+        var components = new List<ValueComponent>(parameters.Count);
+        foreach (var parameter in parameters)
+        {
+            var property = properties.SingleOrDefault(candidate =>
+                string.Equals(candidate.Name, parameter.Name, StringComparison.OrdinalIgnoreCase));
+            var optional = IsOptional(parameter.ParameterType, nullability.Create(parameter));
+            var underlying = Nullable.GetUnderlyingType(parameter.ParameterType) ?? parameter.ParameterType;
+            if (property is null
+                || property.PropertyType != parameter.ParameterType
+                || optional != IsOptional(property.PropertyType, nullability.Create(property))
+                || !s_scalarNames.TryGetValue(underlying, out var scalar)
+                || components.Any(component => component.Name == property.Name))
+            {
+                return null;
+            }
+
+            components.Add(new ValueComponent(property.Name, optional ? scalar + "?" : scalar));
+        }
+
+        return [.. components];
     }
 
     private static bool HasFactory(Type type, Type argumentType, bool allowNullableResult)
@@ -195,19 +272,29 @@ internal sealed record ResourceModel(
             var underlying = Nullable.GetUnderlyingType(parameter.ParameterType) ?? parameter.ParameterType;
             var optional = IsOptional(parameter.ParameterType, nullability.Create(parameter));
             if (field is null
-                || !s_scalarNames.TryGetValue(underlying, out var scalar)
-                || field.Type != (optional ? scalar + "?" : scalar)
+                || !MatchesParameter(field, underlying, optional)
                 || bound.Contains(field))
             {
                 var parameterName = $"{method.DeclaringType?.Name}.{method.Name}({parameter.Name})";
                 throw new InvalidOperationException(
-                    $"'{parameterName}' must match a writable aggregate property and its scalar type.");
+                    $"'{parameterName}' must match a writable aggregate property and its input type.");
             }
 
             bound.Add(field);
         }
 
         return [.. bound];
+    }
+
+    private static bool MatchesParameter(CrudField field, Type parameterType, bool optional)
+    {
+        if (field.Composite)
+        {
+            return field.Optional == optional && field.ValueObject == $"global::{parameterType.FullName}";
+        }
+
+        return s_scalarNames.TryGetValue(parameterType, out var scalar)
+            && field.Type == (optional ? scalar + "?" : scalar);
     }
 
     private static CrudField[] SelectProjection(
@@ -238,9 +325,17 @@ internal sealed record CrudField(
     bool Optional,
     string? ValueObject,
     string? ValueMember,
-    bool HasMaxLength)
+    bool HasMaxLength,
+    IReadOnlyList<ValueComponent>? Components = null,
+    bool NullableStruct = false)
 {
+    public bool Composite => Components is not null;
+
+    public string LocalName => char.ToLowerInvariant(Name[0]) + Name[1..];
+
     public bool RequiredString => Type == "string";
 
-    public bool HasValidation => RequiredString || ValueObject is not null;
+    public bool HasValidation => Composite ? !Optional : RequiredString || ValueObject is not null;
 }
+
+internal sealed record ValueComponent(string Name, string Type);

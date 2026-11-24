@@ -1,5 +1,9 @@
 namespace {{ model.module }}.Presentation.Features.{{ model.feature }}.Write.Create;
 
-internal sealed record Create{{ model.resource }}Request({{ if model.create_fields.size > 0 }}
-{{ for field in model.create_fields }}    {{ field.type }} {{ field.name }}{{ if !for.last }},
-{{ end }}{{ end }}{{ end }});
+{{ fields = model.create_fields
+   access = "internal"
+   dto_name = "Create" + model.resource + "Request"
+   contract = ""
+   input = true
+   with_id = false
+   include "DtoRecord.sbn" }}

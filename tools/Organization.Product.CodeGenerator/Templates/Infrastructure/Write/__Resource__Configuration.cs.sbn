@@ -1,4 +1,6 @@
-using Microsoft.EntityFrameworkCore;
+{{ if model.has_compound_fields }}using System.Text.Json;
+
+{{ end }}using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 using {{ model.domain }};
@@ -17,7 +19,14 @@ internal sealed class {{ model.resource }}Configuration : AuditableEntityConfigu
                 id => id.Value,
                 value => {{ model.id }}.Create(value).Value)
             .ValueGeneratedNever();
-{{ for field in model.fields }}{{ if field.value_object }}
+{{ for field in model.fields }}{{ if field.composite }}
+        builder.Property(item => item.{{ field.name }})
+            .HasConversion<string{{ if field.optional }}?{{ end }}>(
+                value => {{ if field.optional }}value == null ? null : {{ end }}Serialize{{ field.name }}(value{{ if field.nullable_struct }}.Value{{ end }}),
+                value => {{ if field.optional }}value == null ? null : {{ end }}Deserialize{{ field.name }}(value))
+            .HasColumnType("jsonb")
+            .IsRequired({{ if field.optional }}false{{ end }});
+{{ else if field.value_object }}
         builder.Property(item => item.{{ field.name }})
             .HasConversion<{{ field.type }}>(
                 value => {{ if field.optional }}value == null ? null : {{ end }}value.{{ field.value_member }},
@@ -25,4 +34,23 @@ internal sealed class {{ model.resource }}Configuration : AuditableEntityConfigu
 {{ if field.has_max_length }}            .HasMaxLength({{ field.value_object }}.MaxLength)
 {{ end }}            .IsRequired({{ if field.optional }}false{{ end }});
 {{ end }}{{ end }}    }
-}
+{{ for field in model.fields }}{{ if field.composite }}
+    private static string Serialize{{ field.name }}({{ field.value_object }} value) =>
+        JsonSerializer.Serialize(new {{ field.name }}Storage(
+{{ for component in field.components }}            value.{{ component.name }}{{ if !for.last }},
+{{ end }}{{ end }}));
+
+    private static {{ field.value_object }} Deserialize{{ field.name }}(string json)
+    {
+        var value = JsonSerializer.Deserialize<{{ field.name }}Storage>(json)
+            ?? throw new InvalidOperationException("The stored {{ field.name }} must be a JSON object.");
+
+        return {{ field.value_object }}.Create(
+{{ for component in field.components }}            value.{{ component.name }}{{ if !for.last }},
+{{ end }}{{ end }}).Value;
+    }
+{{ end }}{{ end }}{{ for field in model.fields }}{{ if field.composite }}
+    private sealed record {{ field.name }}Storage(
+{{ for component in field.components }}        {{ component.type }} {{ component.name }}{{ if !for.last }},
+{{ end }}{{ end }});
+{{ end }}{{ end }}}

@@ -1,5 +1,9 @@
 namespace {{ model.module }}.Application.{{ model.feature }}.Write.Create;
 
-public sealed record Create{{ model.resource }}Command({{ if model.create_fields.size > 0 }}
-{{ for field in model.create_fields }}    {{ field.type }} {{ field.name }}{{ if !for.last }},
-{{ end }}{{ end }}{{ end }}) : ICommand<Result<Guid>>;
+{{ fields = model.create_fields
+   access = "public"
+   dto_name = "Create" + model.resource + "Command"
+   contract = " : ICommand<Result<Guid>>"
+   input = true
+   with_id = false
+   include "DtoRecord.sbn" }}
