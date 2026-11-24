@@ -9,6 +9,7 @@ try
     var options = new JsonSerializerOptions
     {
         PropertyNameCaseInsensitive = true,
+        ReadCommentHandling = JsonCommentHandling.Skip,
         UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow
     };
     var configurationPath = Path.Combine(AppContext.BaseDirectory, "appsettings.json");
