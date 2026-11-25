@@ -124,12 +124,10 @@ public sealed class ReadModelConventionTests
     {
         var readDbModels = GetReadDatabaseModels();
         var violations = readDbModels
-            .SelectMany(type =>
-                InfrastructurePersistenceConvention
-                    .GetAggregateFeatureLocationViolations(
-                        type,
-                        "Read",
-                        "DbModels"))
+            .SelectMany(type => GetChildReadFeature(type) is { } feature
+                ? InfrastructurePersistenceConvention.GetLocationViolations(
+                    type, "Persistence", "Features", feature, "Read", "DbModels")
+                : InfrastructurePersistenceConvention.GetAggregateFeatureLocationViolations(type, "Read", "DbModels"))
             .ToArray();
 
         Assert.True(
@@ -290,10 +288,16 @@ public sealed class ReadModelConventionTests
 
         if (aggregateType is null)
         {
+            if (GetChildReadFeature(readDbModelType) is { } childFeature)
+            {
+                return InfrastructurePersistenceConvention.GetLocationViolations(
+                    mapper, "Persistence", "Features", childFeature, "Read", slice);
+            }
+
             return
             [
                 $"{mapper.FullName} maps '{readDbModelType.FullName}', which "
-                    + $"must correspond to an aggregate root in module "
+                    + $"must correspond to an aggregate root or a related child in module "
                     + $"'{module.Name}'."
             ];
         }
@@ -308,6 +312,26 @@ public sealed class ReadModelConventionTests
             featureName,
             "Read",
             slice);
+    }
+
+    private static string? GetChildReadFeature(Type model)
+    {
+        if (model.GetProperty("Parent")?.PropertyType is not { } parent
+            || parent.Assembly != model.Assembly
+            || InfrastructurePersistenceConvention.GetClosedGenericBaseType(
+                parent, typeof(ReadDbModel<>)) is not { } parentModel
+            || model.GetProperty("ParentId")?.PropertyType != parentModel.GetGenericArguments()[0]
+            || model.Namespace?.Split('.') is not [.., "Features", var feature, "Read", "DbModels"])
+        {
+            return null;
+        }
+
+        var module = InfrastructurePersistenceConvention.GetModule(model);
+        return InfrastructurePersistenceConvention.GetAggregateRootTypes(module)
+            .Any(aggregate => parent.Name == aggregate.Name + ReadDbModelSuffix
+                && feature.StartsWith(aggregate.Name, StringComparison.Ordinal))
+            ? feature
+            : null;
     }
 
     private static IEnumerable<string> GetAggregateNavigationViolations(

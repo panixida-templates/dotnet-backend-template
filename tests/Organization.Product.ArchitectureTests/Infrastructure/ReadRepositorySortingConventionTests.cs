@@ -85,6 +85,101 @@ public sealed class ReadRepositorySortingConventionTests
         }
     }
 
+    [Theory(DisplayName = "Read mapper sources should match repository ownership when declared")]
+    [InlineData("RootDbModel", true)]
+    [InlineData("RelatedDbModel", true)]
+    [InlineData("OtherDbModel", false)]
+    [InlineData("WrongIdDbModel", false)]
+    public void MapperSource_Should_MatchRepositoryOwner_When_SourceTypeVaries(string typeName, bool expected)
+    {
+        var source = CSharpSyntaxTree.ParseText(
+            """
+            public class RootDbModel;
+            public class OtherRootDbModel;
+            public sealed record RelatedDbModel(int ParentId, RootDbModel Parent);
+            public sealed record OtherDbModel(int ParentId, OtherRootDbModel Parent);
+            public sealed record WrongIdDbModel(string ParentId, RootDbModel Parent);
+            """,
+            cancellationToken: TestContext.Current.CancellationToken);
+        var compilation = CSharpCompilation.Create(
+            "MapperSources",
+            [source],
+            [MetadataReference.CreateFromFile(typeof(object).Assembly.Location)]);
+        var root = compilation.GetTypeByMetadataName("RootDbModel")!;
+        var type = compilation.GetTypeByMetadataName(typeName)!;
+
+        var matches = IsMapperSourceForRepository(type, root, compilation.GetSpecialType(SpecialType.System_Int32));
+
+        Assert.Equal(expected, matches);
+    }
+
+    [Fact(DisplayName = "Page analysis should trace data operations when results also have empty branches")]
+    public void PageAnalysis_Should_TraceProjection_When_PageIsCreatedExplicitly()
+    {
+        var cancellationToken = TestContext.Current.CancellationToken;
+        var source = CSharpSyntaxTree.ParseText(
+            """
+            using PANiXiDA.Core.Application.Querying.Pagination;
+            using PANiXiDA.Core.Infrastructure.Persistence.Ef.Read;
+
+            public sealed class Repository : EfReadRepository<object, int, object>
+            {
+                public PaginationResult<string>? GetPage(bool missing, bool empty)
+                {
+                    if (missing)
+                    {
+                        return null;
+                    }
+
+                    if (empty)
+                    {
+                        return PaginationResult<string>.Empty();
+                    }
+
+                    var projected = ProjectTo();
+                    var sorted = ApplyPagination(projected);
+                    return PaginationResult<string>.Create(sorted);
+                }
+
+                private static string ProjectTo() => "";
+            }
+
+            namespace PANiXiDA.Core.Application.Querying.Pagination
+            {
+                public sealed class PaginationResult<T>
+                {
+                    public static PaginationResult<T> Create(T items) => new();
+                    public static PaginationResult<T> Empty() => new();
+                }
+            }
+
+            namespace PANiXiDA.Core.Infrastructure.Persistence.Ef.Read
+            {
+                public abstract class EfReadRepository<TContext, TId, TModel>
+                {
+                    protected T ApplyPagination<T>(T query) => query;
+                }
+            }
+            """,
+            cancellationToken: cancellationToken);
+        var compilation = CSharpCompilation.Create(
+            "PageAnalysis",
+            [source],
+            [MetadataReference.CreateFromFile(typeof(object).Assembly.Location)]);
+        var semanticModel = compilation.GetSemanticModel(source);
+        var model = compilation.GetSpecialType(SpecialType.System_String);
+        var method = source.GetRoot(cancellationToken).DescendantNodes().OfType<MethodDeclarationSyntax>()
+            .Single(declaration => declaration.Identifier.ValueText == "GetPage");
+        var dataReturn = method.DescendantNodes().OfType<ReturnStatementSyntax>()
+            .Select(statement => semanticModel.GetOperation(statement.Expression!, cancellationToken))
+            .Single(operation => !ReturnsNoRows(operation, model));
+
+        var matches = UsesOperation(
+            dataReturn, model, method, semanticModel, call => call.TargetMethod.Name == "ProjectTo");
+
+        Assert.True(matches);
+    }
+
     private static async Task<ReadMethod[]> GetMethodsAsync(string repositoryRoot, Document document)
     {
         if (document.Project.AssemblyName?.EndsWith(".Infrastructure", StringComparison.Ordinal) != true)
@@ -121,6 +216,10 @@ public sealed class ReadRepositorySortingConventionTests
                     .Select(statement => statement.Expression)
                     .OfType<ExpressionSyntax>()
                     .ToArray();
+            var resultOperations = returns
+                .Select(expression => semanticModel.GetOperation(expression))
+                .Where(operation => !ReturnsNoRows(operation, model))
+                .ToArray();
             var repository = method.ContainingType;
             while (repository is not null && !IsEfRepository(repository))
             {
@@ -132,19 +231,19 @@ public sealed class ReadRepositorySortingConventionTests
                 model.ToDisplayString(),
                 GetResultModel(method.ReturnType, collectionsOnly: true) is not null,
                 repository is not null,
-                returns.Length > 0
-                    && returns.All(expression =>
+                resultOperations.Length > 0
+                    && resultOperations.All(operation =>
                         UsesOperation(
-                            semanticModel.GetOperation(expression),
+                            operation,
                             model,
                             declaration,
                             semanticModel,
                             call => AppliesSorting(call, model))),
                 repository is not null
-                    && returns.Length > 0
-                    && returns.All(expression =>
+                    && resultOperations.Length > 0
+                    && resultOperations.All(operation =>
                         UsesOperation(
-                            semanticModel.GetOperation(expression),
+                            operation,
                             model,
                             declaration,
                             semanticModel,
@@ -237,13 +336,17 @@ public sealed class ReadRepositorySortingConventionTests
 
                 return ((call.TargetMethod.Name == "ApplySorting"
                     && IsSortingFor(call.TargetMethod.ContainingType, model))
+                    || (call.TargetMethod.Name == "ApplyPagination"
+                        && IsEfRepository(call.TargetMethod.ContainingType))
+                    || (call.TargetMethod.Name == "Create"
+                        && IsPaginationResultFor(call.TargetMethod.ContainingType, model))
                     || (call.TargetMethod.IsExtensionMethod
                         && call.TargetMethod.Name is
                             "ToListAsync" or "ToArrayAsync" or "ToList" or "ToArray" or "Where" or "Take" or "Skip" or
                             "AsEnumerable" or "FirstOrDefaultAsync" or "SingleOrDefaultAsync"
                                 or "FirstAsync" or "SingleAsync"))
                     && UsesOperation(
-                        call.Arguments.FirstOrDefault()?.Value,
+                        call.Arguments.FirstOrDefault(argument => argument.Parameter?.Ordinal == 0)?.Value,
                         model,
                         declaration,
                         semanticModel,
@@ -251,6 +354,21 @@ public sealed class ReadRepositorySortingConventionTests
             default:
                 return false;
         }
+    }
+
+    private static bool ReturnsNoRows(IOperation? operation, ITypeSymbol model)
+    {
+        return operation?.ConstantValue is { HasValue: true, Value: null }
+            || (operation is IInvocationOperation call
+                && call.TargetMethod.Name == "Empty"
+                && IsPaginationResultFor(call.TargetMethod.ContainingType, model));
+    }
+
+    private static bool IsPaginationResultFor(INamedTypeSymbol type, ITypeSymbol model)
+    {
+        return type.MetadataName == "PaginationResult`1"
+            && type.ContainingNamespace.ToDisplayString() == "PANiXiDA.Core.Application.Querying.Pagination"
+            && SymbolEqualityComparer.Default.Equals(type.TypeArguments[0], model);
     }
 
     private static bool AppliesSorting(IInvocationOperation call, ITypeSymbol model)
@@ -276,9 +394,26 @@ public sealed class ReadRepositorySortingConventionTests
                     && contract.ContainingNamespace
                         .ToDisplayString() == "PANiXiDA.Core.Infrastructure.Persistence.Ef.Read.Mapping"
                     && SymbolEqualityComparer.Default.Equals(contract.TypeArguments[0], repository.TypeArguments[1])
-                    && SymbolEqualityComparer.Default.Equals(contract.TypeArguments[1], repository.TypeArguments[2])
+                    && IsMapperSourceForRepository(
+                        contract.TypeArguments[1], repository.TypeArguments[2], repository.TypeArguments[1])
                     && SymbolEqualityComparer.Default.Equals(contract.TypeArguments[2], model));
     }
+
+    private static bool IsMapperSourceForRepository(ITypeSymbol source, ITypeSymbol root, ITypeSymbol id)
+    {
+        return SymbolEqualityComparer.Default.Equals(source, root)
+            || (SymbolEqualityComparer.Default.Equals(source.ContainingAssembly, root.ContainingAssembly)
+                && HasProperty(source, "ParentId", id)
+                && HasProperty(source, "Parent", root));
+    }
+
+    private static bool HasProperty(ITypeSymbol type, string name, ITypeSymbol propertyType) =>
+        type.GetMembers(name)
+            .OfType<IPropertySymbol>()
+            .Any(property => !property.IsStatic
+                && property.DeclaredAccessibility == Accessibility.Public
+                && property.GetMethod is not null
+                && SymbolEqualityComparer.Default.Equals(property.Type, propertyType));
 
     private static bool IsEfRepository(INamedTypeSymbol type)
     {
