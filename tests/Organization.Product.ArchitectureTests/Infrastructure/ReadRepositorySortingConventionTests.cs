@@ -85,7 +85,7 @@ public sealed class ReadRepositorySortingConventionTests
         }
     }
 
-    [Theory(DisplayName = "Read mapper sources should match repository ownership when declared")]
+    [Theory(DisplayName = "Read mapper sources should match repository ownership when source type varies")]
     [InlineData("RootDbModel", true)]
     [InlineData("RelatedDbModel", true)]
     [InlineData("OtherDbModel", false)]
@@ -113,7 +113,7 @@ public sealed class ReadRepositorySortingConventionTests
         Assert.Equal(expected, matches);
     }
 
-    [Fact(DisplayName = "Page analysis should trace data operations when results also have empty branches")]
+    [Fact(DisplayName = "Page analysis should trace data operations when page is created explicitly")]
     public void PageAnalysis_Should_TraceProjection_When_PageIsCreatedExplicitly()
     {
         var cancellationToken = TestContext.Current.CancellationToken;
