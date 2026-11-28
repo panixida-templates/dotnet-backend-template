@@ -7,5 +7,5 @@ namespace Organization.Product.Module.Presentation.RepositoryExamples.Features.U
 [Mapper]
 internal static partial class UserDetailsMapper
 {
-    internal static partial UserDetailsResponse ToResponse(UserDetailsReadModel dto);
+    internal static partial UserDetailsResponse ToResponse(UserDetailsReadModel readModel);
 }
