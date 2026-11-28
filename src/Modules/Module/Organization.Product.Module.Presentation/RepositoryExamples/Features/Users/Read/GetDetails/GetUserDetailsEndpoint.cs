@@ -26,7 +26,7 @@ internal class GetUserDetailsEndpoint : IEndpoint<UsersEndpoints>
         var result = await mediator.QueryAsync(
             new GetUserDetailsQuery(id), cancellationToken);
 
-        return result.ToHttpResult(dto =>
-            TypedResults.Ok(UserDetailsMapper.ToResponse(dto)));
+        return result.ToHttpResult(readModel =>
+            TypedResults.Ok(UserDetailsMapper.ToResponse(readModel)));
     }
 }
