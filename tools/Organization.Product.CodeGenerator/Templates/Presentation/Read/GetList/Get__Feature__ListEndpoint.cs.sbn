@@ -1,0 +1,36 @@
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+
+using {{ model.module }}.Application.{{ model.feature }}.Read.GetList;
+
+namespace {{ model.module }}.Presentation.Features.{{ model.feature }}.Read.GetList;
+
+internal sealed class Get{{ model.feature }}ListEndpoint : IEndpoint<{{ model.feature }}Endpoints>
+{
+    public string Route { get; } = "/";
+    public string Name { get; } = "Get{{ model.resource }}List";
+    public string Summary { get; } = "Get paginated {{ model.resource }} list";
+
+    public void Map(EndpointMapBuilder builder)
+    {
+        builder.MapGet(builder.Route, HandleAsync)
+            .Produces<PaginationResult<{{ model.resource }}ListItemResponse>>(StatusCodes.Status200OK){{ if model.has_compound_list || model.child }}
+            .ProducesValidationProblem(StatusCodes.Status400BadRequest){{ end }}{{ if model.child }}
+            .ProducesProblem(StatusCodes.Status404NotFound){{ end }};
+    }
+
+    private static async Task<IResult> HandleAsync(
+{{ if model.child }}        Guid {{ model.child.route_id }},
+{{ end }}        [AsParameters] PaginationParameters paginationParameters,
+        [AsParameters] SortingParameters sortingParameters,
+        IMediator mediator,
+        CancellationToken cancellationToken)
+    {
+        var result = await mediator.QueryAsync(
+            new Get{{ model.feature }}ListQuery({{ if model.child }}{{ model.child.route_id }}, {{ end }}paginationParameters, sortingParameters),
+            cancellationToken);
+
+        return result.ToHttpResult(item
+            => TypedResults.Ok(Get{{ model.feature }}ListMapper.ToResponse(item)));
+    }
+}

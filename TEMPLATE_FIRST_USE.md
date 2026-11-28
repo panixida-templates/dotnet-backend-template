@@ -137,6 +137,140 @@ Architecture tests discover modules by these suffixes. If you intentionally chan
 The generated template starts without sample business features or pre-generated migrations.
 Create the first real feature slice only after final names and namespaces are set.
 
+### Generate a CRUD slice
+
+Define a public `AggregateRoot<TId>` in the module's Domain project under
+`<ModuleNamespace>.Domain.<PluralFeature>`. The generator expects a Guid-backed
+ID in the aggregate's namespace with `Value` and `Create(Guid)`, a public static
+`Create(...)` returning `Result<TAggregate>`, and a public instance
+`Update(...)` returning `Result`. Parameters must match writable aggregate
+properties by name. Use scalar parameters for scalar-backed properties and the
+value object's type for compound properties. A private setter is supported.
+
+The generator supports scalar properties and value objects that expose a scalar
+`Value` or `Name` and a corresponding `Create` factory. For a compound value
+object, it matches each public static `Create` parameter to a readable property
+by name, scalar type, and nullability. The factory returns `Result<TValueObject>`
+and the aggregate method accepts the value object itself. For example,
+`Address.Create(string city, string street)` binds to `City` and `Street`.
+
+Compound value objects become nested API objects and are stored in one
+PostgreSQL `jsonb` column per aggregate property. The generator calls the
+factory when constructing commands' domain values and when reading them into
+the aggregate. To expose a compound value in a response, include its aggregate
+property in the projection. List sorting uses top-level scalar fields.
+Entity references and entity collections are excluded from the root CRUD
+fields. Generate child collection operations explicitly with `children`.
+
+In `tools/<Root>.CodeGenerator/appsettings.json`, configure one or more entries
+in `jobs`. Each job uses a single Domain project and can contain several models.
+Use a separate job for each additional Domain project. `pathToModels` accepts
+the project directory or its `.Domain.csproj`, relative to the repository root.
+Each model uses its full C# name and specifies its own route and read
+projections. Both projections include `Id`.
+
+```json
+{
+  "jobs": [
+    {
+      "pathToModels": "src/Modules/Catalog/Acme.Store.Catalog.Domain",
+      "models": [
+        {
+          "aggregate": "Acme.Store.Catalog.Domain.Products.Product",
+          "route": "products",
+          "detailsFields": ["Id", "Name", "Description"],
+          "listFields": ["Id", "Name"]
+        },
+        {
+          "aggregate": "Acme.Store.Catalog.Domain.Categories.Category",
+          "route": "categories",
+          "detailsFields": ["Id", "Name"],
+          "listFields": ["Id", "Name"]
+        }
+      ],
+      "generatedFiles": ["CreateCommand", "UpdateCommand"],
+      "templates": {
+        "CreateCommand": "Templates/Application/Write/Create/Create__Resource__Command.cs.sbn"
+      },
+      "outputDirectory": {
+        "CreateCommand": "src/Modules/{ModuleName}/{Module}.Application/{Feature}/Write/Create"
+      },
+      "overwriteExisting": false,
+      "deleteGenerated": false,
+      "needMigrate": false
+    }
+  ]
+}
+```
+
+The example selects two artifacts to illustrate selective generation. The
+commented job in `appsettings.json` lists all available artifacts for a full
+CRUD. Omitted artifacts may still be required by the generated code.
+
+- `templates` overrides the Scriban template for an artifact. Relative paths are
+  resolved from the generator project. Keep custom templates in
+  `Templates/Custom` or another directory outside the four bundled layers.
+- `outputDirectory` overrides the destination directory for an artifact.
+  Relative paths are resolved from the repository root. Use `{Module}` for the
+  full module namespace, `{ModuleName}` for its last segment, and `{Feature}`
+  or `{Resource}` for the selected model's plural or singular name. The generator
+  keeps its conventional file name. Configure output directories inside the
+  repository.
+- `overwriteExisting` allows replacing existing files for the selected
+  artifacts. Its default is `false`.
+- `deleteGenerated` removes existing files at the output paths selected by the
+  job, including files with manual edits. It skips missing files, works without
+  building Domain, and cannot be combined with `overwriteExisting`.
+- `needMigrate` is reserved for future use. Run the EF migrator separately.
+
+Run the project from the solution directory, using the generated project name.
+
+```bash
+dotnet run --project tools/Acme.Store.CodeGenerator
+```
+
+For a full CRUD, the tool creates C# files for Create, GetDetails, GetList,
+Update, and Delete.
+GetList includes pagination and sorting. Repository, EF model, and endpoint
+discovery use the template's existing module registrations. The generator
+checks the output paths for all jobs before applying any changes.
+Review the HTTP and persistence contracts, add feature tests, and use the EF
+migrator once the model is ready. Commit the resulting C# files with the feature.
+
+### Generate CRUD for a child entity collection
+
+Add a `children` entry to an aggregate model. The commented job in
+`appsettings.json` includes the complete `Child*` artifact list and an example
+for `Product.Variants`. Use a separate job when different collections need
+different artifact selections. Each child requires:
+
+- `collection`, a public collection property whose elements derive from
+  `Entity<TId>`. Use a typed Guid ID with `Value` and `Create(Guid)`.
+- `resource`, the singular name for generated types and files, such as
+  `ProductVariant`. Choose a unique name for each endpoint resource.
+- `route`, the lowercase child route segment, such as `variants`.
+- `createMethod`, `updateMethod`, and `deleteMethod` for the write artifacts
+  you select. Define these public instance methods on the aggregate. Create
+  returns `Result<TChildId>`. Update and delete take the typed child ID first
+  and return `Result`. Any remaining parameters follow the same field
+  conventions as aggregate CRUD.
+- `detailsFields` and `listFields`, each including `Id`.
+
+Write handlers use the parent repository and call the aggregate's methods.
+The EF configuration maps the collection with `OwnsMany` and a separate table.
+Read handlers use the parent's read model to check that the aggregate exists.
+Generate the parent repository and read database model in the same job, or
+reuse them from an existing root CRUD. Use a mutable backing collection, such as `_variants`
+for the `Variants` property, so EF can track additions and removals.
+
+For a route such as `/products/{productId}/variants`, the generator provides
+POST and paged GET on the collection, and GET, PUT, and DELETE on an item.
+Item access is scoped to the parent. A missing parent returns 404, and an
+existing parent without children returns an empty page. Run the EF migrator
+after generating the collection configuration.
+
+### Feature layout
+
 Use this structure for a feature:
 
 ```text

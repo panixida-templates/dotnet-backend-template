@@ -1,0 +1,55 @@
+{{ if model.child }}using Microsoft.EntityFrameworkCore;
+
+{{ end }}using {{ model.module }}.Application.{{ model.feature }}.Abstractions;
+using {{ model.module }}.Application.{{ model.feature }}.Read.GetDetails;
+using {{ model.module }}.Application.{{ model.feature }}.Read.GetList;
+using {{ model.module }}.Infrastructure.Persistence.Core;
+using {{ model.module }}.Infrastructure.Persistence.Features.{{ model.feature }}.Read.DbModels;
+using {{ model.module }}.Infrastructure.Persistence.Features.{{ model.feature }}.Read.GetDetails;
+using {{ model.module }}.Infrastructure.Persistence.Features.{{ model.feature }}.Read.GetList;
+{{ if model.child }}using {{ model.module }}.Infrastructure.Persistence.Features.{{ model.child.parent_feature }}.Read.DbModels;
+{{ end }}
+namespace {{ model.module }}.Infrastructure.Persistence.Features.{{ model.feature }}.Read;
+
+public sealed class {{ model.feature }}ReadRepository({{ model.module_name }}ReadDbContext dbContext) :
+    EfReadRepository<{{ model.module_name }}ReadDbContext, Guid, {{ model.resource }}ReadDbModel>(dbContext),
+    I{{ model.feature }}ReadRepository
+{
+{{ if model.child }}    private readonly IQueryable<{{ model.child.parent_resource }}ReadDbModel> _parents =
+        dbContext.Set<{{ model.child.parent_resource }}ReadDbModel>();
+
+{{ end }}    public Task<{{ model.resource }}DetailsReadModel?> GetByIdAsync(
+{{ if model.child }}        Guid parentId,
+{{ end }}        Guid id,
+        CancellationToken cancellationToken)
+    {
+{{ if model.child }}        var query = Query
+            .Where(item => item.ParentId == parentId && item.Id == id)
+            .Where(item => _parents.Any(parent => parent.Id == item.ParentId));
+        return {{ model.resource }}DetailsReadModelMapper.ProjectTo(query).FirstOrDefaultAsync(cancellationToken);
+{{ else }}        return GetByIdAsync<{{ model.resource }}DetailsReadModel, {{ model.resource }}DetailsReadModelMapper>(
+            id,
+            cancellationToken);
+{{ end }}    }
+
+    public {{ if model.child }}async {{ end }}Task<PaginationResult<{{ model.resource }}ListItemReadModel>{{ if model.child }}?{{ end }}> GetPagedListAsync(
+{{ if model.child }}        Guid parentId,
+{{ end }}        PaginationParameters paginationParameters,
+        SortingParameters sortingParameters,
+        CancellationToken cancellationToken)
+    {
+{{ if model.child }}        if (!await _parents.AnyAsync(parent => parent.Id == parentId, cancellationToken))
+        {
+            return null;
+        }
+
+{{ end }}        return {{ if model.child }}await {{ end }}GetPagedResultAsync<
+            {{ model.resource }}ListItemReadModel,
+            {{ model.resource }}ListItemReadModelMapper,
+            {{ model.resource }}ListItemReadModelSorting>(
+                Query{{ if model.child }}.Where(item => item.ParentId == parentId){{ end }},
+                paginationParameters,
+                sortingParameters,
+                cancellationToken);
+    }
+}

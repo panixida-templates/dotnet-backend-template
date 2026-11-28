@@ -1,0 +1,11 @@
+using {{ model.module }}.Application.{{ model.feature }}.Read.GetDetails;
+
+using Riok.Mapperly.Abstractions;
+
+namespace {{ model.module }}.Presentation.Features.{{ model.feature }}.Read.GetDetails;
+
+[Mapper]
+internal static partial class {{ model.resource }}DetailsMapper
+{
+    internal static partial {{ model.resource }}DetailsResponse ToResponse({{ model.resource }}DetailsReadModel dto);
+}

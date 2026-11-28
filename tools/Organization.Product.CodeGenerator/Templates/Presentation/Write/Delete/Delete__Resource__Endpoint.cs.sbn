@@ -1,0 +1,32 @@
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+
+using {{ model.module }}.Application.{{ model.feature }}.Write.Delete;
+
+namespace {{ model.module }}.Presentation.Features.{{ model.feature }}.Write.Delete;
+
+internal sealed class Delete{{ model.resource }}Endpoint : IEndpoint<{{ model.feature }}Endpoints>
+{
+    public string Route { get; } = "/" + {{ model.feature }}Endpoints.IdRoute;
+    public string Name { get; } = "Delete{{ model.resource }}";
+    public string Summary { get; } = "Delete {{ model.resource }}";
+
+    public void Map(EndpointMapBuilder builder)
+    {
+        builder.MapDelete(builder.Route, HandleAsync)
+            .Produces(StatusCodes.Status204NoContent)
+            .ProducesValidationProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status404NotFound);
+    }
+
+    private static async Task<IResult> HandleAsync(
+{{ if model.child }}        Guid {{ model.child.route_id }},
+{{ end }}        Guid id,
+        IMediator mediator,
+        CancellationToken cancellationToken)
+    {
+        var result = await mediator.SendAsync(new Delete{{ model.resource }}Command({{ if model.child }}{{ model.child.route_id }}, {{ end }}id), cancellationToken);
+
+        return result.ToHttpResult(TypedResults.NoContent);
+    }
+}

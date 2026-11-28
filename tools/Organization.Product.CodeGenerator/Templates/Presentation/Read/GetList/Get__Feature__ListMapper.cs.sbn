@@ -1,0 +1,12 @@
+using {{ model.module }}.Application.{{ model.feature }}.Read.GetList;
+
+using Riok.Mapperly.Abstractions;
+
+namespace {{ model.module }}.Presentation.Features.{{ model.feature }}.Read.GetList;
+
+[Mapper(IncludedConstructors = MemberVisibility.All)]
+internal static partial class Get{{ model.feature }}ListMapper
+{
+    internal static partial PaginationResult<{{ model.resource }}ListItemResponse> ToResponse(
+        PaginationResult<{{ model.resource }}ListItemReadModel> pagedResult);
+}

@@ -1,0 +1,7 @@
+namespace {{ model.module }}.Application.{{ model.feature }}.Read.GetList;
+
+public sealed record Get{{ model.feature }}ListQuery(
+{{ if model.child }}    Guid ParentId,
+{{ end }}    PaginationParameters PaginationParameters,
+    SortingParameters SortingParameters)
+    : IQuery<Result<PaginationResult<{{ model.resource }}ListItemReadModel>>>;

@@ -1,0 +1,44 @@
+{{ if model.child }}using {{ model.child.parent_domain }};
+using {{ model.child.parent_domain }}.Abstractions;
+{{ else }}using {{ model.domain }};
+using {{ model.domain }}.Abstractions;
+{{ end }}
+namespace {{ model.module }}.Application.{{ model.feature }}.Write.Create;
+
+public sealed class Create{{ model.resource }}Handler(I{{ if model.child }}{{ model.child.parent_feature }}{{ else }}{{ model.feature }}{{ end }}Repository repository)
+    : ICommandHandler<Create{{ model.resource }}Command, Result<Guid>>{{ if model.child }}, IRequireTransaction{{ end }}
+{
+    public {{ if model.child }}async {{ end }}Task<Result<Guid>> HandleAsync(
+        Create{{ model.resource }}Command command,
+        CancellationToken cancellationToken)
+    {
+{{ if model.child }}{{ failure = "Result.Failure<Guid>"
+   with_id = false
+   include "LoadParent.sbn"
+   fields = model.create_fields
+   fail_start = "Result.Failure<Guid>("
+   fail_end = ")"
+   include "BindCompoundValues.sbn" }}        var created = parent.{{ model.child.create_method }}({{ if model.create_fields.size > 0 }}
+{{ for field in model.create_fields }}            {{ if field.composite }}{{ field.local_name }}Value{{ else }}command.{{ field.name }}{{ end }}{{ if !for.last }},
+{{ end }}{{ end }}{{ end }});
+
+        return created.IsSuccess
+            ? Result.Success(created.Value.Value)
+            : Result.Failure<Guid>(created.Errors);
+{{ else }}{{ fields = model.create_fields
+   fail_start = "Task.FromResult(Result.Failure<Guid>("
+   fail_end = "))"
+   include "BindCompoundValues.sbn" }}        var entityResult = {{ model.resource }}.Create({{ if model.create_fields.size > 0 }}
+{{ for field in model.create_fields }}            {{ if field.composite }}{{ field.local_name }}Value{{ else }}command.{{ field.name }}{{ end }}{{ if !for.last }},
+{{ end }}{{ end }}{{ end }});
+
+        if (entityResult.IsFailure)
+        {
+            return Task.FromResult(Result.Failure<Guid>(entityResult.Errors));
+        }
+
+        repository.Add(entityResult.Value);
+
+        return Task.FromResult(Result.Success(entityResult.Value.Id.Value));
+{{ end }}    }
+}

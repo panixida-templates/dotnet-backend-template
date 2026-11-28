@@ -1,0 +1,22 @@
+using {{ model.module }}.Application.{{ model.feature }}.Abstractions;
+
+namespace {{ model.module }}.Application.{{ model.feature }}.Read.GetDetails;
+
+public sealed class Get{{ model.resource }}DetailsHandler(
+    I{{ model.feature }}ReadRepository repository)
+    : IQueryHandler<Get{{ model.resource }}DetailsQuery, Result<{{ model.resource }}DetailsReadModel>>
+{
+    public async Task<Result<{{ model.resource }}DetailsReadModel>> HandleAsync(
+        Get{{ model.resource }}DetailsQuery query,
+        CancellationToken cancellationToken)
+    {
+        var entity = await repository.GetByIdAsync({{ if model.child }}query.ParentId, {{ end }}query.Id, cancellationToken);
+        if (entity is null)
+        {
+            return Result.Failure<{{ model.resource }}DetailsReadModel>(
+                Error.NotFound($"{{ model.resource }} with id '{query.Id}' was not found."));
+        }
+
+        return Result.Success(entity);
+    }
+}

@@ -1,0 +1,26 @@
+using {{ model.module }}.Application.{{ model.feature }}.Abstractions;
+
+namespace {{ model.module }}.Application.{{ model.feature }}.Read.GetList;
+
+public sealed class Get{{ model.feature }}ListHandler(I{{ model.feature }}ReadRepository repository)
+    : IQueryHandler<Get{{ model.feature }}ListQuery, Result<PaginationResult<{{ model.resource }}ListItemReadModel>>>
+{
+    public async Task<Result<PaginationResult<{{ model.resource }}ListItemReadModel>>> HandleAsync(
+        Get{{ model.feature }}ListQuery query,
+        CancellationToken cancellationToken)
+    {
+        var items = await repository.GetPagedListAsync(
+{{ if model.child }}            query.ParentId,
+{{ end }}            query.PaginationParameters,
+            query.SortingParameters,
+            cancellationToken);
+
+{{ if model.child }}        if (items is null)
+        {
+            return Result.Failure<PaginationResult<{{ model.resource }}ListItemReadModel>>(
+                Error.NotFound($"{{ model.child.parent_resource }} with id '{query.ParentId}' was not found."));
+        }
+
+{{ end }}        return Result.Success(items);
+    }
+}

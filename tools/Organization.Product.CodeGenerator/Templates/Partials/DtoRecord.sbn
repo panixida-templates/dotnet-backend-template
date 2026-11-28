@@ -1,0 +1,18 @@
+{{ has_compound = false
+   for item in fields
+       if item.composite
+           has_compound = true
+       end
+   end
+   with_parent = model.child && (string.starts_with contract " : ICommand") -}}
+{{ access }} sealed record {{ dto_name }}({{ if fields.size > 0 }}
+{{ if with_parent }}    Guid ParentId,
+{{ end }}{{ if with_id }}    Guid Id,
+{{ end }}{{ for item in fields }}    {{ if item.composite }}{{ dto_name }}.{{ item.name }}Value{{ if item.optional || input }}?{{ end }}{{ else }}{{ item.type }}{{ end }} {{ item.name }}{{ if !for.last }},
+{{ end }}{{ end }}{{ else }}{{ if with_parent }}Guid ParentId{{ if with_id }}, {{ end }}{{ end }}{{ if with_id }}Guid Id{{ end }}{{ end }}){{ contract }}{{ if has_compound }}
+{
+{{ first_compound = true }}{{ for item in fields }}{{ if item.composite }}{{ if !first_compound }}
+{{ end }}    {{ access }} sealed record {{ item.name }}Value(
+{{ for component in item.components }}        {{ component.type }} {{ component.name }}{{ if !for.last }},
+{{ end }}{{ end }});
+{{ first_compound = false }}{{ end }}{{ end }}}{{ else }};{{ end }}

@@ -1,0 +1,58 @@
+using {{ model.domain }};
+{{ if model.child && model.child.parent_domain != model.domain }}using {{ model.child.parent_domain }};
+{{ end }}using {{ if model.child }}{{ model.child.parent_domain }}{{ else }}{{ model.domain }}{{ end }}.Abstractions;
+
+namespace {{ model.module }}.Application.{{ model.feature }}.Write.Update;
+
+public sealed class Update{{ model.resource }}Handler(I{{ if model.child }}{{ model.child.parent_feature }}{{ else }}{{ model.feature }}{{ end }}Repository repository)
+    : ICommandHandler<Update{{ model.resource }}Command, Result>, IRequireTransaction
+{
+    public async Task<Result> HandleAsync(
+        Update{{ model.resource }}Command command,
+        CancellationToken cancellationToken)
+    {
+{{ if model.child }}{{ failure = "Result.Failure"
+   with_id = true
+   include "LoadParent.sbn"
+   fields = model.update_fields
+   fail_start = "Result.Failure("
+   fail_end = ")"
+   include "BindCompoundValues.sbn" }}        return parent.{{ model.child.update_method }}({{ if model.update_fields.size > 0 }}
+            idResult.Value,
+{{ for field in model.update_fields }}            {{ if field.composite }}{{ field.local_name }}Value{{ else }}command.{{ field.name }}{{ end }}{{ if !for.last }},
+{{ end }}{{ end }}{{ else }}idResult.Value{{ end }});
+{{ else }}        var idResult = {{ model.id }}.Create(command.Id);
+
+        if (idResult.IsFailure)
+        {
+            return Result.Failure(idResult.Errors);
+        }
+
+        var entity = await repository.GetByIdAsync(
+            idResult.Value,
+            cancellationToken);
+
+        if (entity is null)
+        {
+            return Result.Failure(
+                Error.NotFound($"{{ model.resource }} with id '{command.Id}' was not found.")
+                    .WithField(nameof({{ model.resource }})));
+        }
+
+{{ fields = model.update_fields
+   fail_start = "Result.Failure("
+   fail_end = ")"
+   include "BindCompoundValues.sbn" }}        var updateResult = entity.Update({{ if model.update_fields.size > 0 }}
+{{ for field in model.update_fields }}            {{ if field.composite }}{{ field.local_name }}Value{{ else }}command.{{ field.name }}{{ end }}{{ if !for.last }},
+{{ end }}{{ end }}{{ end }});
+
+        if (updateResult.IsFailure)
+        {
+            return updateResult;
+        }
+
+        repository.Update(entity);
+
+        return Result.Success();
+{{ end }}    }
+}

@@ -1,0 +1,9 @@
+namespace {{ model.module }}.Presentation.Features.{{ model.feature }}.Write.Create;
+
+{{ fields = model.create_fields
+   access = "internal"
+   dto_name = "Create" + model.resource + "Request"
+   contract = ""
+   input = true
+   with_id = false
+   include "DtoRecord.sbn" }}

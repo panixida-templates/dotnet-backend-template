@@ -1,0 +1,32 @@
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+
+namespace {{ model.module }}.Presentation.Features.{{ model.feature }}.Write.Update;
+
+internal sealed class Update{{ model.resource }}Endpoint : IEndpoint<{{ model.feature }}Endpoints>
+{
+    public string Route { get; } = "/" + {{ model.feature }}Endpoints.IdRoute;
+    public string Name { get; } = "Update{{ model.resource }}";
+    public string Summary { get; } = "Update {{ model.resource }}";
+
+    public void Map(EndpointMapBuilder builder)
+    {
+        builder.MapPut(builder.Route, HandleAsync)
+            .Produces(StatusCodes.Status204NoContent)
+            .ProducesValidationProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status404NotFound);
+    }
+
+    private static async Task<IResult> HandleAsync(
+{{ if model.child }}        Guid {{ model.child.route_id }},
+{{ end }}        Guid id,
+        Update{{ model.resource }}Request request,
+        IMediator mediator,
+        CancellationToken cancellationToken)
+    {
+        var command = Update{{ model.resource }}Mapper.ToCommand(request, {{ if model.child }}{{ model.child.route_id }}, {{ end }}id);
+        var result = await mediator.SendAsync(command, cancellationToken);
+
+        return result.ToHttpResult(TypedResults.NoContent);
+    }
+}

@@ -1,0 +1,13 @@
+{{ if model.has_compound_fields }}using System.ComponentModel.DataAnnotations.Schema;
+
+{{ end }}namespace {{ model.module }}.Infrastructure.Persistence.Features.{{ model.feature }}.Read.DbModels;
+
+public sealed class {{ model.resource }}ReadDbModel : {{ if !model.child }}Auditable{{ end }}ReadDbModel<Guid>
+{
+{{ if model.child }}    public Guid ParentId { get; set; }
+{{ if model.fields.size > 0 }}
+{{ end }}{{ end }}{{ first_property = true }}{{ for field in model.fields }}{{ if field.composite }}{{ if !first_property }}
+{{ end }}    [Column(TypeName = "jsonb")]
+    public {{ if !field.optional }}required {{ end }}string{{ if field.optional }}?{{ end }} {{ field.name }} { get; set; }
+{{ else }}    public {{ if field.required_string }}required {{ end }}{{ field.type }} {{ field.name }} { get; set; }
+{{ end }}{{ first_property = false }}{{ end }}}

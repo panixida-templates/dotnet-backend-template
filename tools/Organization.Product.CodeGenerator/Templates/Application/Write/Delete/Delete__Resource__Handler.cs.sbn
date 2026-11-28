@@ -1,0 +1,38 @@
+using {{ model.domain }};
+{{ if model.child && model.child.parent_domain != model.domain }}using {{ model.child.parent_domain }};
+{{ end }}using {{ if model.child }}{{ model.child.parent_domain }}{{ else }}{{ model.domain }}{{ end }}.Abstractions;
+
+namespace {{ model.module }}.Application.{{ model.feature }}.Write.Delete;
+
+public sealed class Delete{{ model.resource }}Handler(I{{ if model.child }}{{ model.child.parent_feature }}{{ else }}{{ model.feature }}{{ end }}Repository repository)
+    : ICommandHandler<Delete{{ model.resource }}Command, Result>{{ if model.child }}, IRequireTransaction{{ end }}
+{
+    public async Task<Result> HandleAsync(
+        Delete{{ model.resource }}Command command,
+        CancellationToken cancellationToken)
+    {
+{{ if model.child }}{{ failure = "Result.Failure"
+   with_id = true
+   include "LoadParent.sbn" }}        return parent.{{ model.child.delete_method }}(idResult.Value);
+{{ else }}        var idResult = {{ model.id }}.Create(command.Id);
+
+        if (idResult.IsFailure)
+        {
+            return Result.Failure(idResult.Errors);
+        }
+
+        var entity = await repository.GetByIdAsync(
+            idResult.Value,
+            cancellationToken);
+
+        if (entity is null)
+        {
+            return Result.Failure(
+                Error.NotFound($"{{ model.resource }} with id '{command.Id}' was not found."));
+        }
+
+        repository.Delete(entity);
+
+        return Result.Success();
+{{ end }}    }
+}

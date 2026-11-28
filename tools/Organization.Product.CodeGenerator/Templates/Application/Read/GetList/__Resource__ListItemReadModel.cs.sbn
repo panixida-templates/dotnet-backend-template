@@ -1,0 +1,9 @@
+namespace {{ model.module }}.Application.{{ model.feature }}.Read.GetList;
+
+{{ fields = model.list_fields
+   access = "public"
+   dto_name = model.resource + "ListItemReadModel"
+   contract = " : IReadModel"
+   input = false
+   with_id = false
+   include "DtoRecord.sbn" }}

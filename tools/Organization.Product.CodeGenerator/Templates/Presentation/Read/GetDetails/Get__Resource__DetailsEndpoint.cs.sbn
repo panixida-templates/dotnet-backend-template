@@ -1,0 +1,34 @@
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+
+using {{ model.module }}.Application.{{ model.feature }}.Read.GetDetails;
+
+namespace {{ model.module }}.Presentation.Features.{{ model.feature }}.Read.GetDetails;
+
+internal sealed class Get{{ model.resource }}DetailsEndpoint : IEndpoint<{{ model.feature }}Endpoints>
+{
+    public string Route { get; } = "/" + {{ model.feature }}Endpoints.IdRoute;
+    public string Name { get; } = "Get{{ model.resource }}ById";
+    public string Summary { get; } = "Get {{ model.resource }} by id";
+
+    public void Map(EndpointMapBuilder builder)
+    {
+        builder.MapGet(builder.Route, HandleAsync)
+            .Produces<{{ model.resource }}DetailsResponse>(StatusCodes.Status200OK)
+            .ProducesValidationProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status404NotFound);
+    }
+
+    private static async Task<IResult> HandleAsync(
+{{ if model.child }}        Guid {{ model.child.route_id }},
+{{ end }}        Guid id,
+        IMediator mediator,
+        CancellationToken cancellationToken)
+    {
+        var result = await mediator.QueryAsync(
+            new Get{{ model.resource }}DetailsQuery({{ if model.child }}{{ model.child.route_id }}, {{ end }}id), cancellationToken);
+
+        return result.ToHttpResult(dto =>
+            TypedResults.Ok({{ model.resource }}DetailsMapper.ToResponse(dto)));
+    }
+}

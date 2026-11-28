@@ -1,0 +1,37 @@
+namespace {{ model.module }}.Application.{{ model.feature }}.Read.GetList;
+
+public sealed class Get{{ model.feature }}ListQueryValidator : AbstractValidator<Get{{ model.feature }}ListQuery>
+{
+{{ if model.has_compound_list }}    private static readonly string[] s_sortableFields =
+    [
+{{ for field in model.list_fields }}{{ if !field.composite }}        nameof({{ model.resource }}ListItemReadModel.{{ field.name }}),
+{{ end }}{{ end }}    ];
+
+{{ end }}    public Get{{ model.feature }}ListQueryValidator()
+    {
+{{ if model.child }}        RuleFor(query => query.ParentId).NotEmpty();
+
+{{ end }}        RuleFor(query => query.PaginationParameters)
+            .NotNull();
+
+        When(
+            query => query.PaginationParameters is not null,
+            () =>
+            {
+                RuleFor(query => query.PaginationParameters.PageNumber)
+                    .GreaterThan(0);
+
+                RuleFor(query => query.PaginationParameters.PageSize)
+                    .GreaterThan(0);
+            });
+
+        RuleFor(query => query.SortingParameters)
+            .NotNull();
+{{ if model.has_compound_list }}
+        RuleForEach(query => query.SortingParameters.Fields)
+            .Must(field => field is not null
+                && s_sortableFields.Contains(field.Field, StringComparer.OrdinalIgnoreCase))
+            .WithMessage("Sorting supports only top-level scalar fields.")
+            .When(query => query.SortingParameters is not null);
+{{ end }}    }
+}

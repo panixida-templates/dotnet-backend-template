@@ -1,0 +1,9 @@
+namespace {{ model.module }}.Application.{{ model.feature }}.Write.Create;
+
+{{ fields = model.create_fields
+   access = "public"
+   dto_name = "Create" + model.resource + "Command"
+   contract = " : ICommand<Result<Guid>>"
+   input = true
+   with_id = false
+   include "DtoRecord.sbn" }}

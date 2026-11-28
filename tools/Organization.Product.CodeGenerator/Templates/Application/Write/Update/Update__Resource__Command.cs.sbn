@@ -1,0 +1,9 @@
+namespace {{ model.module }}.Application.{{ model.feature }}.Write.Update;
+
+{{ fields = model.update_fields
+   access = "public"
+   dto_name = "Update" + model.resource + "Command"
+   contract = " : ICommand<Result>"
+   input = true
+   with_id = true
+   include "DtoRecord.sbn" }}

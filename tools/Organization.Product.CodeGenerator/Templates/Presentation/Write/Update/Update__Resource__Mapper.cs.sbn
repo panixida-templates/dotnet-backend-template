@@ -1,0 +1,14 @@
+using {{ model.module }}.Application.{{ model.feature }}.Write.Update;
+
+using Riok.Mapperly.Abstractions;
+
+namespace {{ model.module }}.Presentation.Features.{{ model.feature }}.Write.Update;
+
+[Mapper]
+internal static partial class Update{{ model.resource }}Mapper
+{
+    internal static partial Update{{ model.resource }}Command ToCommand({{ if model.child }}
+        Update{{ model.resource }}Request request,
+        Guid parentId,
+        Guid id{{ else }}Update{{ model.resource }}Request request, Guid id{{ end }});
+}

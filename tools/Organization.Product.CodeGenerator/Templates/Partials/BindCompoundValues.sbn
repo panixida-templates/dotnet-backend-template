@@ -1,0 +1,24 @@
+{{ for item in fields }}{{ if item.composite }}{{ if item.optional }}        {{ item.value_object }}? {{ item.local_name }}Value = null;
+        if (command.{{ item.name }} is { } {{ item.local_name }}Input)
+        {
+{{ indent = "            " }}{{ else }}        var {{ item.local_name }}Input = command.{{ item.name }};
+        if ({{ item.local_name }}Input is null)
+        {
+            var error = Error.Validation("{{ item.name }} is required.")
+                .WithField(nameof(command.{{ item.name }}));
+            return {{ fail_start }}error{{ fail_end }};
+        }
+
+{{ indent = "        " }}{{ end }}{{ indent }}var {{ item.local_name }}Result = {{ item.value_object }}.Create(
+{{ for component in item.components }}{{ indent }}    {{ item.local_name }}Input.{{ component.name }}{{ if !for.last }},
+{{ end }}{{ end }});
+
+{{ indent }}if ({{ item.local_name }}Result.IsFailure)
+{{ indent }}{
+{{ indent }}    return {{ fail_start }}{{ item.local_name }}Result.Errors{{ fail_end }};
+{{ indent }}}
+
+{{ indent }}{{ if !item.optional }}var {{ end }}{{ item.local_name }}Value = {{ item.local_name }}Result.Value;
+{{ if item.optional }}        }
+{{ end }}
+{{ end }}{{ end -}}

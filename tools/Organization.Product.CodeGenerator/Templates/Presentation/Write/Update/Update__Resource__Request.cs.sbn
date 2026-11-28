@@ -1,0 +1,9 @@
+namespace {{ model.module }}.Presentation.Features.{{ model.feature }}.Write.Update;
+
+{{ fields = model.update_fields
+   access = "internal"
+   dto_name = "Update" + model.resource + "Request"
+   contract = ""
+   input = true
+   with_id = false
+   include "DtoRecord.sbn" }}

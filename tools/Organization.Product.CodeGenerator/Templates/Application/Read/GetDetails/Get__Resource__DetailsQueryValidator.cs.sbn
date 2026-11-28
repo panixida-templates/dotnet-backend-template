@@ -1,0 +1,14 @@
+using {{ model.domain }};
+
+namespace {{ model.module }}.Application.{{ model.feature }}.Read.GetDetails;
+
+public sealed class Get{{ model.resource }}DetailsQueryValidator : AbstractValidator<Get{{ model.resource }}DetailsQuery>
+{
+    public Get{{ model.resource }}DetailsQueryValidator()
+    {
+{{ if model.child }}        RuleFor(query => query.ParentId).NotEmpty();
+
+{{ end }}        RuleFor(query => query.Id)
+            .MustBeValidDomainValue({{ model.id }}.Create);
+    }
+}

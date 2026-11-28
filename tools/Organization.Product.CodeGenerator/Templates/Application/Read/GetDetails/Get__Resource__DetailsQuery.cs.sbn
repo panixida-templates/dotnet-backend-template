@@ -1,0 +1,4 @@
+namespace {{ model.module }}.Application.{{ model.feature }}.Read.GetDetails;
+
+public sealed record Get{{ model.resource }}DetailsQuery({{ if model.child }}Guid ParentId, {{ end }}Guid Id)
+    : IQuery<Result<{{ model.resource }}DetailsReadModel>>;

@@ -1,0 +1,12 @@
+namespace {{ model.module }}.Application.{{ model.feature }}.Write.Create;
+
+public sealed class Create{{ model.resource }}CommandValidator : AbstractValidator<Create{{ model.resource }}Command>{{ if model.child || model.create_validation_fields.size > 0 }}
+{
+    public Create{{ model.resource }}CommandValidator()
+    {
+{{ if model.child }}        RuleFor(command => command.ParentId).NotEmpty();
+{{ end }}{{ for field in model.create_validation_fields }}{{ if model.child || !for.first }}
+{{ end }}        RuleFor(command => command.{{ field.name }})
+            {{ if field.value_object && !field.composite }}.MustBeValidDomainValue({{ field.value_object }}.Create);{{ else }}.NotNull();{{ end }}
+{{ end }}    }
+}{{ else }};{{ end }}

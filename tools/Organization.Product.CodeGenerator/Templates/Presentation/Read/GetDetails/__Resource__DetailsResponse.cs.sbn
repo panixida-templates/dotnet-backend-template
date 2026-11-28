@@ -1,0 +1,9 @@
+namespace {{ model.module }}.Presentation.Features.{{ model.feature }}.Read.GetDetails;
+
+{{ fields = model.details_fields
+   access = "internal"
+   dto_name = model.resource + "DetailsResponse"
+   contract = ""
+   input = false
+   with_id = false
+   include "DtoRecord.sbn" }}

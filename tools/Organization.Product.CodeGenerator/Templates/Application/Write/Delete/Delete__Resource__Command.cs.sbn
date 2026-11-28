@@ -1,0 +1,4 @@
+namespace {{ model.module }}.Application.{{ model.feature }}.Write.Delete;
+
+public sealed record Delete{{ model.resource }}Command({{ if model.child }}Guid ParentId, {{ end }}Guid Id)
+    : ICommand<Result>;
