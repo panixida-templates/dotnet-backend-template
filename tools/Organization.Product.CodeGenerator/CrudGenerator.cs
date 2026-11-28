@@ -85,7 +85,7 @@ internal static class CrudGenerator
                         $"'{RelativePath(repository, path)}' is not a unique file path.");
                 }
 
-                var change = PlanChange(repository, owner, model, job, artifact, path, parsedTemplates);
+                var change = PlanChange(repository, model, job, artifact, path, parsedTemplates);
                 if (change is not null)
                 {
                     changes.Add(change);
@@ -167,7 +167,6 @@ internal static class CrudGenerator
 
     private static OutputChange? PlanChange(
         RepositoryLayout repository,
-        string owner,
         ResourceModel? model,
         JobSettings job,
         TemplateArtifact artifact,
@@ -176,21 +175,9 @@ internal static class CrudGenerator
     {
         var previous = File.Exists(path) ? File.ReadAllBytes(path) : null;
         var label = RelativePath(repository, path);
-        var header = $"// Scaffolded by CodeGenerator for {owner}.";
         if (job.DeleteGenerated)
         {
-            if (previous is null)
-            {
-                return null;
-            }
-
-            var firstLine = Encoding.UTF8.GetString(previous).Split('\n', 2)[0].Trim('\uFEFF', '\r');
-            if (firstLine != header)
-            {
-                throw new InvalidOperationException($"Cannot delete '{label}': its scaffold marker does not match.");
-            }
-
-            return new OutputChange(path, previous, null);
+            return previous is null ? null : new OutputChange(path, previous, null);
         }
 
         if (previous is not null && !job.OverwriteExisting)
@@ -203,7 +190,7 @@ internal static class CrudGenerator
             ? repository.ResolvePath(overridePath, repository.GeneratorDirectory)
             : artifact.SourcePath;
         var source = Render(templatePath, model, parsedTemplates);
-        return new OutputChange(path, previous, Encoding.UTF8.GetBytes($"{header}\n\n{source}"));
+        return new OutputChange(path, previous, Encoding.UTF8.GetBytes(source));
     }
 
     private static string Render(string path, ResourceModel? model, Dictionary<string, Template> templates)

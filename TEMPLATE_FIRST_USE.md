@@ -218,9 +218,9 @@ CRUD. Omitted artifacts may still be required by the generated code.
   repository.
 - `overwriteExisting` allows replacing existing files for the selected
   artifacts. Its default is `false`.
-- `deleteGenerated` removes only the selected files whose first line still
-  identifies the scaffolded aggregate. It works without building Domain and
-  cannot be combined with `overwriteExisting`.
+- `deleteGenerated` removes existing files at the output paths selected by the
+  job, including files with manual edits. It skips missing files, works without
+  building Domain, and cannot be combined with `overwriteExisting`.
 - `needMigrate` is reserved for future use. Run the EF migrator separately.
 
 Run the project from the solution directory, using the generated project name.
